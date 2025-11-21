@@ -48,7 +48,7 @@
         </header>
 
         <p class="mb-8 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-md">
-            **Challenge:** Below are three examples of broken Python code. Click the "Run Code" button for each one to see the Python error message and learn the fundamental concept that makes these attempts fail.
+            **Challenge:** Below are five examples of broken Python code. Click the "Run Code" button for each one to see the Python error message and learn the fundamental concept that makes these attempts fail.
         </p>
 
         <div id="activity-container" class="space-y-12">
@@ -86,6 +86,209 @@
                 correct: 'animal = "dog"\n# Use negative indexing for the suffix\nnew_animal = animal[:-1] + "t"',
                 result: '"dot"',
                 explanation: "Negative slicing (animal[:-1]) gets everything up to (but not including) the last character, allowing you to easily replace the last character with the new one ('t')."
+            },
+            {
+                id: 4,
+                broken: 'color = "red"\ncolor[0] = "b"',
+                intention: 'Change "red" to "bed".',
+                correct: 'color = "red"\n# Create a new string by prepending "b" to the rest of the word\nnew_color = "b" + color[1:]',
+                result: '"bed"',
+                explanation: "To replace the first character (index 0), you simply concatenate the new character ('b') with the rest of the original string, starting from the second character (index 1) onward."
+            },
+            {
+                id: 5,
+                broken: 'school = "Panther"\nschool[2] = "X"',
+                intention: 'Change "Panther" to "PaXther".',
+                correct: 'school = "Panther"\n# Combine the prefix (0:2), the replacement ("X"), and the suffix (3:)\nnew_school = school[:2] + "X" + school[3:]',
+                result: '"PaXther"',
+                explanation: "You use slicing to isolate the 'P' and 'a' (school[:2]), insert the 'X', and then use slicing again to grab the remaining characters ('t', 'h', 'e', 'r') starting from index 3."
+            }
+        ];
+
+        const container = document.getElementById('activity-container');
+
+        // Function to create and render the activity sections
+        function renderActivity() {
+            problems.forEach(problem => {
+                const section = document.createElement('div');
+                section.className = 'section-card p-6 bg-white rounded-xl shadow-lg';
+                section.innerHTML = `
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-indigo-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">${problem.id}</span>
+                        Broken Code Example
+                    </h2>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Intended Action:</p>
+                        <p class="text-lg font-semibold text-gray-700">${problem.intention}</p>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Left Panel: Broken Code & Run Button -->
+                        <div class="md:w-1/2">
+                            <h3 class="text-xl font-semibold mb-2 text-red-600">Problem Code</h3>
+                            <pre class="code-block h-32">${problem.broken}</pre>
+                            <button id="run-btn-${problem.id}" 
+                                class="w-full mt-4 px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-150">
+                                Run Code 💥
+                            </button>
+                        </div>
+                        
+                        <!-- Right Panel: Output & Fix (Initially hidden) -->
+                        <div id="output-panel-${problem.id}" class="md:w-1/2 hidden">
+                            <h3 class="text-xl font-semibold mb-2 text-indigo-600">The Fix (Output)</h3>
+                            
+                            <!-- Error Output -->
+                            <div id="error-output-${problem.id}" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p class="font-bold error-message">TypeError: 'str' object does not support item assignment</p>
+                                <p class="mt-2 text-sm text-red-800">
+                                    This error proves Python strings are <strong class="underline">Immutable</strong>. You can read them, but you can't change them!
+                                </p>
+                            </div>
+                            
+                            <!-- Correct Code -->
+                            <h4 class="text-lg font-semibold mb-2 text-gray-800">The Correct Solution:</h4>
+                            <pre class="code-block correct-code !bg-white !text-gray-900 border border-green-300 h-32">${problem.correct}</pre>
+                            
+                            <div class="mt-4 p-3 bg-green-100 text-green-800 rounded-lg">
+                                <p class="font-bold">Result:</p>
+                                <p class="text-sm">${problem.explanation}</p>
+                                <p class="text-lg font-extrabold mt-1">Final Value: <span class="text-green-600">${problem.result}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        // Function to set up event listeners
+        function setupEventListeners() {
+            problems.forEach(problem => {
+                const runButton = document.getElementById(`run-btn-${problem.id}`);
+                const outputPanel = document.getElementById(`output-panel-${problem.id}`);
+
+                runButton.addEventListener('click', () => {
+                    outputPanel.classList.remove('hidden');
+                    // Changed to reflect the error instead of success
+                    runButton.innerText = 'TypeError Revealed! 🚫'; 
+                    // Changed button color to red to signify the error state
+                    runButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                    runButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                });
+            });
+        }
+
+        // Initialize the app
+        renderActivity();
+        setupEventListeners();
+
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python String Immutability Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght=400;600&family=Inter:wght=400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for code presentation */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background-color: #1e1e1e; /* Dark theme for code */
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .correct-code {
+            background-color: #e6ffed; /* Light green background */
+            color: #2d3748; /* Dark text for contrast */
+            border: 1px solid #b2f5ea;
+        }
+        .error-message {
+            color: #f56565; /* Red for error */
+            font-weight: 600;
+        }
+        .section-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+        .section-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">Python Immutability Challenge</h1>
+            <p class="text-xl text-indigo-600">Why can't you change a Python string?</p>
+        </header>
+
+        <p class="mb-8 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-md">
+            **Challenge:** Below are five examples of broken Python code. Click the "Run Code" button for each one to see the Python error message and learn the fundamental concept that makes these attempts fail.
+        </p>
+
+        <div id="activity-container" class="space-y-12">
+            <!-- Content will be generated here -->
+        </div>
+
+        <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+            Concept: String Immutability | Developed using Python Slicing & Concatenation.
+        </footer>
+    </div>
+
+    <script>
+        // Data structure for the activity
+        const problems = [
+            {
+                id: 1,
+                broken: 'word = "Planet"\nword[2] = "o"',
+                intention: 'Change "Planet" to "Plonet".',
+                correct: 'word = "Planet"\n# Get the first part, insert "o", and get the suffix\nnew_word = word[:2] + "o" + word[3:]',
+                result: '"Plonet"',
+                explanation: "You must create a new string by concatenating the first two characters (word[:2]), the desired new character ('o'), and the rest of the original string (word[3:]) to form an entirely new string object."
+            },
+            {
+                id: 2,
+                broken: 'city = "Pikeville"\ncity[4] = "X"',
+                intention: 'Change "Pikeville" to "PikeXille".',
+                correct: 'city = "Pikeville"\n# Use slicing to combine parts\nnew_city = city[:4] + "X" + city[5:]',
+                result: '"PikeXille"',
+                explanation: "Slicing allows you to grab sections of the old string (before index 4 and after index 5) and insert the new character ('X') between them to form a brand new string."
+            },
+            {
+                id: 3,
+                broken: 'animal = "dog"\nanimal[-1] = "t"',
+                intention: 'Change "dog" to "dot".',
+                correct: 'animal = "dog"\n# Use negative indexing for the suffix\nnew_animal = animal[:-1] + "t"',
+                result: '"dot"',
+                explanation: "Negative slicing (animal[:-1]) gets everything up to (but not including) the last character, allowing you to easily replace the last character with the new one ('t')."
+            },
+            {
+                id: 4,
+                broken: 'color = "red"\ncolor[0] = "b"',
+                intention: 'Change "red" to "bed".',
+                correct: 'color = "red"\n# Create a new string by prepending "b" to the rest of the word\nnew_color = "b" + color[1:]',
+                result: '"bed"',
+                explanation: "To replace the first character (index 0), you simply concatenate the new character ('b') with the rest of the original string, starting from the second character (index 1) onward."
+            },
+            {
+                id: 5,
+                broken: 'school = "Panther"\nschool[2] = "X"',
+                intention: 'Change "Panther" to "PaXther".',
+                correct: 'school = "Panther"\n# Combine the prefix (0:2), the replacement ("X"), and the suffix (3:)\nnew_school = school[:2] + "X" + school[3:]',
+                result: '"PaXther"',
+                explanation: "You use slicing to isolate the 'P' and 'a' (school[:2]), insert the 'X', and then use slicing again to grab the remaining characters ('t', 'h', 'e', 'r') starting from index 3."
             }
         ];
 
