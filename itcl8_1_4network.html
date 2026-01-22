@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic: Network or Not?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'Fira Code', monospace; }
+        .diagnostic-card { transition: all 0.3s ease; border-left: 4px solid transparent; }
+        .toggle-btn.active-yes { background-color: #10b981; color: white; border-color: #059669; }
+        .toggle-btn.active-no { background-color: #ef4444; color: white; border-color: #dc2626; }
+        .correct-card { border-left-color: #10b981 !important; background-color: rgba(16, 185, 129, 0.05); }
+        .incorrect-card { border-left-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen text-slate-200 p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
+       
+        <!-- Technical Sidebar -->
+        <aside class="lg:col-span-1 space-y-6">
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-2xl sticky top-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04m17.236 0a11.955 11.955 0 01-8.618 20.944 11.955 11.955 0 01-8.618-20.944" />
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">NetDiagnose <span class="text-indigo-400">v1.3</span></h1>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                        <p class="text-[10px] uppercase text-slate-500 font-bold mb-2">Completion Status</p>
+                        <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                            <div id="progressBar" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
+                    <div id="scoreContainer" class="hidden bg-indigo-500/10 p-4 rounded-lg border border-indigo-500/30 text-center">
+                        <p class="text-xs text-indigo-300 font-bold uppercase">Accuracy Score</p>
+                        <p id="finalScore" class="text-3xl font-black text-white">0%</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-xs text-slate-400 leading-relaxed">
+                    <h2 class="font-bold text-slate-500 uppercase tracking-widest">Diagnostic Key</h2>
+                    <p><strong>YES:</strong> 2+ autonomous devices communicating or sharing data.</p>
+                    <p><strong>NO:</strong> Standalone devices, power-only circuits, or simple peripherals (USB).</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="lg:col-span-3 space-y-6">
+            <div id="scenarios" class="space-y-4">
+                <!-- Data populated via JS for easier scoring management -->
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex flex-col items-center">
+                <button id="submitBtn" onclick="finalizeDiagnostic()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-widest" disabled>
+                    Finalize Diagnostic Report
+                </button>
+                <button id="resetBtn" onclick="location.reload()" class="hidden mt-4 text-xs text-slate-500 hover:text-white underline uppercase tracking-widest">Restart Simulation</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const scenarioData = [
+            { id: 1, text: "Two computers connected to the same Wi-Fi", correct: true, why: "Devices are connected to a shared medium (Wi-Fi) to communicate and share data." },
+            { id: 2, text: "A student typing a paper on a laptop that is NOT connected to Wi-Fi or Bluetooth", correct: false, why: "This is a single standalone device. A network requires two or more connected devices." },
+            { id: 3, text: "A standard printer plugged directly into one computer via a USB cable", correct: false, why: "This is a peripheral connection (USB bus). It is an extension of one computer, not a shared network." },
+            { id: 4, text: "A phone using mobile data to send a text message", correct: true, why: "The phone is connected to a cellular network to exchange data with other devices." },
+            { id: 5, text: "A lamp plugged into a wall outlet to turn on the light", correct: false, why: "This is an electrical circuit. No data is being shared or communicated between devices." },
+            { id: 6, text: "A Chromebook accessing a file on Google Drive", correct: true, why: "The device is communicating with a remote server over the internet to share resources." },
+            { id: 7, text: "Watching a DVD on a TV (no Wi-Fi connection active)", correct: false, why: "This is a local hardware playback connection. There is no network communication happening." },
+            { id: 8, text: "A Nintendo Switch playing with another Switch via local wireless connection", correct: true, why: "This is a local network! Devices are connected and sharing game data, even if not on the internet." }
+        ];
+
+        const container = document.getElementById('scenarios');
+        const userAnswers = {};
+
+        // Render Scenarios
+        scenarioData.forEach(s => {
+            const div = document.createElement('div');
+            div.id = `card-${s.id}`;
+            div.className = "scenario bg-slate-800 rounded-2xl p-6 border border-slate-700 diagnostic-card";
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded border border-indigo-500/20 mono uppercase">Packet_0${s.id}</span>
+                    <span id="result-badge-${s.id}" class="hidden text-[10px] font-black uppercase px-2 py-1 rounded"></span>
+                </div>
+                <h3 class="text-lg font-medium mb-4 text-white">${s.text}</h3>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button onclick="mark(${s.id}, true, this)" class="toggle-btn py-2.5 border border-slate-700 rounded-xl font-bold hover:border-emerald-500/50 transition-all text-xs uppercase tracking-widest">Yes</button>
+                    <button onclick="mark(${s.id}, false, this)" class="toggle-btn py-2.5 border border-slate-700 rounded-xl font-bold hover:border-red-500/50 transition-all text-xs uppercase tracking-widest">No</button>
+                </div>
+                <textarea id="text-${s.id}" oninput="updateProgress()" placeholder="Technical Justification..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none h-20 transition-all text-slate-300"></textarea>
+                <div id="feedback-${s.id}" class="hidden mt-4 p-4 bg-slate-900 rounded-lg border border-slate-700 text-sm italic text-slate-400">
+                    <strong class="text-indigo-400 not-italic block mb-1">Architect Feedback:</strong> ${s.why}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        function mark(id, val, btn) {
+            userAnswers[id] = val;
+            const row = btn.parentElement;
+            row.querySelectorAll('button').forEach(b => b.classList.remove('active-yes', 'active-no'));
+            btn.classList.add(val ? 'active-yes' : 'active-no');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            let completed = 0;
+            scenarioData.forEach(s => {
+                const text = document.getElementById(`text-${s.id}`).value.trim();
+                if (userAnswers[s.id] !== undefined && text.length > 5) completed++;
+            });
+            const percent = (completed / scenarioData.length) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('submitBtn').disabled = completed < scenarioData.length;
+        }
+
+        function finalizeDiagnostic() {
+            let correctCount = 0;
+           
+            scenarioData.forEach(s => {
+                const card = document.getElementById(`card-${s.id}`);
+                const badge = document.getElementById(`result-badge-${s.id}`);
+                const feedback = document.getElementById(`feedback-${s.id}`);
+                const isCorrect = userAnswers[s.id] === s.correct;
+
+                if (isCorrect) {
+                    correctCount++;
+                    card.classList.add('correct-card');
+                    badge.textContent = "Correct";
+                    badge.className = "text-[10px] font-black uppercase px-2 py-1 rounded bg-emerald-500 text-white";
+                } else {
+                    card.classList.add('incorrect-card');
+                    badge.textContent = "Error Detected";
+                    badge.className = "text-[10px] font-black uppercase px-2 py-1 rounded bg-rose-500 text-white";
+                }
+
+                badge.classList.remove('hidden');
+                feedback.classList.remove('hidden');
+               
+                // Disable inputs
+                card.querySelectorAll('button, textarea').forEach(el => el.disabled = true);
+            });
+
+            // Show Score
+            const score = Math.round((correctCount / scenarioData.length) * 100);
+            document.getElementById('scoreContainer').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = score + '%';
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('resetBtn').classList.remove('hidden');
+           
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+
