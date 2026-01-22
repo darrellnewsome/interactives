@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Role Sort - Network Essentials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .device-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab;
+        }
+        .device-card:active {
+            cursor: grabbing;
+        }
+        .drop-zone {
+            min-height: 250px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .drop-zone.over {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+        .correct { border: 2px solid #10b981 !important; background-color: #ecfdf5 !important; }
+        .incorrect { border: 2px solid #ef4444 !important; background-color: #fef2f2 !important; }
+       
+        #device-deck::-webkit-scrollbar {
+            width: 6px;
+        }
+        #device-deck::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        #device-deck::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Network Device Role Sort: Pro Edition</h1>
+            <div class="flex justify-center items-center gap-6 text-slate-600">
+                <p><strong>25 devices total</strong>. Look for functional clues!</p>
+                <div class="flex items-center gap-2 bg-white px-4 py-1 rounded-full border border-slate-200 shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-400">Time:</span>
+                    <span id="timer" class="font-mono font-bold text-blue-600 text-lg">00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+           
+            <!-- Device Deck -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 sticky top-4">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="font-bold text-slate-700">Device Deck</h2>
+                        <span id="counter" class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-500">0/25</span>
+                    </div>
+                    <div id="device-deck" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                        <!-- Devices will be injected here -->
+                    </div>
+                    <div id="congrats-msg" class="hidden mt-4 p-4 bg-green-100 text-green-800 rounded-lg text-center font-bold animate-bounce">
+                        🎉 Expert Architect Status Achieved!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sorting Zones -->
+            <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex flex-col">
+                    <div class="bg-blue-600 text-white p-3 rounded-t-xl font-bold text-center">
+                        End Devices
+                    </div>
+                    <div id="end-device-zone" data-role="End Device" class="drop-zone flex-grow bg-white border-2 border-dashed border-slate-300 p-4 rounded-b-xl space-y-3">
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <div class="bg-indigo-600 text-white p-3 rounded-t-xl font-bold text-center">
+                        Switches
+                    </div>
+                    <div id="switch-zone" data-role="Switch" class="drop-zone flex-grow bg-white border-2 border-dashed border-slate-300 p-4 rounded-b-xl space-y-3">
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <div class="bg-purple-600 text-white p-3 rounded-t-xl font-bold text-center">
+                        Routers
+                    </div>
+                    <div id="router-zone" data-role="Router" class="drop-zone flex-grow bg-white border-2 border-dashed border-slate-300 p-4 rounded-b-xl space-y-3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explainer for "Hidden" names -->
+        <div class="mt-12 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Naming Clues</h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm text-slate-600">
+                <div>
+                    <h3 class="font-bold text-indigo-600 mb-1">Switching Functions:</h3>
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li><strong>Wireless Access Point:</strong> Acts as a "wireless switch" for Wi-Fi clients.</li>
+                        <li><strong>Bridge:</strong> An older term for a device that connects two LAN segments at Layer 2.</li>
+                        <li><strong>Hub:</strong> A basic multiport repeater (precursor to switches).</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-purple-600 mb-1">Routing Functions:</h3>
+                    <ul class="list-disc ml-5 space-y-1">
+                        <li><strong>Gateway:</strong> Any device that acts as a portal between two different networks.</li>
+                        <li><strong>L3 Multilayer Switch:</strong> A switch that is advanced enough to also perform routing.</li>
+                        <li><strong>Firewall (Hardware):</strong> Often handles the routing/NAT between your LAN and the WAN.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const devices = [
+            // End Devices
+            { id: 1, name: "Chromebook", role: "End Device", icon: "💻" },
+            { id: 4, name: "Network Printer", role: "End Device", icon: "🖨️" },
+            { id: 5, name: "Gaming Console", role: "End Device", icon: "🎮" },
+            { id: 7, name: "Smart Security Camera", role: "End Device", icon: "📹" },
+            { id: 9, name: "IP Phone (VoIP)", role: "End Device", icon: "📞" },
+            { id: 10, name: "File Server", role: "End Device", icon: "🗄️" },
+            { id: 11, name: "Smart Thermostat", role: "End Device", icon: "🌡️" },
+            { id: 12, name: "Laptop", role: "End Device", icon: "💻" },
+            { id: 13, name: "Medical Heart Monitor", role: "End Device", icon: "❤️" },
+            { id: 14, name: "Network Attached Storage (NAS)", role: "End Device", icon: "💾" },
+           
+            // Switches (Layer 2 focus)
+            { id: 2, name: "Wireless Access Point", role: "Switch", icon: "📡" },
+            { id: 6, name: "48-Port Enterprise Switch", role: "Switch", icon: "🔌" },
+            { id: 15, name: "Unmanaged 5-Port Hub", role: "Switch", icon: "🔗" },
+            { id: 16, name: "PoE Switch", role: "Switch", icon: "⚡" },
+            { id: 21, name: "Network Bridge", role: "Switch", icon: "🌉" },
+            { id: 22, name: "Virtual Switch (vSwitch)", role: "Switch", icon: "🧱" },
+            { id: 23, name: "Industrial Ethernet Hub", role: "Switch", icon: "🏭" },
+
+            // Routers (Layer 3 focus)
+            { id: 3, name: "Home Wi-Fi Router", role: "Router", icon: "🏠" },
+            { id: 8, name: "Core ISP Router", role: "Router", icon: "🌐" },
+            { id: 18, name: "Default Gateway", role: "Router", icon: "🚪" },
+            { id: 19, name: "Hardware Firewall", role: "Router", icon: "🔥" },
+            { id: 20, name: "Layer 3 Multilayer Switch", role: "Router", icon: "🧩" },
+            { id: 24, name: "Autonomous System Border (ASB)", role: "Router", icon: "🚩" },
+            { id: 25, name: "Branch Gateway", role: "Router", icon: "🏢" },
+            { id: 26, name: "VPN Concentrator", role: "Router", icon: "🔒" }
+        ];
+
+        const deck = document.getElementById('device-deck');
+        const zones = document.querySelectorAll('.drop-zone');
+        const congrats = document.getElementById('congrats-msg');
+        const counter = document.getElementById('counter');
+        const timerDisplay = document.getElementById('timer');
+
+        let startTime = null;
+        let timerInterval = null;
+        let gameFinished = false;
+
+        function startTimer() {
+            if (startTime !== null) return;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (gameFinished) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            timerDisplay.innerText = `${minutes}:${seconds}`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            gameFinished = true;
+        }
+
+        function updateCounter() {
+            const correctlyPlaced = document.querySelectorAll('.correct').length;
+            counter.innerText = `${correctlyPlaced}/${devices.length}`;
+        }
+
+        function initDeck() {
+            const shuffled = [...devices].sort(() => Math.random() - 0.5);
+            shuffled.forEach(device => {
+                const card = document.createElement('div');
+                card.className = 'device-card bg-slate-50 border border-slate-200 p-3 rounded-lg shadow-sm flex items-center gap-3 select-none';
+                card.draggable = true;
+                card.id = `device-${device.id}`;
+                card.dataset.role = device.role;
+                card.innerHTML = `
+                    <span class="text-xl">${device.icon}</span>
+                    <span class="font-medium text-slate-700 text-xs md:text-sm">${device.name}</span>
+                `;
+                card.addEventListener('dragstart', (e) => {
+                    startTimer();
+                    e.dataTransfer.setData('text/plain', card.id);
+                    setTimeout(() => card.classList.add('opacity-50'), 0);
+                });
+                card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
+                deck.appendChild(card);
+            });
+            updateCounter();
+        }
+
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('over');
+                const id = e.dataTransfer.getData('text/plain');
+                const card = document.getElementById(id);
+                if(!card) return;
+                const targetRole = zone.dataset.role;
+                const correctRole = card.dataset.role;
+                zone.appendChild(card);
+                if (targetRole === correctRole) {
+                    card.classList.remove('incorrect');
+                    card.classList.add('correct');
+                    card.draggable = false;
+                    card.style.cursor = 'default';
+                } else {
+                    card.classList.add('incorrect');
+                    setTimeout(() => {
+                        if (card.classList.contains('incorrect')) {
+                            card.classList.remove('incorrect');
+                            deck.appendChild(card);
+                            updateCounter();
+                        }
+                    }, 1000);
+                }
+                updateCounter();
+                checkWin();
+            });
+        });
+
+        function checkWin() {
+            const correctCount = document.querySelectorAll('.correct').length;
+            if (correctCount === devices.length) {
+                stopTimer();
+                congrats.classList.remove('hidden');
+                timerDisplay.classList.replace('text-blue-600', 'text-green-600');
+            }
+        }
+        window.onload = initDeck;
+    </script>
+</body>
+</html>
+
