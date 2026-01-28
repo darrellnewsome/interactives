@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Practice: Python Tuples</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-font { font-family: 'Courier New', Courier, monospace; }
+        .success-glow { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); border-color: #22c55e !important; }
+        .error-glow { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="bg-indigo-700 text-white p-6 rounded-t-xl shadow-lg">
+            <h1 class="text-2xl font-bold">Python Tuples: Guided Practice</h1>
+            <p class="opacity-90">Unit 12.2.4 — Practice your indexing and slicing skills.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <!-- Instructions Panel -->
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
+                        Today's Tasks
+                    </h2>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start">
+                            <input type="checkbox" id="task1" class="mt-1 mr-2 pointer-events-none">
+                            <span>Create a tuple named <code class="bg-slate-100 px-1 rounded">my_student</code> with a name (string), age (int), and grade (int).</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" id="task2" class="mt-1 mr-2 pointer-events-none">
+                            <span>Print the <b>first item</b> in the tuple.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" id="task3" class="mt-1 mr-2 pointer-events-none">
+                            <span>Print the <b>length</b> of the tuple using <code class="bg-slate-100 px-1 rounded">len()</code>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <input type="checkbox" id="task4" class="mt-1 mr-2 pointer-events-none">
+                            <span>Print a <b>slice</b> containing only the last two items (age and grade).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Guidance/Tips -->
+                <div class="bg-amber-50 p-6 rounded-xl border border-amber-200">
+                    <h3 class="font-bold text-amber-800 mb-2">Teacher's Pro-Tips:</h3>
+                    <ul class="text-sm text-amber-900 space-y-2 list-disc ml-4">
+                        <li>Remember: Tuples use <b>parentheses</b> <code class="font-bold">( )</code>.</li>
+                        <li>Python uses <b>Zero-Indexing</b>. The first item is index 0.</li>
+                        <li>Slicing syntax is <code class="font-bold">[start:stop]</code>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Editor Panel -->
+            <div class="flex flex-col h-full">
+                <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden flex flex-col h-full min-h-[400px]">
+                    <div class="flex items-center justify-between px-4 py-2 bg-slate-700">
+                        <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Python Sandbox</span>
+                        <button onclick="runCode()" class="bg-green-500 hover:bg-green-400 text-white text-sm px-4 py-1 rounded font-bold transition-colors">
+                            RUN CODE
+                        </button>
+                    </div>
+                    <textarea id="editor" class="flex-grow p-4 bg-slate-900 text-green-400 code-font outline-none resize-none" spellcheck="false"># Create your tuple below
+my_student = 
+
+# Print the first item
+
+# Print the length
+
+# Slice the last two items
+</textarea>
+                    
+                    <!-- Console/Feedback Output -->
+                    <div id="console" class="h-40 bg-black p-4 border-t border-slate-700 overflow-y-auto text-sm">
+                        <div class="text-slate-500 italic mb-2">Results & Feedback...</div>
+                        <div id="output" class="text-white code-font"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Footer -->
+        <div id="success-banner" class="hidden mt-6 p-6 bg-green-100 border-2 border-green-500 rounded-xl text-center">
+            <h2 class="text-2xl font-bold text-green-700">🎉 Practice Complete!</h2>
+            <p class="text-green-600">You've mastered tuple basics: creation, indexing, and slicing. Take a screenshot of this page for your NTI credit!</p>
+        </div>
+    </div>
+
+    <script>
+        function runCode() {
+            const code = document.getElementById('editor').value;
+            const outputDiv = document.getElementById('output');
+            const task1 = document.getElementById('task1');
+            const task2 = document.getElementById('task2');
+            const task3 = document.getElementById('task3');
+            const task4 = document.getElementById('task4');
+            const banner = document.getElementById('success-banner');
+            
+            outputDiv.innerHTML = "";
+            let points = 0;
+
+            // Simple Regex-based Validation Logic to simulate "Circulating and Checking"
+            
+            // 1. Check Tuple Creation
+            const tupleRegex = /my_student\s*=\s*\(\s*['"].+['"]\s*,\s*\d+\s*,\s*\d+\s*\)/;
+            if (tupleRegex.test(code)) {
+                task1.checked = true;
+                points++;
+            } else {
+                task1.checked = false;
+                logError("Hint: Ensure 'my_student' is a tuple with (string, int, int). Did you use parentheses?");
+            }
+
+            // 2. Check First Item Indexing
+            if (code.includes('[0]')) {
+                task2.checked = true;
+                points++;
+            } else {
+                task2.checked = false;
+                if(code.includes('[1]')) logError("Check Index: Python starts counting at 0, not 1!");
+            }
+
+            // 3. Check Length
+            if (code.includes('len(my_student)')) {
+                task3.checked = true;
+                points++;
+            } else {
+                task3.checked = false;
+            }
+
+            // 4. Check Slicing
+            // Accept [1:3], [1:], or [-2:]
+            const sliceRegex = /\[(1\s*:\s*3|1\s*:| -2\s*:)\]/;
+            if (sliceRegex.test(code)) {
+                task4.checked = true;
+                points++;
+            } else {
+                task4.checked = false;
+                if(code.includes('[:]')) logError("Slice Hint: You need to specify a start or end index to get just two items.");
+            }
+
+            // UI Feedback
+            if (points === 4) {
+                outputDiv.innerHTML = '<span class="text-green-400">>>> Code Validated! Output matches all requirements.</span>';
+                document.getElementById('editor').classList.add('success-glow');
+                banner.classList.remove('hidden');
+            } else {
+                document.getElementById('editor').classList.remove('success-glow');
+                banner.classList.add('hidden');
+            }
+        }
+
+        function logError(msg) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML += `<div class="text-red-400">⚠️ ${msg}</div>`;
+        }
+
+        // Handle Tab key in textarea
+        document.getElementById('editor').addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 4;
+            }
+        });
+    </script>
+</body>
+</html>
