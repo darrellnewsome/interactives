@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity: Topology Match & Reason</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .topology-card {
+            transition: all 0.2s ease;
+        }
+        .topology-card:hover {
+            transform: translateY(-2px);
+        }
+        .selected {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            outline: 2px solid #3b82f6;
+        }
+        .correct {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+        .incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans text-gray-900">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Network Topology Matcher</h1>
+            <p class="text-gray-600 mt-2 italic text-lg">Guided Practice: Choose the best topology and explain why.</p>
+            <div class="mt-4 inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-bold">
+                Progress: <span id="progress-text">0 / 8</span> Completed
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div id="app" class="space-y-8">
+            <!-- Scenarios will be injected here -->
+        </div>
+
+        <!-- Completion Section -->
+        <div id="summary" class="hidden mt-12 p-8 bg-white rounded-xl shadow-lg border-2 border-blue-200 text-center">
+            <h2 class="text-3xl font-bold text-blue-600 mb-4">Activity Complete! 🎓</h2>
+            <p class="text-gray-700 mb-6 text-lg">You've successfully analyzed 8 different networking scenarios. You understand how layout affects reliability, cost, and performance.</p>
+            <button onclick="location.reload()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition transform hover:scale-105">Restart Activity</button>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                id: 1,
+                title: "A Small Classroom Network",
+                description: "The teacher needs a simple way to connect 20 laptops to a central switch. It must be easy to manage and add new students later. Cost is a factor, but management is the priority.",
+                correctAnswer: "Star",
+                hint: "Think about which topology is most common in schools and uses a central switch.",
+                explanation: "The Star topology is standard for schools because the central switch makes it easy to add devices and manage the network."
+            },
+            {
+                id: 2,
+                title: "A Large Hospital Network",
+                description: "Reliability is the #1 priority. If the network goes down, patient records cannot be accessed. Failure is NOT an option, regardless of the high cost or complexity.",
+                correctAnswer: "Mesh",
+                hint: "Which topology has no single point of failure and provides multiple paths for data?",
+                explanation: "Mesh is used where failure is not an option because it provides multiple redundant paths for data to travel."
+            },
+            {
+                id: 3,
+                title: "A Temporary Event Network",
+                description: "A pop-up art show needs a basic connection for 3 computers in a straight line for just one afternoon. They want the cheapest, simplest solution possible and don't care about long-term reliability.",
+                correctAnswer: "Bus",
+                hint: "Which topology uses a single main cable and is the cheapest to set up?",
+                explanation: "Bus topology is cheap and simple for very small, temporary setups, even though it's rarely used in permanent buildings today."
+            },
+            {
+                id: 4,
+                title: "A Specialized Gaming Tournament LAN",
+                description: "Professional gamers need a highly organized, predictable flow of data to minimize collisions. The setup is a controlled loop where data moves sequentially between stations.",
+                correctAnswer: "Ring",
+                hint: "Look for the topology that forms a closed loop and has an organized data flow.",
+                explanation: "Ring topology provides a very structured, organized data flow, even though a single break can stop the loop."
+            },
+            {
+                id: 5,
+                title: "Smart Home Security System",
+                description: "A homeowner is installing 15 smart sensors. They want the system to keep working even if one sensor's battery dies or a connection is blocked. Every device should be able to talk to several neighbors.",
+                correctAnswer: "Mesh",
+                hint: "Redundancy is key here. If one device fails, the data needs another path.",
+                explanation: "Modern smart homes often use Mesh (like Zigbee or Z-Wave) so that every device acts as a relay, ensuring a reliable connection throughout the house."
+            },
+            {
+                id: 6,
+                title: "Modern Office Floor",
+                description: "A business is moving into a new floor. They need a layout where if one person's computer breaks, it doesn't affect anyone else. They also want to be able to troubleshoot issues from one single location.",
+                correctAnswer: "Star",
+                hint: "Centralized management and isolation of failures are the big clues here.",
+                explanation: "Star topology isolates failures; if one cable breaks, only that computer goes down. It also allows IT to manage everything from the central switch."
+            },
+            {
+                id: 7,
+                title: "Vintage Lab Equipment",
+                description: "A science lab is using very old computers that only have two network ports each. They are connected in a circle to save on cabling, passing data from one machine to the next in order.",
+                correctAnswer: "Ring",
+                hint: "The machines are connected 'in a circle' and 'passing data to the next'.",
+                explanation: "This describes a Ring topology. While organized, it is rarely used now because one broken machine disconnects the whole circle."
+            },
+            {
+                id: 8,
+                title: "Industrial Manufacturing Line",
+                description: "A factory has sensors along a 500-foot conveyor belt. To save money, they ran a single long 'backbone' cable and tapped each sensor into it. It's simple, but if the main cable snaps, the whole line stops.",
+                correctAnswer: "Bus",
+                hint: "A single long 'backbone' cable shared by all devices is the definition of this topology.",
+                explanation: "This is a Bus topology. It's cost-effective for long, linear distances but risky because the main cable is a single point of failure."
+            }
+        ];
+
+        const topologies = [
+            { name: "Star", icon: "⭐" },
+            { name: "Bus", icon: "🚌" },
+            { name: "Ring", icon: "🔁" },
+            { name: "Mesh", icon: "🕸️" }
+        ];
+
+        let currentSelections = {};
+
+        function updateProgress() {
+            const completedCount = document.querySelectorAll('[id^="feedback-"]:not(.hidden)').length;
+            document.getElementById('progress-text').innerText = `${completedCount} / ${scenarios.length}`;
+        }
+
+        function initApp() {
+            const container = document.getElementById('app');
+            scenarios.forEach(scenario => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-md p-6 border border-gray-200 topology-card';
+                card.id = `scenario-${scenario.id}`;
+                
+                let topoButtons = topologies.map(t => `
+                    <button 
+                        onclick="selectTopology(${scenario.id}, '${t.name}')" 
+                        id="btn-${scenario.id}-${t.name}"
+                        class="flex flex-col items-center justify-center p-4 border-2 rounded-lg hover:bg-gray-50 transition-all border-gray-200"
+                    >
+                        <span class="text-2xl">${t.icon}</span>
+                        <span class="text-sm font-semibold">${t.name}</span>
+                    </button>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="mb-4">
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Scenario ${scenario.id}</span>
+                        <h3 class="text-xl font-bold text-gray-800">${scenario.title}</h3>
+                        <p class="text-gray-600 mt-2">${scenario.description}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        ${topoButtons}
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-sm font-medium text-gray-700">Explain your reasoning:</label>
+                        <textarea 
+                            id="reason-${scenario.id}"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                            placeholder="Why is this the best choice? (1-2 sentences)"
+                            rows="2"
+                        ></textarea>
+                        <button 
+                            onclick="checkAnswer(${scenario.id})" 
+                            id="check-btn-${scenario.id}"
+                            class="w-full bg-gray-800 text-white py-2 rounded-lg font-semibold hover:bg-black transition"
+                        >
+                            Check This Scenario
+                        </button>
+                    </div>
+
+                    <div id="feedback-${scenario.id}" class="hidden mt-4 p-4 rounded-lg text-sm"></div>
+                `;
+                container.appendChild(card);
+            });
+            updateProgress();
+        }
+
+        window.selectTopology = function(scenarioId, topoName) {
+            // Remove selection from all buttons in this scenario
+            topologies.forEach(t => {
+                document.getElementById(`btn-${scenarioId}-${t.name}`).classList.remove('selected');
+            });
+            // Add selection to clicked button
+            document.getElementById(`btn-${scenarioId}-${topoName}`).classList.add('selected');
+            currentSelections[scenarioId] = topoName;
+        };
+
+        window.checkAnswer = function(id) {
+            const scenario = scenarios.find(s => s.id === id);
+            const selection = currentSelections[id];
+            const reason = document.getElementById(`reason-${id}`).value.trim();
+            const feedbackDiv = document.getElementById(`feedback-${id}`);
+            
+            if (!selection) {
+                alert("Please select a topology first!");
+                return;
+            }
+            if (reason.length < 10) {
+                alert("Please write a bit more for your reasoning so your teacher can see your thinking.");
+                return;
+            }
+
+            feedbackDiv.classList.remove('hidden');
+            const isCorrect = selection === scenario.correctAnswer;
+
+            if (isCorrect) {
+                feedbackDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-200';
+                feedbackDiv.innerHTML = `<strong>Correct!</strong> ${scenario.explanation}`;
+                document.getElementById(`check-btn-${id}`).disabled = true;
+                document.getElementById(`check-btn-${id}`).innerText = "Completed";
+                document.getElementById(`check-btn-${id}`).className = "w-full bg-green-600 text-white py-2 rounded-lg font-semibold cursor-not-allowed";
+            } else {
+                feedbackDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-200';
+                feedbackDiv.innerHTML = `<strong>Not quite.</strong> While ${selection} has certain features, ${scenario.correctAnswer} fits this specific scenario better. <br><br><strong>Hint:</strong> ${scenario.hint}`;
+            }
+
+            updateProgress();
+
+            // Check if all are done
+            const completedCount = document.querySelectorAll('[id^="feedback-"]:not(.hidden).bg-green-100').length;
+            if (completedCount === scenarios.length) {
+                document.getElementById('summary').classList.remove('hidden');
+                document.getElementById('summary').scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
