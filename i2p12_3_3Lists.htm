@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Lesson: 12.3.3 Python Lists</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-input {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            width: 100%;
+            resize: none;
+            border: 1px solid #333;
+        }
+        .output-box {
+            background-color: #f3f4f6;
+            border-left: 4px solid #3b82f6;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-family: monospace;
+            min-height: 1.5rem;
+        }
+        .success-highlight {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+        }
+        .error-highlight {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 p-6 text-white">
+            <h1 class="text-3xl font-bold">📋 Python Lists: Guided Practice</h1>
+            <p class="mt-2 text-blue-100 italic">NTI Day Activity - i2p12_3_3Lists</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 space-y-10">
+            
+            <!-- Step 1: Creation & Printing -->
+            <section id="step1">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-3">Task 1</span>
+                    Create and Print a List
+                </h2>
+                <div class="mt-4 bg-gray-50 p-4 border rounded-lg">
+                    <p class="text-gray-700 mb-2">Create a list named <code class="bg-gray-200 px-1 rounded">my_list</code> with at least <strong>4 values</strong>. Then, use the <code class="bg-gray-200 px-1 rounded">print()</code> function to display it.</p>
+                    <textarea id="code1" class="code-input" rows="4" placeholder="my_list = [1, 2, 3, 4]&#10;print(my_list)"></textarea>
+                    <button onclick="checkStep1()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">Run Code</button>
+                    
+                    <div id="output1" class="output-box hidden"></div>
+                    <div id="feedback1" class="mt-3 text-sm font-medium hidden"></div>
+                </div>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-yellow-50 p-3 rounded border border-yellow-200">
+                        <p class="text-xs font-bold text-yellow-800 uppercase">Teacher Look-Fors:</p>
+                        <ul class="text-xs text-yellow-900 list-disc ml-4">
+                            <li>Are you using square brackets <code class="font-bold">[]</code>?</li>
+                            <li>Are your items separated by commas?</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Mutability -->
+            <section id="step2" class="opacity-50 pointer-events-none transition-opacity duration-500">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-3">Task 2</span>
+                    Update and Print
+                </h2>
+                <div class="mt-4 bg-gray-50 p-4 border rounded-lg">
+                    <p class="text-gray-700 mb-2">Change the <strong>first value</strong> (index 0) of your list to a new value. Then print the list again to see the change.</p>
+                    <textarea id="code2" class="code-input" rows="4" placeholder="my_list[0] = 'New Value'&#10;print(my_list)"></textarea>
+                    <button onclick="checkStep2()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">Run Code</button>
+                    
+                    <div id="output2" class="output-box hidden"></div>
+                    <div id="feedback2" class="mt-3 text-sm font-medium hidden"></div>
+                </div>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-green-50 p-3 rounded border border-green-200">
+                        <p class="text-xs font-bold text-green-800 uppercase">Concept: Mutability</p>
+                        <p class="text-xs text-green-900">Unlike tuples, lists can change. You just used index assignment to "mutate" the list!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Strings to Lists -->
+            <section id="step3" class="opacity-50 pointer-events-none transition-opacity duration-500">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-3">Task 3</span>
+                    Strings to Lists
+                </h2>
+                <div class="mt-4 bg-gray-50 p-4 border rounded-lg">
+                    <p class="text-gray-700 mb-2">Create a string variable named <code class="bg-gray-200 px-1 rounded">my_word</code>. Use the <code class="bg-gray-200 px-1 rounded">list()</code> function to convert it into a list of characters and print it.</p>
+                    <textarea id="code3" class="code-input" rows="4" placeholder="my_word = 'Python'&#10;char_list = list(my_word)&#10;print(char_list)"></textarea>
+                    <button onclick="checkStep3()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">Run Code</button>
+                    
+                    <div id="output3" class="output-box hidden"></div>
+                    <div id="feedback3" class="mt-3 text-sm font-medium hidden"></div>
+                </div>
+            </section>
+
+            <!-- Final Summary -->
+            <div id="finalMessage" class="hidden p-6 bg-blue-50 border-2 border-blue-200 rounded-xl text-center">
+                <h3 class="text-2xl font-bold text-blue-800">⭐ Practice Complete!</h3>
+                <p class="text-blue-700 mt-2 text-lg">You've mastered the basics of creating and changing lists. Remember: <strong>Lists use [] and they ARE mutable.</strong></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Simple mock Python interpreter logic
+        function getOutput(code) {
+            let logs = [];
+            let variables = {};
+            
+            const lines = code.split('\n');
+            try {
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (!line) return;
+
+                    // Match print statements
+                    if (line.startsWith('print(')) {
+                        let content = line.substring(6, line.length - 1);
+                        if (variables[content] !== undefined) {
+                            logs.push(JSON.stringify(variables[content]).replace(/"/g, "'"));
+                        } else if (content.startsWith('"') || content.startsWith("'")) {
+                            logs.push(content.substring(1, content.length - 1));
+                        } else {
+                            // Fallback for list() calls inside print
+                            if (content.startsWith('list(')) {
+                                let strMatch = content.match(/list\(['"](.+?)['"]\)/);
+                                if (strMatch) logs.push(JSON.stringify(strMatch[1].split('')).replace(/"/g, "'"));
+                            } else {
+                                logs.push("Error: Variable undefined");
+                            }
+                        }
+                    } 
+                    // Match assignments
+                    else if (line.includes('=')) {
+                        let [varPart, valPart] = line.split('=').map(s => s.trim());
+                        
+                        // Index assignment: my_list[0] = 5
+                        if (varPart.includes('[')) {
+                            let name = varPart.split('[')[0];
+                            let index = parseInt(varPart.match(/\[(\d+)\]/)[1]);
+                            if (variables[name]) {
+                                let newVal = valPart.replace(/['"]/g, "");
+                                if (!isNaN(newVal)) newVal = Number(newVal);
+                                variables[name][index] = newVal;
+                            }
+                        } 
+                        // String to list: list("word")
+                        else if (valPart.startsWith('list(')) {
+                            let inner = valPart.substring(5, valPart.length - 1).replace(/['"]/g, "");
+                            variables[varPart] = inner.split('');
+                        }
+                        // Standard list: [1, 2]
+                        else if (valPart.startsWith('[')) {
+                            let items = valPart.substring(1, valPart.length - 1).split(',').map(i => {
+                                let trimmed = i.trim().replace(/['"]/g, "");
+                                return isNaN(trimmed) ? trimmed : Number(trimmed);
+                            });
+                            variables[varPart] = items;
+                        }
+                        // String assignment
+                        else {
+                            variables[varPart] = valPart.replace(/['"]/g, "");
+                        }
+                    }
+                });
+                return { logs, variables, error: null };
+            } catch (e) {
+                return { logs: ["Syntax Error: Check your brackets or commas"], error: e };
+            }
+        }
+
+        function checkStep1() {
+            const code = document.getElementById('code1').value;
+            const res = getOutput(code);
+            const outputDiv = document.getElementById('output1');
+            const feedback = document.getElementById('feedback1');
+            
+            outputDiv.innerText = res.logs.join('\n');
+            outputDiv.classList.remove('hidden');
+            feedback.classList.remove('hidden');
+
+            let hasList = false;
+            for (let v in res.variables) {
+                if (Array.isArray(res.variables[v]) && res.variables[v].length >= 4) hasList = true;
+            }
+
+            if (hasList && code.includes('print(')) {
+                feedback.innerText = "✅ Success! You created a list and printed it correctly.";
+                feedback.className = "mt-3 text-sm font-medium text-green-600";
+                document.getElementById('step2').classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                feedback.innerText = "❌ Keep trying! Make sure your list has 4 values and you used print().";
+                feedback.className = "mt-3 text-sm font-medium text-red-600";
+            }
+        }
+
+        function checkStep2() {
+            const code = document.getElementById('code2').value;
+            const res = getOutput(code);
+            const outputDiv = document.getElementById('output2');
+            const feedback = document.getElementById('feedback2');
+            
+            outputDiv.innerText = res.logs.join('\n');
+            outputDiv.classList.remove('hidden');
+            feedback.classList.remove('hidden');
+
+            if (code.includes('[0] =') && code.includes('print(')) {
+                feedback.innerText = "✅ Excellent! You modified the list using an index. That is mutability in action.";
+                feedback.className = "mt-3 text-sm font-medium text-green-600";
+                document.getElementById('step3').classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                feedback.innerText = "❌ Remember to use my_list[0] = 'something' to update the value.";
+                feedback.className = "mt-3 text-sm font-medium text-red-600";
+            }
+        }
+
+        function checkStep3() {
+            const code = document.getElementById('code3').value;
+            const res = getOutput(code);
+            const outputDiv = document.getElementById('output3');
+            const feedback = document.getElementById('feedback3');
+            
+            outputDiv.innerText = res.logs.join('\n');
+            outputDiv.classList.remove('hidden');
+            feedback.classList.remove('hidden');
+
+            if (code.includes('list(') && code.includes('print(')) {
+                feedback.innerText = "✅ Perfect! You've converted a string into a list of characters.";
+                feedback.className = "mt-3 text-sm font-medium text-green-600";
+                document.getElementById('finalMessage').classList.remove('hidden');
+            } else {
+                feedback.innerText = "❌ Use the list() function to break the string apart into individual items.";
+                feedback.className = "mt-3 text-sm font-medium text-red-600";
+            }
+        }
+    </script>
+</body>
+</html>
