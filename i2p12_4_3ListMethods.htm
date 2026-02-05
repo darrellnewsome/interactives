@@ -13,51 +13,64 @@
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
+        /* Custom scrollbar for a more "IDE" feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-5xl mx-auto">
         <!-- Header -->
-        <header class="mb-8 border-b border-slate-700 pb-4">
-            <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
-            <p class="text-slate-400 mt-2 italic">Guided Practice (10 Minutes) • NTI Independent Study</p>
+        <header class="mb-8 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
+                <p class="text-slate-400 mt-2 italic">Guided Practice (10 Minutes) • NTI Independent Study</p>
+            </div>
+            <button onclick="copyCode()" class="bg-slate-700 hover:bg-slate-600 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600">
+                Copy Code for Notebook
+            </button>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Left Side: Instructions & Tasks -->
             <div class="space-y-6">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
                     <h2 class="text-xl font-semibold mb-4 flex items-center">
                         <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">!</span>
                         Your Mission
                     </h2>
                     <ul class="space-y-4 text-slate-300">
-                        <li id="task-1" class="flex items-start opacity-100 transition-opacity">
-                            <span class="mr-3 mt-1">1.</span>
-                            <span>Create a list named <code class="text-yellow-400">my_items</code> with exactly 4 strings.</span>
+                        <li id="task-1" class="flex items-start opacity-100 transition-all duration-300">
+                            <span class="mr-3 mt-1 font-mono text-blue-400">01.</span>
+                            <span>Create a list named <code class="text-yellow-400 bg-slate-900 px-1 rounded">my_items</code> with exactly 4 strings.</span>
                         </li>
-                        <li id="task-2" class="flex items-start opacity-50 transition-opacity">
-                            <span class="mr-3 mt-1">2.</span>
+                        <li id="task-2" class="flex items-start opacity-50 transition-all duration-300">
+                            <span class="mr-3 mt-1 font-mono text-blue-400">02.</span>
                             <span>Use <code class="text-blue-400">.append()</code> to add a 5th item to the end.</span>
                         </li>
-                        <li id="task-3" class="flex items-start opacity-50 transition-opacity">
-                            <span class="mr-3 mt-1">3.</span>
+                        <li id="task-3" class="flex items-start opacity-50 transition-all duration-300">
+                            <span class="mr-3 mt-1 font-mono text-blue-400">03.</span>
                             <span>Use <code class="text-blue-400">.insert()</code> to add an item at index 1 (the 2nd spot).</span>
                         </li>
-                        <li id="task-4" class="flex items-start opacity-50 transition-opacity">
-                            <span class="mr-3 mt-1">4.</span>
+                        <li id="task-4" class="flex items-start opacity-50 transition-all duration-300">
+                            <span class="mr-3 mt-1 font-mono text-blue-400">04.</span>
                             <span>Use <code class="text-blue-400">.remove()</code> or <code class="text-blue-400">.pop()</code> to delete one item.</span>
                         </li>
                     </ul>
-                    <p class="mt-6 text-sm text-slate-500 border-t border-slate-700 pt-4">
-                        💡 Remember: You must <code class="text-slate-300">print(my_items)</code> after every change to see the results!
-                    </p>
+                    <div class="mt-6 text-sm text-slate-400 border-t border-slate-700 pt-4 bg-slate-800/50">
+                        <p class="mb-2 uppercase text-[10px] font-bold tracking-widest text-slate-500">Requirement:</p>
+                        💡 You must <code class="text-blue-300">print(my_items)</code> after every change to see your progress in the console!
+                    </div>
                 </div>
 
                 <!-- Teacher Feedback Box -->
-                <div id="feedback-box" class="hidden bg-blue-900/30 border border-blue-500/50 p-4 rounded-lg">
-                    <h3 class="text-blue-300 font-bold text-sm uppercase tracking-wider mb-1">Teacher Look-For Notice:</h3>
-                    <p id="feedback-text" class="text-blue-100 text-sm italic"></p>
+                <div id="feedback-box" class="hidden bg-blue-900/40 border border-blue-400/50 p-4 rounded-xl backdrop-blur-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xl">🎓</span>
+                        <h3 class="text-blue-300 font-bold text-xs uppercase tracking-wider">Teacher's Note</h3>
+                    </div>
+                    <p id="feedback-text" class="text-blue-100 text-sm leading-relaxed italic"></p>
                 </div>
             </div>
 
@@ -65,28 +78,35 @@
             <div class="flex flex-col gap-4">
                 <div class="bg-slate-950 rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
                     <div class="bg-slate-800 px-4 py-2 text-xs font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
-                        <span>SANDBOX: sandbox.py</span>
-                        <span id="run-status" class="text-green-500">READY</span>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            <span class="ml-2 font-mono">sandbox.py</span>
+                        </div>
+                        <span id="run-status" class="text-green-500 flex items-center gap-1">
+                            <span class="animate-pulse">●</span> LIVE
+                        </span>
                     </div>
                     <textarea 
                         id="code-editor" 
                         spellcheck="false"
-                        class="w-full h-64 bg-transparent p-4 console-font text-blue-300 focus:outline-none resize-none leading-relaxed"
-                        placeholder="# Start coding here...&#10;my_items = "></textarea>
+                        class="w-full h-80 bg-transparent p-6 console-font text-blue-300 focus:outline-none resize-none leading-relaxed text-sm md:text-base"
+                        placeholder="# Example:&#10;my_items = ['Apple', 'Banana', 'Cherry', 'Date']&#10;print(my_items)"></textarea>
                 </div>
 
                 <!-- Console Output -->
-                <div class="bg-black rounded-xl border border-slate-800 p-4 h-32 overflow-y-auto shadow-inner">
-                    <div class="text-xs font-bold text-slate-600 mb-2 uppercase">Console Output</div>
+                <div class="bg-black rounded-xl border border-slate-800 p-4 h-36 overflow-y-auto shadow-inner">
+                    <div class="text-[10px] font-bold text-slate-600 mb-2 uppercase tracking-tighter">Terminal Output</div>
                     <div id="console-output" class="console-font text-green-400 text-sm whitespace-pre-wrap"></div>
                 </div>
 
                 <!-- Visual State -->
-                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                    <div class="text-xs font-bold text-slate-500 mb-3 uppercase italic">Live List Visualization</div>
-                    <div id="list-visual" class="flex flex-wrap gap-2 min-h-[40px]">
+                <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                    <div class="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest">Memory Inspector (my_items)</div>
+                    <div id="list-visual" class="flex flex-wrap gap-3 min-h-[50px] items-start">
                         <!-- Items injected here -->
-                        <span class="text-slate-600 italic text-sm">No items in list...</span>
+                        <span class="text-slate-600 italic text-sm">Define your list to begin...</span>
                     </div>
                 </div>
             </div>
@@ -99,10 +119,6 @@
         const listVisual = document.getElementById('list-visual');
         const feedbackBox = document.getElementById('feedback-box');
         const feedbackText = document.getElementById('feedback-text');
-
-        // State Tracking
-        let currentList = [];
-        let history = [];
 
         editor.addEventListener('input', () => {
             processCode(editor.value);
@@ -117,42 +133,39 @@
             }
         }
 
-        function updateTasks(code, list) {
+        function updateTasks(code, list, appendCount, insertCount, deleteCount) {
             const t1 = document.getElementById('task-1');
             const t2 = document.getElementById('task-2');
             const t3 = document.getElementById('task-3');
             const t4 = document.getElementById('task-4');
 
-            // Task 1: 4 items
+            // Reset classes
+            [t1, t2, t3, t4].forEach(t => t.classList.remove('line-through', 'text-green-500', 'opacity-100', 'opacity-50'));
+
+            // Logic for Task Highlights
             if (list.length >= 4) {
-                t1.classList.add('line-through', 'text-green-500');
-                t1.classList.remove('opacity-100');
-                t1.classList.add('opacity-50');
-                t2.classList.replace('opacity-50', 'opacity-100');
+                t1.classList.add('line-through', 'text-green-500', 'opacity-50');
+            } else {
+                t1.classList.add('opacity-100');
             }
 
-            // Task 2: Append
-            if (code.includes('.append(')) {
-                t2.classList.add('line-through', 'text-green-500');
-                t2.classList.remove('opacity-100');
-                t2.classList.add('opacity-50');
-                t3.classList.replace('opacity-50', 'opacity-100');
-            }
+            if (appendCount > 0) {
+                t2.classList.add('line-through', 'text-green-500', 'opacity-50');
+            } else if (list.length >= 4) {
+                t2.classList.add('opacity-100');
+            } else { t2.classList.add('opacity-50'); }
 
-            // Task 3: Insert
-            if (code.includes('.insert(')) {
-                t3.classList.add('line-through', 'text-green-500');
-                t3.classList.remove('opacity-100');
-                t3.classList.add('opacity-50');
-                t4.classList.replace('opacity-50', 'opacity-100');
-            }
+            if (insertCount > 0) {
+                t3.classList.add('line-through', 'text-green-500', 'opacity-50');
+            } else if (appendCount > 0) {
+                t3.classList.add('opacity-100');
+            } else { t3.classList.add('opacity-50'); }
 
-            // Task 4: Delete
-            if (code.includes('.pop(') || code.includes('.remove(')) {
-                t4.classList.add('line-through', 'text-green-500');
-                t4.classList.remove('opacity-100');
-                t4.classList.add('opacity-50');
-            }
+            if (deleteCount > 0) {
+                t4.classList.add('line-through', 'text-green-500', 'opacity-50');
+            } else if (insertCount > 0) {
+                t4.classList.add('opacity-100');
+            } else { t4.classList.add('opacity-50'); }
         }
 
         function processCode(raw) {
@@ -160,33 +173,39 @@
             let workingList = [];
             let output = [];
             let feedback = "";
+            
+            let appendCount = 0;
+            let insertCount = 0;
+            let deleteCount = 0;
 
             try {
-                lines.forEach((line, index) => {
+                lines.forEach((line) => {
                     const cleanLine = line.trim();
                     if (!cleanLine || cleanLine.startsWith('#')) return;
 
-                    // 1. Assignment
-                    if (cleanLine.includes('my_items =')) {
-                        const parts = cleanLine.split('=');
-                        const valStr = parts[1].trim();
+                    // 1. Assignment (More robust regex for various quotes/spacing)
+                    const assignMatch = cleanLine.match(/my_items\s*=\s*\[(.*)\]/);
+                    if (assignMatch) {
                         try {
-                            // Simple parser for ["a", "b"]
-                            const parsed = JSON.parse(valStr.replace(/'/g, '"'));
-                            if (Array.isArray(parsed)) workingList = parsed;
-                        } catch(e) {}
+                            const valStr = assignMatch[1];
+                            // Replace single quotes with double for JSON parsing, handle empty strings
+                            const sanitized = valStr.replace(/'/g, '"');
+                            workingList = JSON.parse(`[${sanitized}]`);
+                        } catch(e) {
+                            // If they are mid-typing, JSON parse might fail, we just keep workingList as is
+                        }
                     }
 
                     // 2. Append
                     if (cleanLine.includes('.append(')) {
                         const match = cleanLine.match(/\.append\((.*)\)/);
                         if (match) {
+                            appendCount++;
                             const val = match[1].trim().replace(/'|"/g, '');
                             workingList.push(val);
                         }
-                        // Teacher Look-for: list = list.append()
                         if (cleanLine.includes('my_items = my_items.append')) {
-                            feedback = "Careful! .append() changes the list directly. It doesn't return a new one. Writing 'my_items = my_items.append()' will make your list disappear (None)!";
+                            feedback = "Careful! .append() changes the list 'in-place'. It doesn't return anything. If you write 'my_items = my_items.append()', your list will become None!";
                         }
                     }
 
@@ -194,6 +213,7 @@
                     if (cleanLine.includes('.insert(')) {
                         const match = cleanLine.match(/\.insert\(\s*(\d+)\s*,\s*(.*)\)/);
                         if (match) {
+                            insertCount++;
                             const idx = parseInt(match[1]);
                             const val = match[2].trim().replace(/'|"/g, '');
                             workingList.splice(idx, 0, val);
@@ -204,51 +224,72 @@
                     if (cleanLine.includes('.pop(')) {
                         const match = cleanLine.match(/\.pop\(\s*(\d*)\s*\)/);
                         if (match) {
-                            const idx = match[1] === "" ? workingList.length - 1 : parseInt(match[1]);
-                            workingList.splice(idx, 1);
+                            deleteCount++;
+                            const idxStr = match[1].trim();
+                            const idx = idxStr === "" ? workingList.length - 1 : parseInt(idxStr);
+                            if (idx >= 0 && idx < workingList.length) workingList.splice(idx, 1);
                         }
                     } else if (cleanLine.includes('.remove(')) {
                         const match = cleanLine.match(/\.remove\((.*)\)/);
                         if (match) {
+                            deleteCount++;
                             const val = match[1].trim().replace(/'|"/g, '');
                             const idx = workingList.indexOf(val);
                             if (idx > -1) workingList.splice(idx, 1);
                         }
-                        // Teacher Look-for: Confusion
                         if (cleanLine.match(/\.remove\(\d+\)/)) {
-                            feedback = "Wait! Are you trying to remove an index? .remove() looks for the name (value). Use .pop() if you want to use the index number.";
+                            feedback = "Wait! .remove() looks for a specific VALUE (like 'Apple'). If you want to use the index number (like 0), use .pop() instead.";
                         }
                     }
 
                     // 5. Print
                     if (cleanLine.includes('print(my_items)')) {
-                        output.push(`[${workingList.map(i => `'${i}'`).join(', ')}]`);
+                        output.push(`>>> [${workingList.map(i => `'${i}'`).join(', ')}]`);
                     }
                 });
 
                 showFeedback(feedback);
                 renderVisuals(workingList);
                 consoleOutput.textContent = output.join('\n');
-                updateTasks(raw, workingList);
+                updateTasks(raw, workingList, appendCount, insertCount, deleteCount);
 
             } catch (err) {
-                // Silently handle errors while typing
+                // Silently handle errors
             }
         }
 
         function renderVisuals(list) {
             if (list.length === 0) {
-                listVisual.innerHTML = `<span class="text-slate-600 italic text-sm">Waiting for list definition...</span>`;
+                listVisual.innerHTML = `<span class="text-slate-600 italic text-sm">Define my_items to see it here...</span>`;
                 return;
             }
             listVisual.innerHTML = list.map((item, i) => `
                 <div class="flex flex-col items-center list-item-pop">
-                    <div class="bg-blue-600 text-white px-3 py-1 rounded shadow-lg font-bold border border-blue-400">
+                    <div class="bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-xl font-bold border-t border-blue-400 min-w-[50px] text-center">
                         ${item}
                     </div>
-                    <span class="text-[10px] text-slate-500 font-mono mt-1">idx ${i}</span>
+                    <span class="text-[9px] text-slate-500 font-mono mt-1 font-bold">INDEX ${i}</span>
                 </div>
             `).join('');
+        }
+
+        function copyCode() {
+            const text = editor.value;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = "COPIED!";
+            btn.classList.replace('bg-slate-700', 'bg-green-700');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.replace('bg-green-700', 'bg-slate-700');
+            }, 2000);
         }
     </script>
 </body>
