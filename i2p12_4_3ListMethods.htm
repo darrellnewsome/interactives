@@ -4,52 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guided Practice: Python List Methods</title>
-    <!-- Tailwind CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
         
-        /* MANDATORY LAYOUT FIX FOR GOGUARDIAN/GITHUB PAGES */
         .grid-container {
-            display: block; /* Mobile default */
+            display: flex;
+            flex-direction: column;
             width: 100%;
+            gap: 1.5rem;
         }
 
         @media (min-width: 1024px) {
             .grid-container {
-                display: grid !important; /* Force grid on desktop */
+                display: grid !important;
                 grid-template-columns: 1fr 1.2fr !important;
                 gap: 2rem !important;
                 align-items: start;
             }
         }
 
-        .flex-col-custom {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
         .console-font { font-family: 'Fira Code', monospace; }
-        
-        /* List visual item animation */
-        .list-item-pop { 
+
+        .list-item-pop {
             animation: pop 0.3s ease-out;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         @keyframes pop {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        
-        /* Scrollbar aesthetics */
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        
-        textarea::placeholder { color: #475569; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
@@ -58,18 +50,17 @@
         <header class="mb-6 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
-                <p class="text-slate-400 mt-2 italic text-sm">Guided Practice (10 Minutes) • NTI Independent Study</p>
+                <p class="text-slate-400 mt-2 italic text-sm">Guided Practice (10 Minutes) • Interactive Lab</p>
             </div>
-            <button onclick="copyCode()" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600 whitespace-nowrap">
+            <button onclick="copyCode(event)" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600 whitespace-nowrap">
                 Copy Code for Notebook
             </button>
         </header>
 
         <!-- Main Layout Container -->
         <div class="grid-container">
-            
-            <!-- Left Side: Instructions & Tasks -->
-            <div class="flex-col-custom">
+            <!-- Left Side: Instructions -->
+            <div class="flex flex-col gap-6">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
                     <h2 class="text-xl font-semibold mb-4 flex items-center">
                         <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2 font-bold">i</span>
@@ -82,15 +73,15 @@
                         </li>
                         <li id="task-2" class="flex items-start opacity-50 transition-all duration-300">
                             <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">02.</span>
-                            <span>Use <code class="text-blue-400">.append()</code> to add a 5th item to the end.</span>
+                            <span>Use <code class="text-blue-400">.append()</code> to add a 5th item.</span>
                         </li>
                         <li id="task-3" class="flex items-start opacity-50 transition-all duration-300">
                             <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">03.</span>
-                            <span>Use <code class="text-blue-400">.insert()</code> to add an item at index 1 (the 2nd spot).</span>
+                            <span>Use <code class="text-blue-400">.insert()</code> to add an item at index 1.</span>
                         </li>
                         <li id="task-4" class="flex items-start opacity-50 transition-all duration-300">
                             <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">04.</span>
-                            <span>Use <code class="text-blue-400">.remove()</code> or <code class="text-blue-400">.pop()</code> to delete one item.</span>
+                            <span>Use <code class="text-blue-400">.remove()</code> or <code class="text-blue-400">.pop()</code> to delete an item.</span>
                         </li>
                     </ul>
                     <div class="mt-6 text-sm text-slate-400 border-t border-slate-700 pt-4 bg-slate-800/50">
@@ -109,8 +100,8 @@
                 </div>
             </div>
 
-            <!-- Right Side: Interactive Editor -->
-            <div class="flex-col-custom">
+            <!-- Right Side: Editor & Console -->
+            <div class="flex flex-col gap-6">
                 <div class="bg-black rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
                     <div class="bg-slate-800/80 px-4 py-2 text-[10px] font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
                         <div class="flex items-center gap-2">
@@ -119,15 +110,13 @@
                             <span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
                             <span class="ml-2 font-mono uppercase tracking-widest opacity-60">Python Interpreter</span>
                         </div>
-                        <span id="run-status" class="text-green-500 flex items-center gap-1 font-mono">
-                            LIVE
-                        </span>
+                        <span id="run-status" class="text-green-500 flex items-center gap-1 font-mono">LIVE</span>
                     </div>
                     <textarea 
                         id="code-editor" 
                         spellcheck="false"
                         class="w-full h-80 bg-slate-950 p-6 console-font text-blue-300 focus:outline-none resize-none leading-relaxed text-sm md:text-base border-none"
-                        placeholder="# Start typing your code...&#10;my_items = "></textarea>
+                        placeholder="# Start typing your code...&#10;my_items = ['apple', 'banana', 'cherry', 'date']&#10;print(my_items)"></textarea>
                 </div>
 
                 <!-- Console Output -->
@@ -139,7 +128,7 @@
                     <div id="console-output" class="console-font text-green-400 text-sm whitespace-pre-wrap"></div>
                 </div>
 
-                <!-- Visual State -->
+                <!-- Visual Inspector -->
                 <div class="bg-slate-800/30 p-5 rounded-xl border border-slate-700">
                     <div class="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest">List Inspector: my_items</div>
                     <div id="list-visual" class="flex flex-wrap gap-3 min-h-[50px] items-start">
@@ -147,7 +136,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -171,7 +159,7 @@
             }
         }
 
-        function updateTasks(code, list, appendCount, insertCount, deleteCount) {
+        function updateTasks(list, appendCount, insertCount, deleteCount) {
             const t1 = document.getElementById('task-1');
             const t2 = document.getElementById('task-2');
             const t3 = document.getElementById('task-3');
@@ -181,25 +169,29 @@
 
             if (list.length >= 4) {
                 t1.classList.add('line-through', 'text-green-500', 'opacity-50');
-            } else { t1.classList.add('opacity-100'); }
+                t2.classList.add('opacity-100');
+            } else {
+                t1.classList.add('opacity-100');
+                t2.classList.add('opacity-50');
+            }
 
             if (appendCount > 0) {
                 t2.classList.add('line-through', 'text-green-500', 'opacity-50');
-            } else if (list.length >= 4) {
-                t2.classList.add('opacity-100');
-            } else { t2.classList.add('opacity-50'); }
+                t3.classList.add('opacity-100');
+            } else if (list.length < 4) {
+                t3.classList.add('opacity-50');
+            }
 
             if (insertCount > 0) {
                 t3.classList.add('line-through', 'text-green-500', 'opacity-50');
-            } else if (appendCount > 0) {
-                t3.classList.add('opacity-100');
-            } else { t3.classList.add('opacity-50'); }
+                t4.classList.add('opacity-100');
+            } else if (appendCount === 0) {
+                t4.classList.add('opacity-50');
+            }
 
             if (deleteCount > 0) {
                 t4.classList.add('line-through', 'text-green-500', 'opacity-50');
-            } else if (insertCount > 0) {
-                t4.classList.add('opacity-100');
-            } else { t4.classList.add('opacity-50'); }
+            }
         }
 
         function processCode(raw) {
@@ -207,7 +199,6 @@
             let workingList = [];
             let output = [];
             let feedback = "";
-            
             let appendCount = 0;
             let insertCount = 0;
             let deleteCount = 0;
@@ -217,6 +208,7 @@
                     const cleanLine = line.trim();
                     if (!cleanLine || cleanLine.startsWith('#')) return;
 
+                    // Assignment match
                     const assignMatch = cleanLine.match(/my_items\s*=\s*\[(.*)\]/);
                     if (assignMatch) {
                         try {
@@ -226,6 +218,7 @@
                         } catch(e) {}
                     }
 
+                    // Method handling
                     if (cleanLine.includes('.append(')) {
                         const match = cleanLine.match(/\.append\((.*)\)/);
                         if (match) {
@@ -264,9 +257,6 @@
                             const idx = workingList.indexOf(val);
                             if (idx > -1) workingList.splice(idx, 1);
                         }
-                        if (cleanLine.match(/\.remove\(\d+\)/)) {
-                            feedback = ".remove() searches for a value (like 'Apple'). If you're trying to delete by index number, use .pop() instead!";
-                        }
                     }
 
                     if (cleanLine.includes('print(my_items)')) {
@@ -277,9 +267,11 @@
                 showFeedback(feedback);
                 renderVisuals(workingList);
                 consoleOutput.textContent = output.join('\n');
-                updateTasks(raw, workingList, appendCount, insertCount, deleteCount);
+                updateTasks(workingList, appendCount, insertCount, deleteCount);
 
-            } catch (err) {}
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         function renderVisuals(list) {
@@ -297,7 +289,7 @@
             `).join('');
         }
 
-        function copyCode() {
+        function copyCode(e) {
             const text = editor.value;
             const dummy = document.createElement("textarea");
             document.body.appendChild(dummy);
@@ -306,7 +298,7 @@
             document.execCommand("copy");
             document.body.removeChild(dummy);
             
-            const btn = event.target;
+            const btn = e.target;
             const originalText = btn.textContent;
             btn.textContent = "COPIED!";
             btn.classList.add('bg-green-700');
