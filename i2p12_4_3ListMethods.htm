@@ -9,30 +9,42 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
         
-        /* CSS Fallback: In case Tailwind CDN doesn't load on GitHub Pages */
-        .container-custom {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+        /* MANDATORY LAYOUT FIX FOR GOGUARDIAN/GITHUB PAGES */
+        .grid-container {
+            display: block; /* Mobile default */
+            width: 100%;
         }
+
         @media (min-width: 1024px) {
             .grid-container {
-                display: grid;
-                grid-template-columns: 1fr 1.2fr;
-                gap: 2rem;
+                display: grid !important; /* Force grid on desktop */
+                grid-template-columns: 1fr 1.2fr !important;
+                gap: 2rem !important;
+                align-items: start;
             }
         }
-        
+
+        .flex-col-custom {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
         .console-font { font-family: 'Fira Code', monospace; }
-        .list-item-pop { animation: pop 0.3s ease-out; }
+        
+        /* List visual item animation */
+        .list-item-pop { 
+            animation: pop 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         @keyframes pop {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
         
-        /* IDE styling */
+        /* Scrollbar aesthetics */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -41,9 +53,9 @@
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
-    <div class="max-w-6xl mx-auto container-custom">
+    <div class="max-w-6xl mx-auto">
         <!-- Header -->
-        <header class="mb-4 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <header class="mb-6 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
                 <p class="text-slate-400 mt-2 italic text-sm">Guided Practice (10 Minutes) • NTI Independent Study</p>
@@ -53,12 +65,14 @@
             </button>
         </header>
 
-        <div class="grid-container grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Main Layout Container -->
+        <div class="grid-container">
+            
             <!-- Left Side: Instructions & Tasks -->
-            <div class="flex flex-col gap-6">
+            <div class="flex-col-custom">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
                     <h2 class="text-xl font-semibold mb-4 flex items-center">
-                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2 font-bold italic">i</span>
+                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2 font-bold">i</span>
                         Your Mission
                     </h2>
                     <ul class="space-y-4 text-slate-300">
@@ -96,7 +110,7 @@
             </div>
 
             <!-- Right Side: Interactive Editor -->
-            <div class="flex flex-col gap-4">
+            <div class="flex-col-custom">
                 <div class="bg-black rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
                     <div class="bg-slate-800/80 px-4 py-2 text-[10px] font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
                         <div class="flex items-center gap-2">
@@ -129,11 +143,11 @@
                 <div class="bg-slate-800/30 p-5 rounded-xl border border-slate-700">
                     <div class="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest">List Inspector: my_items</div>
                     <div id="list-visual" class="flex flex-wrap gap-3 min-h-[50px] items-start">
-                        <!-- Items injected here -->
                         <span class="text-slate-600 italic text-xs">Define your list to begin...</span>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -163,7 +177,6 @@
             const t3 = document.getElementById('task-3');
             const t4 = document.getElementById('task-4');
 
-            // Reset classes
             [t1, t2, t3, t4].forEach(t => t.classList.remove('line-through', 'text-green-500', 'opacity-100', 'opacity-50'));
 
             if (list.length >= 4) {
@@ -204,7 +217,6 @@
                     const cleanLine = line.trim();
                     if (!cleanLine || cleanLine.startsWith('#')) return;
 
-                    // 1. Assignment
                     const assignMatch = cleanLine.match(/my_items\s*=\s*\[(.*)\]/);
                     if (assignMatch) {
                         try {
@@ -214,7 +226,6 @@
                         } catch(e) {}
                     }
 
-                    // 2. Append
                     if (cleanLine.includes('.append(')) {
                         const match = cleanLine.match(/\.append\((.*)\)/);
                         if (match) {
@@ -227,7 +238,6 @@
                         }
                     }
 
-                    // 3. Insert
                     if (cleanLine.includes('.insert(')) {
                         const match = cleanLine.match(/\.insert\(\s*(\d+)\s*,\s*(.*)\)/);
                         if (match) {
@@ -238,7 +248,6 @@
                         }
                     }
 
-                    // 4. Pop/Remove
                     if (cleanLine.includes('.pop(')) {
                         const match = cleanLine.match(/\.pop\(\s*(\d*)\s*\)/);
                         if (match) {
@@ -260,7 +269,6 @@
                         }
                     }
 
-                    // 5. Print
                     if (cleanLine.includes('print(my_items)')) {
                         output.push(`[${workingList.map(i => `'${i}'`).join(', ')}]`);
                     }
@@ -280,7 +288,7 @@
                 return;
             }
             listVisual.innerHTML = list.map((item, i) => `
-                <div class="flex flex-col items-center list-item-pop">
+                <div class="list-item-pop">
                     <div class="bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-xl font-bold border-t border-blue-400 min-w-[50px] text-center text-sm">
                         ${item}
                     </div>
