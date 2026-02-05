@@ -4,109 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guided Practice: Python List Methods</title>
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        
+        /* CSS Fallback: In case Tailwind CDN doesn't load on GitHub Pages */
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        @media (min-width: 1024px) {
+            .grid-container {
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 2rem;
+            }
+        }
+        
         .console-font { font-family: 'Fira Code', monospace; }
         .list-item-pop { animation: pop 0.3s ease-out; }
         @keyframes pop {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        /* Custom scrollbar for a more "IDE" feel */
+        
+        /* IDE styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        
+        textarea::placeholder { color: #475569; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-6xl mx-auto container-custom">
         <!-- Header -->
-        <header class="mb-8 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <header class="mb-4 border-b border-slate-700 pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
-                <p class="text-slate-400 mt-2 italic">Guided Practice (10 Minutes) • NTI Independent Study</p>
+                <p class="text-slate-400 mt-2 italic text-sm">Guided Practice (10 Minutes) • NTI Independent Study</p>
             </div>
-            <button onclick="copyCode()" class="bg-slate-700 hover:bg-slate-600 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600">
+            <button onclick="copyCode()" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600 whitespace-nowrap">
                 Copy Code for Notebook
             </button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid-container grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Left Side: Instructions & Tasks -->
-            <div class="space-y-6">
+            <div class="flex flex-col gap-6">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
                     <h2 class="text-xl font-semibold mb-4 flex items-center">
-                        <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">!</span>
+                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2 font-bold italic">i</span>
                         Your Mission
                     </h2>
                     <ul class="space-y-4 text-slate-300">
                         <li id="task-1" class="flex items-start opacity-100 transition-all duration-300">
-                            <span class="mr-3 mt-1 font-mono text-blue-400">01.</span>
-                            <span>Create a list named <code class="text-yellow-400 bg-slate-900 px-1 rounded">my_items</code> with exactly 4 strings.</span>
+                            <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">01.</span>
+                            <span>Create a list named <code class="text-yellow-400 bg-black/40 px-1 rounded">my_items</code> with exactly 4 strings.</span>
                         </li>
                         <li id="task-2" class="flex items-start opacity-50 transition-all duration-300">
-                            <span class="mr-3 mt-1 font-mono text-blue-400">02.</span>
+                            <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">02.</span>
                             <span>Use <code class="text-blue-400">.append()</code> to add a 5th item to the end.</span>
                         </li>
                         <li id="task-3" class="flex items-start opacity-50 transition-all duration-300">
-                            <span class="mr-3 mt-1 font-mono text-blue-400">03.</span>
+                            <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">03.</span>
                             <span>Use <code class="text-blue-400">.insert()</code> to add an item at index 1 (the 2nd spot).</span>
                         </li>
                         <li id="task-4" class="flex items-start opacity-50 transition-all duration-300">
-                            <span class="mr-3 mt-1 font-mono text-blue-400">04.</span>
+                            <span class="mr-3 mt-1 font-mono text-blue-500 font-bold">04.</span>
                             <span>Use <code class="text-blue-400">.remove()</code> or <code class="text-blue-400">.pop()</code> to delete one item.</span>
                         </li>
                     </ul>
                     <div class="mt-6 text-sm text-slate-400 border-t border-slate-700 pt-4 bg-slate-800/50">
-                        <p class="mb-2 uppercase text-[10px] font-bold tracking-widest text-slate-500">Requirement:</p>
+                        <p class="mb-2 uppercase text-[10px] font-bold tracking-widest text-slate-500">Teacher Rule:</p>
                         💡 You must <code class="text-blue-300">print(my_items)</code> after every change to see your progress in the console!
                     </div>
                 </div>
 
                 <!-- Teacher Feedback Box -->
-                <div id="feedback-box" class="hidden bg-blue-900/40 border border-blue-400/50 p-4 rounded-xl backdrop-blur-sm">
+                <div id="feedback-box" class="hidden bg-indigo-950/60 border border-indigo-400/50 p-5 rounded-xl backdrop-blur-sm">
                     <div class="flex items-center gap-3 mb-2">
-                        <span class="text-xl">🎓</span>
-                        <h3 class="text-blue-300 font-bold text-xs uppercase tracking-wider">Teacher's Note</h3>
+                        <span class="text-xl">💡</span>
+                        <h3 class="text-indigo-300 font-bold text-xs uppercase tracking-wider">Helpful Hint</h3>
                     </div>
-                    <p id="feedback-text" class="text-blue-100 text-sm leading-relaxed italic"></p>
+                    <p id="feedback-text" class="text-indigo-100 text-sm leading-relaxed italic"></p>
                 </div>
             </div>
 
             <!-- Right Side: Interactive Editor -->
             <div class="flex flex-col gap-4">
-                <div class="bg-slate-950 rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
-                    <div class="bg-slate-800 px-4 py-2 text-xs font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
+                <div class="bg-black rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800/80 px-4 py-2 text-[10px] font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
                         <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                            <span class="ml-2 font-mono">sandbox.py</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-green-500/80"></span>
+                            <span class="ml-2 font-mono uppercase tracking-widest opacity-60">Python Interpreter</span>
                         </div>
-                        <span id="run-status" class="text-green-500 flex items-center gap-1">
-                            <span class="animate-pulse">●</span> LIVE
+                        <span id="run-status" class="text-green-500 flex items-center gap-1 font-mono">
+                            LIVE
                         </span>
                     </div>
                     <textarea 
                         id="code-editor" 
                         spellcheck="false"
-                        class="w-full h-80 bg-transparent p-6 console-font text-blue-300 focus:outline-none resize-none leading-relaxed text-sm md:text-base"
-                        placeholder="# Example:&#10;my_items = ['Apple', 'Banana', 'Cherry', 'Date']&#10;print(my_items)"></textarea>
+                        class="w-full h-80 bg-slate-950 p-6 console-font text-blue-300 focus:outline-none resize-none leading-relaxed text-sm md:text-base border-none"
+                        placeholder="# Start typing your code...&#10;my_items = "></textarea>
                 </div>
 
                 <!-- Console Output -->
-                <div class="bg-black rounded-xl border border-slate-800 p-4 h-36 overflow-y-auto shadow-inner">
-                    <div class="text-[10px] font-bold text-slate-600 mb-2 uppercase tracking-tighter">Terminal Output</div>
+                <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 h-36 overflow-y-auto shadow-inner">
+                    <div class="text-[10px] font-bold text-slate-600 mb-2 uppercase tracking-tighter flex justify-between">
+                        <span>Terminal Output</span>
+                        <span>stdout</span>
+                    </div>
                     <div id="console-output" class="console-font text-green-400 text-sm whitespace-pre-wrap"></div>
                 </div>
 
                 <!-- Visual State -->
-                <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
-                    <div class="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest">Memory Inspector (my_items)</div>
+                <div class="bg-slate-800/30 p-5 rounded-xl border border-slate-700">
+                    <div class="text-[10px] font-bold text-slate-500 mb-4 uppercase tracking-widest">List Inspector: my_items</div>
                     <div id="list-visual" class="flex flex-wrap gap-3 min-h-[50px] items-start">
                         <!-- Items injected here -->
-                        <span class="text-slate-600 italic text-sm">Define your list to begin...</span>
+                        <span class="text-slate-600 italic text-xs">Define your list to begin...</span>
                     </div>
                 </div>
             </div>
@@ -142,12 +166,9 @@
             // Reset classes
             [t1, t2, t3, t4].forEach(t => t.classList.remove('line-through', 'text-green-500', 'opacity-100', 'opacity-50'));
 
-            // Logic for Task Highlights
             if (list.length >= 4) {
                 t1.classList.add('line-through', 'text-green-500', 'opacity-50');
-            } else {
-                t1.classList.add('opacity-100');
-            }
+            } else { t1.classList.add('opacity-100'); }
 
             if (appendCount > 0) {
                 t2.classList.add('line-through', 'text-green-500', 'opacity-50');
@@ -183,17 +204,14 @@
                     const cleanLine = line.trim();
                     if (!cleanLine || cleanLine.startsWith('#')) return;
 
-                    // 1. Assignment (More robust regex for various quotes/spacing)
+                    // 1. Assignment
                     const assignMatch = cleanLine.match(/my_items\s*=\s*\[(.*)\]/);
                     if (assignMatch) {
                         try {
                             const valStr = assignMatch[1];
-                            // Replace single quotes with double for JSON parsing, handle empty strings
                             const sanitized = valStr.replace(/'/g, '"');
                             workingList = JSON.parse(`[${sanitized}]`);
-                        } catch(e) {
-                            // If they are mid-typing, JSON parse might fail, we just keep workingList as is
-                        }
+                        } catch(e) {}
                     }
 
                     // 2. Append
@@ -205,7 +223,7 @@
                             workingList.push(val);
                         }
                         if (cleanLine.includes('my_items = my_items.append')) {
-                            feedback = "Careful! .append() changes the list 'in-place'. It doesn't return anything. If you write 'my_items = my_items.append()', your list will become None!";
+                            feedback = "Check your assignment! .append() updates the list directly. If you set 'my_items = my_items.append()', your list will become None.";
                         }
                     }
 
@@ -238,13 +256,13 @@
                             if (idx > -1) workingList.splice(idx, 1);
                         }
                         if (cleanLine.match(/\.remove\(\d+\)/)) {
-                            feedback = "Wait! .remove() looks for a specific VALUE (like 'Apple'). If you want to use the index number (like 0), use .pop() instead.";
+                            feedback = ".remove() searches for a value (like 'Apple'). If you're trying to delete by index number, use .pop() instead!";
                         }
                     }
 
                     // 5. Print
                     if (cleanLine.includes('print(my_items)')) {
-                        output.push(`>>> [${workingList.map(i => `'${i}'`).join(', ')}]`);
+                        output.push(`[${workingList.map(i => `'${i}'`).join(', ')}]`);
                     }
                 });
 
@@ -253,22 +271,20 @@
                 consoleOutput.textContent = output.join('\n');
                 updateTasks(raw, workingList, appendCount, insertCount, deleteCount);
 
-            } catch (err) {
-                // Silently handle errors
-            }
+            } catch (err) {}
         }
 
         function renderVisuals(list) {
             if (list.length === 0) {
-                listVisual.innerHTML = `<span class="text-slate-600 italic text-sm">Define my_items to see it here...</span>`;
+                listVisual.innerHTML = `<span class="text-slate-600 italic text-xs">Define my_items to see memory visualization...</span>`;
                 return;
             }
             listVisual.innerHTML = list.map((item, i) => `
                 <div class="flex flex-col items-center list-item-pop">
-                    <div class="bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-xl font-bold border-t border-blue-400 min-w-[50px] text-center">
+                    <div class="bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-xl font-bold border-t border-blue-400 min-w-[50px] text-center text-sm">
                         ${item}
                     </div>
-                    <span class="text-[9px] text-slate-500 font-mono mt-1 font-bold">INDEX ${i}</span>
+                    <span class="text-[9px] text-slate-500 font-mono mt-1 font-bold">IDX ${i}</span>
                 </div>
             `).join('');
         }
@@ -285,10 +301,10 @@
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = "COPIED!";
-            btn.classList.replace('bg-slate-700', 'bg-green-700');
+            btn.classList.add('bg-green-700');
             setTimeout(() => {
                 btn.textContent = originalText;
-                btn.classList.replace('bg-green-700', 'bg-slate-700');
+                btn.classList.remove('bg-green-700');
             }, 2000);
         }
     </script>
