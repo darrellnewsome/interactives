@@ -9,6 +9,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
         
+        /* Layout Fixes */
         .grid-container {
             display: flex;
             flex-direction: column;
@@ -27,6 +28,7 @@
 
         .console-font { font-family: 'Fira Code', monospace; }
 
+        /* List visual item animation */
         .list-item-pop {
             animation: pop 0.3s ease-out;
             display: flex;
@@ -39,9 +41,12 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* Scrollbar aesthetics */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        
+        textarea::placeholder { color: #475569; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
@@ -52,14 +57,14 @@
                 <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
                 <p class="text-slate-400 mt-2 italic text-sm">Guided Practice (10 Minutes) • Interactive Lab</p>
             </div>
-            <button onclick="copyCode(event)" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600 whitespace-nowrap">
+            <button id="copy-btn" onclick="copyCode()" class="bg-slate-800 hover:bg-slate-700 text-xs px-4 py-2 rounded-lg transition-colors border border-slate-600 whitespace-nowrap">
                 Copy Code for Notebook
             </button>
         </header>
 
         <!-- Main Layout Container -->
         <div class="grid-container">
-            <!-- Left Side: Instructions -->
+            <!-- Left Side: Instructions & Tasks -->
             <div class="flex flex-col gap-6">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
                     <h2 class="text-xl font-semibold mb-4 flex items-center">
@@ -100,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- Right Side: Editor & Console -->
+            <!-- Right Side: Interactive Editor -->
             <div class="flex flex-col gap-6">
                 <div class="bg-black rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
                     <div class="bg-slate-800/80 px-4 py-2 text-[10px] font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
@@ -116,7 +121,7 @@
                         id="code-editor" 
                         spellcheck="false"
                         class="w-full h-80 bg-slate-950 p-6 console-font text-blue-300 focus:outline-none resize-none leading-relaxed text-sm md:text-base border-none"
-                        placeholder="# Start typing your code...&#10;my_items = ['apple', 'banana', 'cherry', 'date']&#10;print(my_items)"></textarea>
+                        placeholder="# Start typing your code...&#10;my_items = "></textarea>
                 </div>
 
                 <!-- Console Output -->
@@ -167,31 +172,28 @@
 
             [t1, t2, t3, t4].forEach(t => t.classList.remove('line-through', 'text-green-500', 'opacity-100', 'opacity-50'));
 
+            // Logic for Task Highlighting
             if (list.length >= 4) {
                 t1.classList.add('line-through', 'text-green-500', 'opacity-50');
-                t2.classList.add('opacity-100');
-            } else {
-                t1.classList.add('opacity-100');
-                t2.classList.add('opacity-50');
-            }
+            } else { t1.classList.add('opacity-100'); }
 
             if (appendCount > 0) {
                 t2.classList.add('line-through', 'text-green-500', 'opacity-50');
-                t3.classList.add('opacity-100');
-            } else if (list.length < 4) {
-                t3.classList.add('opacity-50');
-            }
+            } else if (list.length >= 4) {
+                t2.classList.add('opacity-100');
+            } else { t2.classList.add('opacity-50'); }
 
             if (insertCount > 0) {
                 t3.classList.add('line-through', 'text-green-500', 'opacity-50');
-                t4.classList.add('opacity-100');
-            } else if (appendCount === 0) {
-                t4.classList.add('opacity-50');
-            }
+            } else if (appendCount > 0) {
+                t3.classList.add('opacity-100');
+            } else { t3.classList.add('opacity-50'); }
 
             if (deleteCount > 0) {
                 t4.classList.add('line-through', 'text-green-500', 'opacity-50');
-            }
+            } else if (insertCount > 0) {
+                t4.classList.add('opacity-100');
+            } else { t4.classList.add('opacity-50'); }
         }
 
         function processCode(raw) {
@@ -208,7 +210,7 @@
                     const cleanLine = line.trim();
                     if (!cleanLine || cleanLine.startsWith('#')) return;
 
-                    // Assignment match
+                    // Detect Initial List Creation
                     const assignMatch = cleanLine.match(/my_items\s*=\s*\[(.*)\]/);
                     if (assignMatch) {
                         try {
@@ -218,7 +220,7 @@
                         } catch(e) {}
                     }
 
-                    // Method handling
+                    // .append()
                     if (cleanLine.includes('.append(')) {
                         const match = cleanLine.match(/\.append\((.*)\)/);
                         if (match) {
@@ -227,10 +229,11 @@
                             workingList.push(val);
                         }
                         if (cleanLine.includes('my_items = my_items.append')) {
-                            feedback = "Check your assignment! .append() updates the list directly. If you set 'my_items = my_items.append()', your list will become None.";
+                            feedback = "Careful! .append() updates the list 'in-place' and returns None. Don't assign it back to the variable.";
                         }
                     }
 
+                    // .insert()
                     if (cleanLine.includes('.insert(')) {
                         const match = cleanLine.match(/\.insert\(\s*(\d+)\s*,\s*(.*)\)/);
                         if (match) {
@@ -241,6 +244,7 @@
                         }
                     }
 
+                    // .pop() or .remove()
                     if (cleanLine.includes('.pop(')) {
                         const match = cleanLine.match(/\.pop\(\s*(\d*)\s*\)/);
                         if (match) {
@@ -257,8 +261,12 @@
                             const idx = workingList.indexOf(val);
                             if (idx > -1) workingList.splice(idx, 1);
                         }
+                        if (cleanLine.match(/\.remove\(\d+\)/)) {
+                            feedback = ".remove() takes the VALUE (like 'apple'), while .pop() takes the INDEX (like 0). Check which one you need!";
+                        }
                     }
 
+                    // Print output simulation
                     if (cleanLine.includes('print(my_items)')) {
                         output.push(`[${workingList.map(i => `'${i}'`).join(', ')}]`);
                     }
@@ -270,13 +278,13 @@
                 updateTasks(workingList, appendCount, insertCount, deleteCount);
 
             } catch (err) {
-                console.error(err);
+                // Silent error handling for partial typing
             }
         }
 
         function renderVisuals(list) {
             if (list.length === 0) {
-                listVisual.innerHTML = `<span class="text-slate-600 italic text-xs">Define my_items to see memory visualization...</span>`;
+                listVisual.innerHTML = `<span class="text-slate-600 italic text-xs">Define my_items to begin...</span>`;
                 return;
             }
             listVisual.innerHTML = list.map((item, i) => `
@@ -289,16 +297,16 @@
             `).join('');
         }
 
-        function copyCode(e) {
+        function copyCode() {
             const text = editor.value;
             const dummy = document.createElement("textarea");
             document.body.appendChild(dummy);
             dummy.value = text;
             dummy.select();
-            document.execCommand("copy");
+            document.execCommand("copy"); // Fallback for iFrame restrictions
             document.body.removeChild(dummy);
             
-            const btn = e.target;
+            const btn = document.getElementById('copy-btn');
             const originalText = btn.textContent;
             btn.textContent = "COPIED!";
             btn.classList.add('bg-green-700');
