@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Practice: Python List Methods</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        .console-font { font-family: 'Fira Code', monospace; }
+        .list-item-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400">i2p12_4_3: List Methods</h1>
+            <p class="text-slate-400 mt-2 italic">Guided Practice (10 Minutes) • NTI Independent Study</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Side: Instructions & Tasks -->
+            <div class="space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-2">!</span>
+                        Your Mission
+                    </h2>
+                    <ul class="space-y-4 text-slate-300">
+                        <li id="task-1" class="flex items-start opacity-100 transition-opacity">
+                            <span class="mr-3 mt-1">1.</span>
+                            <span>Create a list named <code class="text-yellow-400">my_items</code> with exactly 4 strings.</span>
+                        </li>
+                        <li id="task-2" class="flex items-start opacity-50 transition-opacity">
+                            <span class="mr-3 mt-1">2.</span>
+                            <span>Use <code class="text-blue-400">.append()</code> to add a 5th item to the end.</span>
+                        </li>
+                        <li id="task-3" class="flex items-start opacity-50 transition-opacity">
+                            <span class="mr-3 mt-1">3.</span>
+                            <span>Use <code class="text-blue-400">.insert()</code> to add an item at index 1 (the 2nd spot).</span>
+                        </li>
+                        <li id="task-4" class="flex items-start opacity-50 transition-opacity">
+                            <span class="mr-3 mt-1">4.</span>
+                            <span>Use <code class="text-blue-400">.remove()</code> or <code class="text-blue-400">.pop()</code> to delete one item.</span>
+                        </li>
+                    </ul>
+                    <p class="mt-6 text-sm text-slate-500 border-t border-slate-700 pt-4">
+                        💡 Remember: You must <code class="text-slate-300">print(my_items)</code> after every change to see the results!
+                    </p>
+                </div>
+
+                <!-- Teacher Feedback Box -->
+                <div id="feedback-box" class="hidden bg-blue-900/30 border border-blue-500/50 p-4 rounded-lg">
+                    <h3 class="text-blue-300 font-bold text-sm uppercase tracking-wider mb-1">Teacher Look-For Notice:</h3>
+                    <p id="feedback-text" class="text-blue-100 text-sm italic"></p>
+                </div>
+            </div>
+
+            <!-- Right Side: Interactive Editor -->
+            <div class="flex flex-col gap-4">
+                <div class="bg-slate-950 rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
+                    <div class="bg-slate-800 px-4 py-2 text-xs font-bold text-slate-400 flex justify-between items-center border-b border-slate-700">
+                        <span>SANDBOX: sandbox.py</span>
+                        <span id="run-status" class="text-green-500">READY</span>
+                    </div>
+                    <textarea 
+                        id="code-editor" 
+                        spellcheck="false"
+                        class="w-full h-64 bg-transparent p-4 console-font text-blue-300 focus:outline-none resize-none leading-relaxed"
+                        placeholder="# Start coding here...&#10;my_items = "></textarea>
+                </div>
+
+                <!-- Console Output -->
+                <div class="bg-black rounded-xl border border-slate-800 p-4 h-32 overflow-y-auto shadow-inner">
+                    <div class="text-xs font-bold text-slate-600 mb-2 uppercase">Console Output</div>
+                    <div id="console-output" class="console-font text-green-400 text-sm whitespace-pre-wrap"></div>
+                </div>
+
+                <!-- Visual State -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="text-xs font-bold text-slate-500 mb-3 uppercase italic">Live List Visualization</div>
+                    <div id="list-visual" class="flex flex-wrap gap-2 min-h-[40px]">
+                        <!-- Items injected here -->
+                        <span class="text-slate-600 italic text-sm">No items in list...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const editor = document.getElementById('code-editor');
+        const consoleOutput = document.getElementById('console-output');
+        const listVisual = document.getElementById('list-visual');
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackText = document.getElementById('feedback-text');
+
+        // State Tracking
+        let currentList = [];
+        let history = [];
+
+        editor.addEventListener('input', () => {
+            processCode(editor.value);
+        });
+
+        function showFeedback(msg) {
+            if (msg) {
+                feedbackBox.classList.remove('hidden');
+                feedbackText.textContent = msg;
+            } else {
+                feedbackBox.classList.add('hidden');
+            }
+        }
+
+        function updateTasks(code, list) {
+            const t1 = document.getElementById('task-1');
+            const t2 = document.getElementById('task-2');
+            const t3 = document.getElementById('task-3');
+            const t4 = document.getElementById('task-4');
+
+            // Task 1: 4 items
+            if (list.length >= 4) {
+                t1.classList.add('line-through', 'text-green-500');
+                t1.classList.remove('opacity-100');
+                t1.classList.add('opacity-50');
+                t2.classList.replace('opacity-50', 'opacity-100');
+            }
+
+            // Task 2: Append
+            if (code.includes('.append(')) {
+                t2.classList.add('line-through', 'text-green-500');
+                t2.classList.remove('opacity-100');
+                t2.classList.add('opacity-50');
+                t3.classList.replace('opacity-50', 'opacity-100');
+            }
+
+            // Task 3: Insert
+            if (code.includes('.insert(')) {
+                t3.classList.add('line-through', 'text-green-500');
+                t3.classList.remove('opacity-100');
+                t3.classList.add('opacity-50');
+                t4.classList.replace('opacity-50', 'opacity-100');
+            }
+
+            // Task 4: Delete
+            if (code.includes('.pop(') || code.includes('.remove(')) {
+                t4.classList.add('line-through', 'text-green-500');
+                t4.classList.remove('opacity-100');
+                t4.classList.add('opacity-50');
+            }
+        }
+
+        function processCode(raw) {
+            const lines = raw.split('\n');
+            let workingList = [];
+            let output = [];
+            let feedback = "";
+
+            try {
+                lines.forEach((line, index) => {
+                    const cleanLine = line.trim();
+                    if (!cleanLine || cleanLine.startsWith('#')) return;
+
+                    // 1. Assignment
+                    if (cleanLine.includes('my_items =')) {
+                        const parts = cleanLine.split('=');
+                        const valStr = parts[1].trim();
+                        try {
+                            // Simple parser for ["a", "b"]
+                            const parsed = JSON.parse(valStr.replace(/'/g, '"'));
+                            if (Array.isArray(parsed)) workingList = parsed;
+                        } catch(e) {}
+                    }
+
+                    // 2. Append
+                    if (cleanLine.includes('.append(')) {
+                        const match = cleanLine.match(/\.append\((.*)\)/);
+                        if (match) {
+                            const val = match[1].trim().replace(/'|"/g, '');
+                            workingList.push(val);
+                        }
+                        // Teacher Look-for: list = list.append()
+                        if (cleanLine.includes('my_items = my_items.append')) {
+                            feedback = "Careful! .append() changes the list directly. It doesn't return a new one. Writing 'my_items = my_items.append()' will make your list disappear (None)!";
+                        }
+                    }
+
+                    // 3. Insert
+                    if (cleanLine.includes('.insert(')) {
+                        const match = cleanLine.match(/\.insert\(\s*(\d+)\s*,\s*(.*)\)/);
+                        if (match) {
+                            const idx = parseInt(match[1]);
+                            const val = match[2].trim().replace(/'|"/g, '');
+                            workingList.splice(idx, 0, val);
+                        }
+                    }
+
+                    // 4. Pop/Remove
+                    if (cleanLine.includes('.pop(')) {
+                        const match = cleanLine.match(/\.pop\(\s*(\d*)\s*\)/);
+                        if (match) {
+                            const idx = match[1] === "" ? workingList.length - 1 : parseInt(match[1]);
+                            workingList.splice(idx, 1);
+                        }
+                    } else if (cleanLine.includes('.remove(')) {
+                        const match = cleanLine.match(/\.remove\((.*)\)/);
+                        if (match) {
+                            const val = match[1].trim().replace(/'|"/g, '');
+                            const idx = workingList.indexOf(val);
+                            if (idx > -1) workingList.splice(idx, 1);
+                        }
+                        // Teacher Look-for: Confusion
+                        if (cleanLine.match(/\.remove\(\d+\)/)) {
+                            feedback = "Wait! Are you trying to remove an index? .remove() looks for the name (value). Use .pop() if you want to use the index number.";
+                        }
+                    }
+
+                    // 5. Print
+                    if (cleanLine.includes('print(my_items)')) {
+                        output.push(`[${workingList.map(i => `'${i}'`).join(', ')}]`);
+                    }
+                });
+
+                showFeedback(feedback);
+                renderVisuals(workingList);
+                consoleOutput.textContent = output.join('\n');
+                updateTasks(raw, workingList);
+
+            } catch (err) {
+                // Silently handle errors while typing
+            }
+        }
+
+        function renderVisuals(list) {
+            if (list.length === 0) {
+                listVisual.innerHTML = `<span class="text-slate-600 italic text-sm">Waiting for list definition...</span>`;
+                return;
+            }
+            listVisual.innerHTML = list.map((item, i) => `
+                <div class="flex flex-col items-center list-item-pop">
+                    <div class="bg-blue-600 text-white px-3 py-1 rounded shadow-lg font-bold border border-blue-400">
+                        ${item}
+                    </div>
+                    <span class="text-[10px] text-slate-500 font-mono mt-1">idx ${i}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
+
