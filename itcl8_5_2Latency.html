@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's the Problem? Network Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .scenario-card {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .correct { border-color: #10b981; background-color: #ecfdf5; }
+        .incorrect { border-color: #ef4444; background-color: #fef2f2; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+
+    <div class="max-w-3xl mx-auto p-6">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">What's the Problem?</h1>
+            <p class="text-slate-600">Analyze the scenario and determine which network factor is causing the issue.</p>
+            <div class="mt-4 flex justify-center gap-4 text-sm">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-200">15 Minutes</span>
+                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full border border-purple-200">Pairs Task</span>
+            </div>
+        </header>
+
+        <!-- Progress Tracker -->
+        <div class="flex justify-between items-center mb-4 px-2">
+            <div id="progressText" class="text-slate-600 font-medium">Scenario 1 of 6</div>
+            <div id="scoreDisplay" class="text-blue-600 font-bold">Score: 0</div>
+        </div>
+        <div class="w-full bg-slate-200 rounded-full h-2.5 mb-8">
+            <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 16%"></div>
+        </div>
+
+        <!-- Scenario Area -->
+        <div id="gameContainer">
+            <div id="scenarioCard" class="scenario-card bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                <h2 class="text-xs uppercase tracking-widest text-slate-400 font-bold mb-2">The Situation</h2>
+                <p id="scenarioText" class="text-xl text-slate-800 leading-relaxed font-medium mb-6">
+                    Loading scenario...
+                </p>
+
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="checkAnswer('Bandwidth')" class="option-btn text-left p-4 rounded-xl border-2 border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all">
+                        <span class="font-bold text-blue-600 block">Bandwidth</span>
+                        <span class="text-sm text-slate-500">Related to capacity and volume of data.</span>
+                    </button>
+                    <button onclick="checkAnswer('Latency')" class="option-btn text-left p-4 rounded-xl border-2 border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all">
+                        <span class="font-bold text-blue-600 block">Latency</span>
+                        <span class="text-sm text-slate-500">Related to delay and response time.</span>
+                    </button>
+                    <button onclick="checkAnswer('Network Load')" class="option-btn text-left p-4 rounded-xl border-2 border-slate-100 hover:border-blue-400 hover:bg-blue-50 transition-all">
+                        <span class="font-bold text-blue-600 block">Network Load</span>
+                        <span class="text-sm text-slate-500">Related to the number of active users/devices.</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feedback Area -->
+            <div id="feedback" class="hidden p-6 rounded-2xl mb-6 border-2">
+                <p id="feedbackType" class="font-bold text-lg mb-1"></p>
+                <p id="feedbackText" class="text-slate-700 italic mb-4"></p>
+                <button onclick="nextScenario()" class="bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                    Next Scenario
+                </button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="endScreen" class="hidden text-center bg-white p-10 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-3xl font-bold text-slate-800 mb-4">Great Work!</h2>
+            <p class="text-slate-600 mb-6">You've completed all scenarios. You now know the difference between capacity, delay, and congestion.</p>
+            <div id="finalScore" class="text-5xl font-black text-blue-600 mb-8">0/6</div>
+            <button onclick="resetGame()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all">
+                Try Again
+            </button>
+        </div>
+
+        <!-- Teacher Reference -->
+        <footer class="mt-12 text-center border-t border-slate-200 pt-6">
+            <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">Teacher Tip</p>
+            <p class="text-sm text-slate-500 italic">"Listen for correct use of terms and avoidance of 'Wi-Fi is bad' as a catch-all."</p>
+        </footer>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                text: "During a school-wide online testing session, the video instructions on every student's screen start buffering and won't play.",
+                answer: "Network Load",
+                why: "Because hundreds of devices are trying to access the network at the exact same moment, causing congestion."
+            },
+            {
+                text: "You are playing an online game. The game feels laggy and your character jumps around, even though your game update downloaded very quickly earlier.",
+                answer: "Latency",
+                why: "Latency measures the response time (delay), which is critical for real-time interaction even if you have enough capacity for big files."
+            },
+            {
+                text: "At 7:00 PM every night, the internet at your house becomes much slower for everyone in the family.",
+                answer: "Network Load",
+                why: "The 'rush hour' effect happens when more users in your house and neighborhood start streaming or gaming at the same time."
+            },
+            {
+                text: "A photographer is trying to upload 500 high-resolution photos to a cloud drive, and it says it will take 4 hours to finish.",
+                answer: "Bandwidth",
+                why: "This is a capacity issue; there isn't a wide enough 'road' to move that much data all at once."
+            },
+            {
+                text: "During a video call, the person you are talking to sounds robotic and their voice doesn't line up with their mouth movements.",
+                answer: "Latency",
+                why: "The delay in the data packets arriving makes real-time communication difficult."
+            },
+            {
+                text: "You upgrade your internet plan to a more expensive one so that four people in your house can all watch 4K movies at the same time.",
+                answer: "Bandwidth",
+                why: "Upgrading your plan usually increases your capacity, allowing for more data to flow simultaneously."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        function updateUI() {
+            const s = scenarios[currentIdx];
+            document.getElementById('scenarioText').innerText = s.text;
+            document.getElementById('progressText').innerText = `Scenario ${currentIdx + 1} of ${scenarios.length}`;
+            document.getElementById('scoreDisplay').innerText = `Score: ${score}`;
+            document.getElementById('progressBar').style.width = `${((currentIdx + 1) / scenarios.length) * 100}%`;
+            
+            // Reset button styles
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => {
+                b.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50', 'opacity-50');
+                b.disabled = false;
+            });
+            document.getElementById('feedback').classList.add('hidden');
+            canAnswer = true;
+        }
+
+        function checkAnswer(choice) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const s = scenarios[currentIdx];
+            const feedback = document.getElementById('feedback');
+            const feedbackType = document.getElementById('feedbackType');
+            const feedbackText = document.getElementById('feedbackText');
+            const btns = document.querySelectorAll('.option-btn');
+
+            btns.forEach(b => {
+                if (b.innerText.includes(s.answer)) {
+                    b.classList.add('border-green-500', 'bg-green-50');
+                } else if (b.innerText.includes(choice) && choice !== s.answer) {
+                    b.classList.add('border-red-500', 'bg-red-50');
+                }
+                b.disabled = true;
+            });
+
+            feedback.classList.remove('hidden');
+            if (choice === s.answer) {
+                score++;
+                feedback.className = "p-6 rounded-2xl mb-6 border-2 correct";
+                feedbackType.innerText = "Correct!";
+                feedbackType.className = "font-bold text-lg text-emerald-700";
+            } else {
+                feedback.className = "p-6 rounded-2xl mb-6 border-2 incorrect";
+                feedbackType.innerText = `Not quite. It's ${s.answer}.`;
+                feedbackType.className = "font-bold text-lg text-red-700";
+            }
+            feedbackText.innerText = `Why: ${s.why}`;
+            document.getElementById('scoreDisplay').innerText = `Score: ${score}`;
+        }
+
+        function nextScenario() {
+            if (currentIdx < scenarios.length - 1) {
+                currentIdx++;
+                updateUI();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+            document.getElementById('finalScore').innerText = `${score} / ${scenarios.length}`;
+        }
+
+        function resetGame() {
+            currentIdx = 0;
+            score = 0;
+            document.getElementById('gameContainer').classList.remove('hidden');
+            document.getElementById('endScreen').classList.add('hidden');
+            updateUI();
+        }
+
+        // Initialize
+        window.onload = updateUI;
+    </script>
+</body>
+</html>
