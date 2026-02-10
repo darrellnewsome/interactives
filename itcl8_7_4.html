@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Design Scenarios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .scenario-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .scenario-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">Activity 5: Design Decision Scenarios</h1>
+            <p class="text-slate-600 italic">Work with your partner to decide: Is reliability or scalability more important?</p>
+            
+            <!-- Progress Tracker -->
+            <div class="mt-6 flex items-center justify-center gap-4">
+                <div class="w-64 h-3 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progressBar" class="progress-bar h-full bg-indigo-500" style="width: 0%"></div>
+                </div>
+                <span id="progressText" class="text-sm font-medium text-slate-500">0 / 4 Completed</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div id="scenariosContainer" class="grid gap-6">
+            <!-- Scenarios will be injected here -->
+        </div>
+
+        <!-- Reference Guide (Collapsible) -->
+        <div class="mt-12 border-t border-slate-200 pt-8">
+            <details class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <summary class="p-4 cursor-pointer font-bold text-indigo-700 hover:bg-indigo-50 transition-colors">
+                    View Network Topology Cheat Sheet
+                </summary>
+                <div class="p-6 overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-700 uppercase">
+                            <tr>
+                                <th class="px-4 py-3">Topology</th>
+                                <th class="px-4 py-3">Reliable?</th>
+                                <th class="px-4 py-3">Easy?</th>
+                                <th class="px-4 py-3">Cost</th>
+                                <th class="px-4 py-3">Key Feature</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-4 py-3 font-medium">⭐ Star</td>
+                                <td class="px-4 py-3 text-green-600 font-bold">✔</td>
+                                <td class="px-4 py-3 text-green-600 font-bold">✔</td>
+                                <td class="px-4 py-3">$$</td>
+                                <td class="px-4 py-3 italic">Most common, easy to add devices.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium">🚌 Bus</td>
+                                <td class="px-4 py-3 text-red-500 font-bold">✖</td>
+                                <td class="px-4 py-3 text-green-600 font-bold">✔</td>
+                                <td class="px-4 py-3">$</td>
+                                <td class="px-4 py-3 italic">Cheap, but one break stops it all.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium">🔁 Ring</td>
+                                <td class="px-4 py-3 text-red-500 font-bold">✖</td>
+                                <td class="px-4 py-3 text-red-500 font-bold">✖</td>
+                                <td class="px-4 py-3">$$</td>
+                                <td class="px-4 py-3 italic">Organized flow but hard to fix.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium">🕸️ Mesh</td>
+                                <td class="px-4 py-3 text-green-600 font-bold">✔</td>
+                                <td class="px-4 py-3 text-red-500 font-bold">✖</td>
+                                <td class="px-4 py-3">$$$</td>
+                                <td class="px-4 py-3 italic">Failure is not an option.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Notification Overlay -->
+    <div id="feedbackModal" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center hidden z-50">
+        <div id="modalContent" class="bg-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 border-t-8">
+            <div id="feedbackIcon" class="text-5xl mb-4 text-center"></div>
+            <h3 id="feedbackTitle" class="text-2xl font-bold text-center mb-2"></h3>
+            <div id="feedbackStatus" class="text-center font-bold uppercase tracking-widest text-sm mb-4"></div>
+            <p id="feedbackText" class="text-slate-600 text-center mb-6"></p>
+            <button id="modalButton" onclick="closeModal()" class="w-full py-3 text-white font-bold rounded-xl transition-colors"></button>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                id: 1,
+                title: "Hospital Network",
+                description: "This network manages patient records, heart monitors, and surgery schedules. Lives depend on this data moving correctly.",
+                correct: "reliability",
+                topology: "Mesh",
+                reason: "When 'failure is not an option,' Mesh is best because it has multiple paths for data and no single point of failure."
+            },
+            {
+                id: 2,
+                title: "School Expanding Enrollment",
+                description: "The school is building 10 new classrooms and expects 200 more students. They need to add new computers easily and quickly.",
+                correct: "scalability",
+                topology: "Star",
+                reason: "Star topology is 'easy to manage' and 'easy to add new devices,' making it the most scalable choice for growth."
+            },
+            {
+                id: 3,
+                title: "Small Home Network",
+                description: "A student wants to connect a laptop, a tablet, and a gaming console. The budget is very tight.",
+                correct: "scalability",
+                topology: "Star/Bus",
+                reason: "In a home, Star is best because it's cheap ($$) and easy to manage, allowing the user to add more devices later easily."
+            },
+            {
+                id: 4,
+                title: "Online Multiplayer Game Servers",
+                description: "Thousands of players connect. If one server goes down, players should stay connected through other paths.",
+                correct: "reliability",
+                topology: "Mesh",
+                reason: "Reliability is key here to avoid downtime. Like the hospital, this requires multiple data paths so the game doesn't stop."
+            }
+        ];
+
+        let completed = new Set();
+        let lastResultCorrect = false;
+        let hasFinished = false; // Flag to prevent infinite loop
+
+        function renderScenarios() {
+            const container = document.getElementById('scenariosContainer');
+            container.innerHTML = scenarios.map(s => `
+                <div class="scenario-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 ${completed.has(s.id) ? 'border-green-200 bg-green-50/30' : ''}">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-slate-800">${s.id}. ${s.title}</h2>
+                        ${completed.has(s.id) ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase">Decision Logged</span>' : ''}
+                    </div>
+                    <p class="text-slate-600 mb-6">${s.description}</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="checkAnswer(${s.id}, 'reliability')" 
+                                ${completed.has(s.id) ? 'disabled' : ''}
+                                class="flex-1 py-3 px-4 rounded-xl border-2 border-indigo-100 hover:bg-indigo-50 text-indigo-700 font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            Reliability
+                        </button>
+                        <button onclick="checkAnswer(${s.id}, 'scalability')" 
+                                ${completed.has(s.id) ? 'disabled' : ''}
+                                class="flex-1 py-3 px-4 rounded-xl border-2 border-indigo-100 hover:bg-indigo-50 text-indigo-700 font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            Scalability
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateProgress();
+        }
+
+        function checkAnswer(id, choice) {
+            const scenario = scenarios.find(s => s.id === id);
+            const isCorrect = choice === scenario.correct;
+            lastResultCorrect = isCorrect;
+            
+            const modal = document.getElementById('feedbackModal');
+            const modalContent = document.getElementById('modalContent');
+            const icon = document.getElementById('feedbackIcon');
+            const title = document.getElementById('feedbackTitle');
+            const status = document.getElementById('feedbackStatus');
+            const text = document.getElementById('feedbackText');
+            const btn = document.getElementById('modalButton');
+
+            if (isCorrect) {
+                modalContent.className = "bg-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 border-t-8 border-green-500";
+                icon.innerText = "✅";
+                title.innerText = "Correct Choice!";
+                status.innerText = "Success";
+                status.className = "text-center font-bold uppercase tracking-widest text-sm mb-4 text-green-600";
+                btn.className = "w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors";
+                btn.innerText = "Continue to Next Scenario";
+                completed.add(id);
+            } else {
+                modalContent.className = "bg-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 border-t-8 border-red-500";
+                icon.innerText = "❌";
+                title.innerText = "Not Quite...";
+                status.innerText = "Incorrect";
+                status.className = "text-center font-bold uppercase tracking-widest text-sm mb-4 text-red-600";
+                btn.className = "w-full py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors";
+                btn.innerText = "Try Again";
+            }
+
+            text.innerHTML = `
+                <div class="mb-4">You chose <strong>${choice.charAt(0).toUpperCase() + choice.slice(1)}</strong>.</div>
+                <div class="${isCorrect ? 'bg-green-50 text-green-900' : 'bg-red-50 text-red-900'} p-4 rounded-lg text-sm">
+                    <strong>Reasoning:</strong> ${scenario.reason}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            renderScenarios();
+        }
+
+        function closeModal() {
+            document.getElementById('feedbackModal').classList.add('hidden');
+            
+            // Trigger final screen ONLY once and only if last answer was correct
+            if (completed.size === scenarios.length && lastResultCorrect && !hasFinished) {
+                hasFinished = true; // Mark as finished so this doesn't loop
+                setTimeout(() => {
+                    const modal = document.getElementById('feedbackModal');
+                    const modalContent = document.getElementById('modalContent');
+                    modalContent.className = "bg-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 border-t-8 border-indigo-500";
+                    document.getElementById('feedbackIcon').innerText = "🏆";
+                    document.getElementById('feedbackTitle').innerText = "All Decisions Complete!";
+                    document.getElementById('feedbackStatus').innerText = "Activity Finished";
+                    document.getElementById('feedbackStatus').className = "text-center font-bold uppercase tracking-widest text-sm mb-4 text-indigo-600";
+                    document.getElementById('feedbackText').innerText = "You and your partner have successfully evaluated all network scenarios based on reliability and scalability.";
+                    const btn = document.getElementById('modalButton');
+                    btn.innerText = "Close & Review";
+                    btn.className = "w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors";
+                    
+                    // On final close, just hide the modal
+                    btn.onclick = () => { modal.classList.add('hidden'); };
+                    
+                    modal.classList.remove('hidden');
+                }, 300);
+            }
+        }
+
+        function updateProgress() {
+            const percent = (completed.size / scenarios.length) * 100;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressText').innerText = `${completed.size} / ${scenarios.length} Completed`;
+        }
+
+        window.onload = renderScenarios;
+    </script>
+</body>
+</html>
