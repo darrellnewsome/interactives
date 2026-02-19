@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. Guided Practice: 2D Lists</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .step-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .highlight {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid #3b82f6;
+            display: block;
+            padding-left: 10px;
+        }
+        .grid-cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #374151;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: white;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <!-- Schoology-style Header -->
+        <div class="bg-[#005a9c] p-4 text-white flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-1 rounded">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#005a9c" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
+                <h1 class="font-semibold text-lg">3️⃣ Guided Practice (10–15 mins)</h1>
+            </div>
+            <div class="text-sm opacity-80">Unit 3: Python 2D Lists</div>
+        </div>
+
+        <div class="p-6">
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">
+                    <span>Progress</span>
+                    <span id="progress-text">Step 1 of 4</span>
+                </div>
+                <div class="w-full bg-gray-200 h-2 rounded-full">
+                    <div id="progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: 25%;"></div>
+                </div>
+            </div>
+
+            <!-- STEP 1: DEFINE THE BOARD -->
+            <div id="step-1" class="step-content active">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Task 1: Define the Board</h2>
+                <p class="text-gray-600 mb-6">First, we initialize our 2D list. This creates a grid where each element in the main list is another list representing a row.</p>
+                
+                <div class="code-block mb-6">
+board = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    ["X", " ", "O"]
+]</div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <p class="text-sm text-blue-700 italic">💡 <strong>Think:</strong> Row 0 is the top, Row 1 is the middle, and Row 2 is the bottom.</p>
+                </div>
+            </div>
+
+            <!-- STEP 2: PRINT ENTIRE BOARD -->
+            <div id="step-2" class="step-content">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Task 2: Print the Entire Board</h2>
+                <p class="text-gray-600 mb-4">Printing the variable directly shows the internal structure of the list of lists.</p>
+                
+                <div class="code-block mb-6">
+board = [
+    ["X", "O", "X"],
+    ["O", "X", "O"],
+    ["X", " ", "O"]
+]
+<span class="highlight">print(board)</span></div>
+
+                <div class="bg-gray-800 text-green-400 p-4 rounded font-mono text-sm mb-6">
+                    <span class="text-gray-500"># Console Output:</span><br>
+                    [['X', 'O', 'X'], ['O', 'X', 'O'], ['X', ' ', 'O']]
+                </div>
+            </div>
+
+            <!-- STEP 3: MIDDLE VALUE -->
+            <div id="step-3" class="step-content">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Task 3: Access Middle Value</h2>
+                <p class="text-gray-600 mb-4">To get the center of the grid, we look at <strong>Row 1</strong> (the 2nd row) and <strong>Index 1</strong> (the 2nd item).</p>
+                
+                <div class="flex flex-col md:flex-row gap-8 mb-6">
+                    <div class="code-block flex-1">
+<span class="text-gray-500"># middle value is row 1, col 1</span>
+print(board[1][1])</div>
+                    
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div class="text-xs font-bold mb-2">VISUAL AID</div>
+                        <div class="grid grid-cols-3">
+                            <div class="grid-cell">X</div><div class="grid-cell">O</div><div class="grid-cell">X</div>
+                            <div class="grid-cell">O</div><div class="grid-cell bg-blue-100 border-blue-500 text-blue-600">X</div><div class="grid-cell">O</div>
+                            <div class="grid-cell">X</div><div class="grid-cell"> </div><div class="grid-cell">O</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 text-green-400 p-4 rounded font-mono text-sm mb-6">
+                    <span class="text-gray-500"># Console Output:</span><br>
+                    X
+                </div>
+            </div>
+
+            <!-- STEP 4: BOTTOM LEFT -->
+            <div id="step-4" class="step-content">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Task 4: Access Bottom Left</h2>
+                <p class="text-gray-600 mb-4">Bottom left is the last row (index 2) and the first column (index 0).</p>
+                
+                <div class="flex flex-col md:flex-row gap-8 mb-6">
+                    <div class="code-block flex-1">
+<span class="text-gray-500"># bottom left is row 2, col 0</span>
+print(board[2][0])</div>
+                    
+                    <div class="flex-shrink-0 flex flex-col items-center">
+                        <div class="text-xs font-bold mb-2">VISUAL AID</div>
+                        <div class="grid grid-cols-3">
+                            <div class="grid-cell">X</div><div class="grid-cell">O</div><div class="grid-cell">X</div>
+                            <div class="grid-cell">O</div><div class="grid-cell">X</div><div class="grid-cell">O</div>
+                            <div class="grid-cell bg-green-100 border-green-500 text-green-600">X</div><div class="grid-cell"> </div><div class="grid-cell">O</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 text-green-400 p-4 rounded font-mono text-sm mb-6">
+                    <span class="text-gray-500"># Console Output:</span><br>
+                    X
+                </div>
+
+                <div class="bg-green-100 text-green-800 p-4 rounded-lg border border-green-200">
+                    ✅ Practice Complete! You have successfully practiced indexing multi-dimensional lists.
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-10 flex justify-between border-t pt-6">
+                <button id="prevBtn" class="px-6 py-2 bg-gray-100 text-gray-400 font-semibold rounded hover:bg-gray-200 transition-colors cursor-not-allowed" disabled>
+                    Back
+                </button>
+                <button id="nextBtn" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-shadow shadow-md">
+                    Next Step
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+
+        function updateUI() {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            // Show current
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            // Update progress
+            const percent = (currentStep / totalSteps) * 100;
+            progressBar.style.width = `${percent}%`;
+            progressText.innerText = `Step ${currentStep} of ${totalSteps}`;
+
+            // Buttons
+            if (currentStep === 1) {
+                prevBtn.classList.add('text-gray-400', 'cursor-not-allowed');
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.classList.remove('text-gray-400', 'cursor-not-allowed');
+                prevBtn.disabled = false;
+            }
+
+            if (currentStep === totalSteps) {
+                nextBtn.innerText = 'Start Over';
+            } else {
+                nextBtn.innerText = 'Next Step';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+            } else {
+                currentStep = 1;
+            }
+            updateUI();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+            }
+            updateUI();
+        });
+    </script>
+</body>
+</html>
+
