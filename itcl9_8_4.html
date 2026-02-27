@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITCL 9.8.4 - Digital Responsibility Workshop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #1d4ed8; font-weight: 600; }
+        .hidden { display: none; }
+        textarea:focus { outline: none; border-color: #3b82f6; ring: 2px solid #3b82f6; }
+        .correct-card { border-color: #10b981 !important; background-color: #f0fdf4 !important; }
+        .locked { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800">ITCL 9.8.4: Digital Responsibility</h1>
+            <p class="text-slate-600 mt-2">Interactive Workshop & Case Study Analysis</p>
+        </header>
+
+        <!-- Main Container -->
+        <main class="bg-white rounded-xl custom-shadow overflow-hidden">
+            <!-- Navigation Tabs -->
+            <nav class="flex border-b border-slate-200">
+                <button onclick="switchTab('guided')" id="tab-guided" class="flex-1 py-4 text-center hover:bg-slate-50 transition tab-active">
+                    🟡 Phase 1: Guided Practice
+                </button>
+                <button onclick="switchTab('main')" id="tab-main" class="flex-1 py-4 text-center hover:bg-slate-50 transition locked">
+                    🔴 Phase 2: Main Activity
+                </button>
+                <button onclick="switchTab('summary')" id="tab-summary" class="flex-1 py-4 text-center hover:bg-slate-50 transition locked">
+                    📋 Final Summary
+                </button>
+            </nav>
+
+            <!-- Phase 1: Guided Practice -->
+            <section id="section-guided" class="p-6">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-amber-600">Quick Case Study Discussion</h2>
+                    <p class="text-sm text-slate-500 italic">Demonstrate mastery by correctly identifying the issues in each scenario to unlock the main activity.</p>
+                </div>
+
+                <!-- Example Card -->
+                <div class="mb-8 p-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded">EXAMPLE</span>
+                        <p class="font-medium text-slate-600">User creates a weak password like "password123".</p>
+                    </div>
+                    <div class="flex flex-wrap gap-4 items-center opacity-75">
+                        <div class="text-sm font-bold text-green-600">Irresponsible</div>
+                        <div class="flex items-center space-x-1 text-sm text-slate-500">
+                            <span class="text-slate-300">☐</span> <span>Legal</span>
+                        </div>
+                        <div class="flex items-center space-x-1 text-sm text-slate-500">
+                            <span class="text-slate-300">☐</span> <span>Ethical</span>
+                        </div>
+                        <div class="flex items-center space-x-1 text-sm text-green-600">
+                            <span>☑</span> <span>Security Risk</span>
+                        </div>
+                    </div>
+                    <p class="text-xs mt-2 text-slate-400 italic">This is a Security Risk because it makes the account easy to hack, but it isn't necessarily illegal or an ethical violation against others.</p>
+                </div>
+
+                <div class="space-y-6" id="guided-container">
+                    <!-- Cards will be injected here -->
+                </div>
+
+                <div id="mastery-message" class="mt-6 p-4 rounded-lg text-center font-medium hidden"></div>
+
+                <div class="mt-8 flex justify-end">
+                    <button id="btn-to-main" onclick="switchTab('main')" class="bg-slate-300 text-slate-500 px-6 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>
+                        Locked: Complete Phase 1
+                    </button>
+                </div>
+            </section>
+
+            <!-- Phase 2: Main Activity -->
+            <section id="section-main" class="p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-red-600">Group Task: Scenario Analysis</h2>
+                    <p class="text-sm text-slate-500 italic">Apply what you've learned to a complex real-world situation.</p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Select Your Assigned Scenario:</label>
+                    <select id="scenario-selector" onchange="loadMainScenario()" class="w-full p-2 rounded border border-slate-300 mb-6 bg-white">
+                        <option value="0">Scenario A: The "Shared" Subscription</option>
+                        <option value="1">Scenario B: The Accidental Leak</option>
+                        <option value="2">Scenario C: The Remote Access Slip</option>
+                    </select>
+
+                    <div id="main-scenario-text" class="bg-white p-4 rounded-lg border-l-4 border-red-500 mb-6 shadow-sm italic text-slate-700">
+                        <!-- Scenario text loaded via JS -->
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold">What went wrong?</label>
+                            <textarea id="main-q1" class="w-full h-24 p-2 rounded border border-slate-300 text-sm" placeholder="Analyze the mistake..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold">What policy/expectation was violated?</label>
+                            <textarea id="main-q2" class="w-full h-24 p-2 rounded border border-slate-300 text-sm" placeholder="Cite Acceptable Use Policies or social norms..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold">What could happen as a result?</label>
+                            <textarea id="main-q3" class="w-full h-24 p-2 rounded border border-slate-300 text-sm" placeholder="Think about legal, financial, or social consequences..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold">What should have been done instead?</label>
+                            <textarea id="main-q4" class="w-full h-24 p-2 rounded border border-slate-300 text-sm" placeholder="Provide the responsible alternative..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <button onclick="switchTab('guided')" class="text-slate-600 font-semibold hover:underline">← Back</button>
+                    <button onclick="switchTab('summary')" class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+                        Finish & View Summary
+                    </button>
+                </div>
+            </section>
+
+            <!-- Summary Page -->
+            <section id="section-summary" class="p-6 hidden">
+                <div class="mb-6 text-center">
+                    <h2 class="text-2xl font-bold text-slate-800">Workshop Completion</h2>
+                    <p class="text-slate-500">Your analysis is ready to be submitted.</p>
+                </div>
+
+                <div id="copy-status" class="hidden mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-center font-medium">
+                    Content copied to clipboard! Paste it into Schoology.
+                </div>
+
+                <div id="summary-content" class="bg-slate-100 p-6 rounded-lg border border-slate-200 font-mono text-sm overflow-y-auto max-h-96 whitespace-pre-wrap">
+                    <!-- Summary generated here -->
+                </div>
+
+                <div class="mt-8 flex justify-center gap-4">
+                    <button onclick="copyToClipboard()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition transform hover:scale-105">
+                        Copy to Clipboard
+                    </button>
+                    <button onclick="window.print()" class="bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
+                        Print / Save PDF
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-8 text-center text-slate-400 text-xs">
+            &copy; ITCL Digital Responsibility Interactive Module
+        </footer>
+    </div>
+
+    <script>
+        const guidedScenarios = [
+            { text: "Employee uses work email to insult coworker.", resp: "Irresponsible", legal: false, ethical: true, security: false },
+            { text: "Student downloads pirated software on school device.", resp: "Irresponsible", legal: true, ethical: true, security: true },
+            { text: "Worker shares login credentials to 'help a friend.'", resp: "Irresponsible", legal: false, ethical: true, security: true },
+            { text: "Student leaves account logged in on public computer.", resp: "Irresponsible", legal: false, ethical: false, security: true }
+        ];
+
+        const mainScenarios = [
+            "Scenario A: A group of students wants to use a specialized graphic design tool for a club project. One student finds a 'cracked' serial key on a forum and shares it with the group to install on school laptops, saving them $300.",
+            "Scenario B: A temporary administrative assistant is working on sensitive student files. To finish work faster, they email a spreadsheet of student home addresses and contact info to their personal Gmail so they can work from home.",
+            "Scenario C: An IT intern is troubleshooting a server issue. They are logged in as an Admin. They get a phone call and step away for 15 minutes, leaving the high-level access console wide open in a busy hallway."
+        ];
+
+        // State
+        let guidedResults = guidedScenarios.map(() => ({ isResponsible: "", legal: false, ethical: false, security: false, isCorrect: false }));
+        let phase1Mastered = false;
+
+        function initGuided() {
+            const container = document.getElementById('guided-container');
+            container.innerHTML = guidedScenarios.map((s, i) => `
+                <div id="guided-card-${i}" class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm transition-all duration-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="font-medium text-slate-800">${i+1}. ${s.text}</p>
+                        <span id="feedback-icon-${i}" class="hidden text-xl"></span>
+                    </div>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <select onchange="updateGuided(${i}, 'isResponsible', this.value)" class="p-1 text-sm border rounded bg-white">
+                            <option value="">Status?</option>
+                            <option value="Responsible">Responsible</option>
+                            <option value="Irresponsible">Irresponsible</option>
+                        </select>
+                        
+                        <label class="inline-flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" onchange="updateGuided(${i}, 'legal', this.checked)" class="rounded text-blue-500">
+                            <span>Legal Issue</span>
+                        </label>
+                        
+                        <label class="inline-flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" onchange="updateGuided(${i}, 'ethical', this.checked)" class="rounded text-blue-500">
+                            <span>Ethical Issue</span>
+                        </label>
+                        
+                        <label class="inline-flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" onchange="updateGuided(${i}, 'security', this.checked)" class="rounded text-blue-500">
+                            <span>Security Risk</span>
+                        </label>
+                    </div>
+                    <p id="feedback-text-${i}" class="text-xs mt-2 hidden"></p>
+                </div>
+            `).join('');
+        }
+
+        function updateGuided(index, key, value) {
+            guidedResults[index][key] = value;
+            checkMastery();
+        }
+
+        function checkMastery() {
+            let allCorrect = true;
+            
+            guidedScenarios.forEach((expected, i) => {
+                const actual = guidedResults[i];
+                const card = document.getElementById(`guided-card-${i}`);
+                const icon = document.getElementById(`feedback-icon-${i}`);
+                const feedbackText = document.getElementById(`feedback-text-${i}`);
+                
+                // Compare logic
+                const respMatch = actual.isResponsible === expected.resp;
+                const legalMatch = actual.legal === expected.legal;
+                const ethicalMatch = actual.ethical === expected.ethical;
+                const securityMatch = actual.security === expected.security;
+                
+                if (actual.isResponsible !== "") {
+                    if (respMatch && legalMatch && ethicalMatch && securityMatch) {
+                        card.classList.add('correct-card');
+                        icon.innerHTML = "✅";
+                        icon.classList.remove('hidden');
+                        feedbackText.innerText = "Correct analysis!";
+                        feedbackText.classList.remove('hidden', 'text-red-500');
+                        feedbackText.classList.add('text-green-600');
+                        actual.isCorrect = true;
+                    } else {
+                        card.classList.remove('correct-card');
+                        icon.innerHTML = "🔍";
+                        icon.classList.remove('hidden');
+                        feedbackText.innerText = "Check your issue labels again...";
+                        feedbackText.classList.remove('hidden', 'text-green-600');
+                        feedbackText.classList.add('text-amber-600');
+                        actual.isCorrect = false;
+                        allCorrect = false;
+                    }
+                } else {
+                    allCorrect = false;
+                }
+            });
+
+            const nextBtn = document.getElementById('btn-to-main');
+            const masteryMsg = document.getElementById('mastery-message');
+
+            if (allCorrect) {
+                phase1Mastered = true;
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+                nextBtn.innerText = "Mastery Achieved: Next Activity →";
+                
+                masteryMsg.innerText = "Excellent! You have mastered the basics. You are now ready to apply these concepts to the main scenarios.";
+                masteryMsg.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+                masteryMsg.classList.add('bg-green-100', 'text-green-700');
+
+                // Unlock tabs
+                document.getElementById('tab-main').classList.remove('locked');
+                document.getElementById('tab-summary').classList.remove('locked');
+            } else {
+                phase1Mastered = false;
+                nextBtn.disabled = true;
+                nextBtn.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+                nextBtn.innerText = "Locked: Complete Phase 1";
+            }
+        }
+
+        function loadMainScenario() {
+            const idx = document.getElementById('scenario-selector').value;
+            document.getElementById('main-scenario-text').innerText = mainScenarios[idx];
+        }
+
+        function switchTab(tab) {
+            if ((tab === 'main' || tab === 'summary') && !phase1Mastered) {
+                return; // Guard against clicking locked tabs
+            }
+
+            ['guided', 'main', 'summary'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active');
+            });
+            
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+            
+            if (tab === 'summary') {
+                generateSummary();
+                window.scrollTo(0,0);
+            }
+        }
+
+        function generateSummary() {
+            const mainScenarioTitle = document.getElementById('scenario-selector').options[document.getElementById('scenario-selector').selectedIndex].text;
+            const mainQ1 = document.getElementById('main-q1').value;
+            const mainQ2 = document.getElementById('main-q2').value;
+            const mainQ3 = document.getElementById('main-q3').value;
+            const mainQ4 = document.getElementById('main-q4').value;
+
+            let output = `ITCL 9.8.4 DIGITAL RESPONSIBILITY REPORT\n`;
+            output += `-------------------------------------------\n\n`;
+            
+            output += `PHASE 1: MASTERY CHECK (GUIDED PRACTICE)\n`;
+            guidedScenarios.forEach((s, i) => {
+                const res = guidedResults[i];
+                output += `${i+1}. ${s.text}\n`;
+                output += `   - Decision: ${res.isResponsible}\n`;
+                output += `   - Risks: ${[res.legal?'Legal':'', res.ethical?'Ethical':'', res.security?'Security':''].filter(x => x).join(', ') || 'None'}\n\n`;
+            });
+
+            output += `PHASE 2: MAIN ACTIVITY ANALYSIS\n`;
+            output += `Case: ${mainScenarioTitle}\n`;
+            output += `1. Error identified: ${mainQ1 || 'N/A'}\n`;
+            output += `2. Policy Violated: ${mainQ2 || 'N/A'}\n`;
+            output += `3. Consequences: ${mainQ3 || 'N/A'}\n`;
+            output += `4. Correct Strategy: ${mainQ4 || 'N/A'}\n`;
+
+            document.getElementById('summary-content').innerText = output;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('summary-content').innerText;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const status = document.getElementById('copy-status');
+            status.classList.remove('hidden');
+            setTimeout(() => status.classList.add('hidden'), 3000);
+        }
+
+        window.onload = () => {
+            initGuided();
+            loadMainScenario();
+        };
+    </script>
+</body>
+</html>
+
