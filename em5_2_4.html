@@ -17,7 +17,6 @@
         .correct-input { border-color: #10b981 !important; background-color: #ecfdf5; }
         .wrong-input { border-color: #ef4444 !important; background-color: #fef2f2; }
         
-        /* Ensuring 's' looks lowercase and distinct */
         .place-label {
             font-variant-caps: normal;
             text-transform: none !important;
@@ -43,7 +42,7 @@
                     <p class="text-sm text-slate-600 mb-4">Unary counting (one finger = one) is simple, but place value lets us represent huge numbers easily.</p>
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <p class="font-mono text-center text-2xl font-bold text-blue-800" id="decimal-display">123</p>
-                        <div class="flex justify-between text-[11px] text-blue-500 font-semibold mt-2 place-label">
+                        <div class="flex justify-between text-[11px] text-blue-500 font-semibold mt-2 place-label px-2">
                             <span>(100)s place</span>
                             <span>(10)s place</span>
                             <span>(1)s place</span>
@@ -66,33 +65,33 @@
             <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
                 <span>⚡</span> Computer Counting (Base 2)
             </h2>
-            <p class="text-slate-400 text-sm mb-6">Computers don't have fingers. They have <strong>bits</strong> (Binary Digits). Each bit is a switch: 0 (Off) or 1 (On).</p>
+            <p class="text-slate-400 text-sm mb-6">Computers use <strong>bits</strong>. Each bit is a switch: 0 (Off) or 1 (On). Use the 5 bits below to help you solve the challenges!</p>
             
-            <!-- Binary Visualizer -->
-            <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <!-- Bit 8 -->
-                <div id="bit-8" onclick="toggleBit(8)" class="bit-card cursor-pointer bg-slate-800 p-4 rounded-xl border-2 border-slate-700 w-24 text-center hover:border-blue-500">
-                    <div class="lightbulb text-4xl mb-2">💡</div>
-                    <div class="text-[11px] text-slate-400 font-bold place-label">(8)s place</div>
-                    <div class="bit-val text-2xl font-mono font-bold">0</div>
+            <div class="flex flex-wrap justify-center gap-3 mb-8">
+                <div id="bit-16" onclick="toggleBit(16)" class="bit-card cursor-pointer bg-slate-800 p-3 rounded-xl border-2 border-slate-700 w-20 text-center hover:border-blue-500">
+                    <div class="lightbulb text-3xl mb-1">💡</div>
+                    <div class="text-[10px] text-slate-400 font-bold place-label">(16)s place</div>
+                    <div class="bit-val text-xl font-mono font-bold">0</div>
                 </div>
-                <!-- Bit 4 -->
-                <div id="bit-4" onclick="toggleBit(4)" class="bit-card cursor-pointer bg-slate-800 p-4 rounded-xl border-2 border-slate-700 w-24 text-center hover:border-blue-500">
-                    <div class="lightbulb text-4xl mb-2">💡</div>
-                    <div class="text-[11px] text-slate-400 font-bold place-label">(4)s place</div>
-                    <div class="bit-val text-2xl font-mono font-bold">0</div>
+                <div id="bit-8" onclick="toggleBit(8)" class="bit-card cursor-pointer bg-slate-800 p-3 rounded-xl border-2 border-slate-700 w-20 text-center hover:border-blue-500">
+                    <div class="lightbulb text-3xl mb-1">💡</div>
+                    <div class="text-[10px] text-slate-400 font-bold place-label">(8)s place</div>
+                    <div class="bit-val text-xl font-mono font-bold">0</div>
                 </div>
-                <!-- Bit 2 -->
-                <div id="bit-2" onclick="toggleBit(2)" class="bit-card cursor-pointer bg-slate-800 p-4 rounded-xl border-2 border-slate-700 w-24 text-center hover:border-blue-500">
-                    <div class="lightbulb text-4xl mb-2">💡</div>
-                    <div class="text-[11px] text-slate-400 font-bold place-label">(2)s place</div>
-                    <div class="bit-val text-2xl font-mono font-bold">0</div>
+                <div id="bit-4" onclick="toggleBit(4)" class="bit-card cursor-pointer bg-slate-800 p-3 rounded-xl border-2 border-slate-700 w-20 text-center hover:border-blue-500">
+                    <div class="lightbulb text-3xl mb-1">💡</div>
+                    <div class="text-[10px] text-slate-400 font-bold place-label">(4)s place</div>
+                    <div class="bit-val text-xl font-mono font-bold">0</div>
                 </div>
-                <!-- Bit 1 -->
-                <div id="bit-1" onclick="toggleBit(1)" class="bit-card cursor-pointer bg-slate-800 p-4 rounded-xl border-2 border-slate-700 w-24 text-center hover:border-blue-500">
-                    <div class="lightbulb text-4xl mb-2">💡</div>
-                    <div class="text-[11px] text-slate-400 font-bold place-label">(1)s place</div>
-                    <div class="bit-val text-2xl font-mono font-bold">0</div>
+                <div id="bit-2" onclick="toggleBit(2)" class="bit-card cursor-pointer bg-slate-800 p-3 rounded-xl border-2 border-slate-700 w-20 text-center hover:border-blue-500">
+                    <div class="lightbulb text-3xl mb-1">💡</div>
+                    <div class="text-[10px] text-slate-400 font-bold place-label">(2)s place</div>
+                    <div class="bit-val text-xl font-mono font-bold">0</div>
+                </div>
+                <div id="bit-1" onclick="toggleBit(1)" class="bit-card cursor-pointer bg-slate-800 p-3 rounded-xl border-2 border-slate-700 w-20 text-center hover:border-blue-500">
+                    <div class="lightbulb text-3xl mb-1">💡</div>
+                    <div class="text-[10px] text-slate-400 font-bold place-label">(1)s place</div>
+                    <div class="bit-val text-xl font-mono font-bold">0</div>
                 </div>
             </div>
 
@@ -102,7 +101,7 @@
             </div>
         </section>
 
-        <!-- Section 3: The Challenge -->
+        <!-- Section 3: Expanded Challenge -->
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
             <h2 class="text-xl font-bold mb-6">🔢 Activity: Decimal ↔ Binary Challenge</h2>
             
@@ -111,21 +110,41 @@
                 <div class="space-y-4">
                     <h3 class="font-bold text-blue-600 border-b pb-2 text-sm uppercase">Part A: Decimal → Binary</h3>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 2:</label>
-                            <input type="text" data-answer="10" oninput="checkAnswer(this)" placeholder="Binary" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">11 =</label>
+                            <input type="text" data-answer="1011" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 5:</label>
-                            <input type="text" data-answer="101" oninput="checkAnswer(this)" placeholder="Binary" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">4 =</label>
+                            <input type="text" data-answer="100" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 7:</label>
-                            <input type="text" data-answer="111" oninput="checkAnswer(this)" placeholder="Binary" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">13 =</label>
+                            <input type="text" data-answer="1101" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 10:</label>
-                            <input type="text" data-answer="1010" oninput="checkAnswer(this)" placeholder="Binary" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">2 =</label>
+                            <input type="text" data-answer="10" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">15 =</label>
+                            <input type="text" data-answer="1111" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">7 =</label>
+                            <input type="text" data-answer="111" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1 =</label>
+                            <input type="text" data-answer="1" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">10 =</label>
+                            <input type="text" data-answer="1010" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">5 =</label>
+                            <input type="text" data-answer="101" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
                     </div>
                 </div>
@@ -134,18 +153,73 @@
                 <div class="space-y-4">
                     <h3 class="font-bold text-purple-600 border-b pb-2 text-sm uppercase">Part B: Binary → Decimal</h3>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 101:</label>
-                            <input type="text" data-answer="5" oninput="checkAnswer(this)" placeholder="Decimal" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1100 =</label>
+                            <input type="text" data-answer="12" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 110:</label>
-                            <input type="text" data-answer="6" oninput="checkAnswer(this)" placeholder="Decimal" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">101 =</label>
+                            <input type="text" data-answer="5" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium">Convert 111:</label>
-                            <input type="text" data-answer="7" oninput="checkAnswer(this)" placeholder="Decimal" class="w-24 p-2 border-2 rounded-md font-mono text-center">
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1000 =</label>
+                            <input type="text" data-answer="8" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                         </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1110 =</label>
+                            <input type="text" data-answer="14" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">111 =</label>
+                            <input type="text" data-answer="7" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1001 =</label>
+                            <input type="text" data-answer="9" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">11 =</label>
+                            <input type="text" data-answer="3" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">110 =</label>
+                            <input type="text" data-answer="6" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="text-sm font-medium">1101 =</label>
+                            <input type="text" data-answer="13" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part C -->
+            <div class="mt-10 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                <h3 class="font-bold text-yellow-800 text-sm uppercase mb-4 text-center">🚀 Part C: Expert Mode (5-bit Challenge)</h3>
+                <div class="grid md:grid-cols-2 gap-x-10 gap-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Decimal 31 to Binary:</label>
+                        <input type="text" data-answer="11111" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Binary 11011 to Decimal:</label>
+                        <input type="text" data-answer="27" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Decimal 18 to Binary:</label>
+                        <input type="text" data-answer="10010" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Binary 10110 to Decimal:</label>
+                        <input type="text" data-answer="22" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Decimal 20 to Binary:</label>
+                        <input type="text" data-answer="10100" oninput="checkAnswer(this)" placeholder="Binary" class="w-32 p-2 border-2 rounded-md font-mono text-center">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Binary 10001 to Decimal:</label>
+                        <input type="text" data-answer="17" oninput="checkAnswer(this)" placeholder="Decimal" class="w-32 p-2 border-2 rounded-md font-mono text-center">
                     </div>
                 </div>
             </div>
@@ -155,13 +229,7 @@
     </div>
 
     <script>
-        // State for Binary Visualizer
-        const bits = {
-            8: false,
-            4: false,
-            2: false,
-            1: false
-        };
+        const bits = { 16: false, 8: false, 4: false, 2: false, 1: false };
 
         function toggleBit(value) {
             bits[value] = !bits[value];
@@ -177,32 +245,26 @@
                 el.classList.add('border-slate-700');
                 valEl.innerText = '0';
             }
-            
             calculateBinary();
         }
 
         function calculateBinary() {
             let total = 0;
-            if (bits[8]) total += 8;
-            if (bits[4]) total += 4;
-            if (bits[2]) total += 2;
-            if (bits[1]) total += 1;
-            
+            Object.keys(bits).forEach(val => {
+                if (bits[val]) total += parseInt(val);
+            });
             document.getElementById('binary-to-decimal-result').innerText = total;
         }
 
         function checkAnswer(input) {
             const userAnswer = input.value.trim();
             const correctAnswer = input.getAttribute('data-answer');
-            
             if (userAnswer === "") {
                 input.classList.remove('correct-input', 'wrong-input');
                 return;
             }
-
             const userNum = parseInt(userAnswer, 10);
             const correctNum = parseInt(correctAnswer, 10);
-
             if (userNum === correctNum) {
                 input.classList.add('correct-input');
                 input.classList.remove('wrong-input');
