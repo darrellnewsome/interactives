@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Unpacking Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-input {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            tab-size: 4;
+            resize: none;
+        }
+        .feedback-box {
+            transition: all 0.3s ease;
+        }
+        .correct { color: #4ade80; border-left: 4px solid #4ade80; }
+        .hint { color: #facc15; border-left: 4px solid #facc15; }
+        .error { color: #f87171; border-left: 4px solid #f87171; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400">Activity i2p13_7_3: Dictionary Unpacking</h1>
+            <p class="text-gray-400 mt-2">Learn how to unpack data using <code>.items()</code> to write cleaner, more professional code.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Lesson Content -->
+            <div class="space-y-6 overflow-y-auto max-h-[70vh] pr-4">
+                <section class="bg-gray-800 p-5 rounded-lg border border-gray-700">
+                    <h2 class="text-xl font-semibold mb-3 text-blue-300">What is Unpacking?</h2>
+                    <div class="bg-black p-3 rounded mb-3 text-sm">
+                        <code class="text-purple-400">person = ("Alex", 90)</code><br>
+                        <code class="text-green-400">name, score = person</code>
+                    </div>
+                    <ul class="list-disc ml-5 space-y-2 text-sm text-gray-300">
+                        <li>The tuple contains two values.</li>
+                        <li>We "unpack" them into two variables at once.</li>
+                        <li><span class="text-yellow-400 font-bold">Important Rule:</span> Order matters! The first variable gets the first value.</li>
+                    </ul>
+                </section>
+
+                <section class="bg-gray-800 p-5 rounded-lg border border-gray-700">
+                    <h2 class="text-xl font-semibold mb-3 text-blue-300">Unpacking with Dictionaries</h2>
+                    <p class="text-sm mb-3 italic">Instead of manually indexing:</p>
+                    <div class="bg-black p-3 rounded mb-3 text-sm opacity-60">
+                        <code>for key in grades:</code><br>
+                        <code>&nbsp;&nbsp;print(key, grades[key])</code>
+                    </div>
+                    <p class="text-sm mb-3 italic text-green-400">Use .items():</p>
+                    <div class="bg-black p-3 rounded mb-3 text-sm">
+                        <code>for name, score in grades.items():</code><br>
+                        <code>&nbsp;&nbsp;print(name, score)</code>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 italic">👉 "Unpacking reduces indexing and improves readability."</p>
+                </section>
+            </div>
+
+            <!-- Right Column: Interactive Editor -->
+            <div class="flex flex-col h-full">
+                <div class="bg-gray-800 rounded-t-lg p-4 border-t border-l border-r border-gray-700">
+                    <h3 class="font-bold text-orange-400 mb-2">Guided Practice: Inventory Auditor</h3>
+                    <p class="text-xs text-gray-300 mb-4">
+                        1. Loop through <code>inventory</code> using <code>.items()</code><br>
+                        2. <strong>Unpack</strong> into variables (item, qty)<br>
+                        3. Print all items/quantities.<br>
+                        4. Print a warning ONLY if quantity is <strong>less than 5</strong>.
+                    </p>
+                </div>
+
+                <div class="relative">
+                    <textarea 
+                        id="codeInput"
+                        class="code-input w-full h-64 p-4 text-sm focus:outline-none border-x border-gray-700"
+                        placeholder="inventory = {&#10;    'Apples': 5,&#10;    'Bananas': 8,&#10;    'Oranges': 3&#10;}&#10;&#10;# Type your loop here..."
+                        oninput="checkCode()"
+                    ></textarea>
+                </div>
+
+                <div id="feedbackBox" class="bg-gray-800 p-4 rounded-b-lg border border-gray-700 feedback-box min-h-[100px]">
+                    <h4 class="text-xs font-bold uppercase text-gray-500 mb-2">Feedback & Status</h4>
+                    <div id="feedbackContent" class="text-sm">
+                        Waiting for you to start typing...
+                    </div>
+                </div>
+
+                <button 
+                    onclick="resetCode()" 
+                    class="mt-4 text-xs text-gray-500 hover:text-gray-300 underline self-end"
+                >
+                    Reset Editor
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initialValue = `inventory = {
+    "Apples": 5,
+    "Bananas": 8,
+    "Oranges": 3
+}
+
+# Write your loop below...
+`;
+
+        const codeInput = document.getElementById('codeInput');
+        const feedbackContent = document.getElementById('feedbackContent');
+        const feedbackBox = document.getElementById('feedbackBox');
+
+        // Set initial state
+        codeInput.value = initialValue;
+
+        function checkCode() {
+            const code = codeInput.value;
+            let feedback = [];
+            let status = 'hint';
+
+            // 1. Check for .items()
+            if (!code.includes('.items()')) {
+                feedback.push("❌ <strong>Missing .items():</strong> Use <code>inventory.items()</code> to get both keys and values.");
+                status = 'error';
+            } else {
+                feedback.push("✅ Using <code>.items()</code> correctly.");
+            }
+
+            // 2. Check for Unpacking
+            const loopMatch = code.match(/for\s+([a-zA-Z0-9_]+)\s*,\s*([a-zA-Z0-9_]+)\s+in/);
+            if (!loopMatch) {
+                feedback.push("❌ <strong>Not Unpacking:</strong> Try <code>for item, qty in inventory.items():</code> to unpack values.");
+                status = 'error';
+            } else {
+                feedback.push(`✅ Unpacking into <code>${loopMatch[1]}</code> and <code>${loopMatch[2]}</code>.`);
+            }
+
+            // 3. Check for Indexing (should avoid)
+            if (code.match(/inventory\[.*\]/)) {
+                feedback.push("⚠️ <strong>Avoid Indexing:</strong> You've already unpacked! Use your variable instead of <code>inventory[key]</code>.");
+                status = 'hint';
+            }
+
+            // 4. Check for logic < 5
+            if (code.includes('< 5')) {
+                feedback.push("✅ Logic check for <code>< 5</code> found.");
+            } else if (code.includes('<= 5')) {
+                feedback.push("⚠️ <strong>Check the rule:</strong> The task says <em>less than</em> 5. Apples (5) shouldn't trigger the warning.");
+                status = 'hint';
+            } else if (code.includes('if')) {
+                feedback.push("💡 Almost there! Ensure you are comparing the quantity to 5.");
+            }
+
+            // Final Win Condition
+            if (!feedback.some(f => f.includes('❌')) && code.includes('print') && code.includes('< 5')) {
+                feedbackContent.innerHTML = "<div class='font-bold text-green-400 mb-2'>Excellent Work! 🚀</div>" + 
+                    "You've successfully used unpacking to make your code cleaner and more readable. No more student[0] or student[1] required!";
+                feedbackBox.className = "bg-gray-800 p-4 rounded-b-lg border border-gray-700 feedback-box correct";
+            } else {
+                feedbackContent.innerHTML = feedback.join('<br>');
+                feedbackBox.className = `bg-gray-800 p-4 rounded-b-lg border border-gray-700 feedback-box ${status}`;
+            }
+        }
+
+        function resetCode() {
+            codeInput.value = initialValue;
+            checkCode();
+        }
+
+        // Initialize feedback
+        checkCode();
+    </script>
+</body>
+</html>
+
