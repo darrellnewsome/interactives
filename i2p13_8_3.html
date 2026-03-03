@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i2p13_8_3: Python List Comprehensions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-input {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #333;
+        }
+        .feedback-box {
+            transition: all 0.3s ease;
+            min-height: 50px;
+        }
+        .correct { border-left: 5px solid #10b981; background-color: #ecfdf5; color: #065f46; }
+        .incorrect { border-left: 5px solid #ef4444; background-color: #fef2f2; color: #991b1b; }
+        .hint { border-left: 5px solid #f59e0b; background-color: #fffbeb; color: #92400e; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans leading-relaxed">
+
+    <div class="max-w-3xl mx-auto p-6 md:p-12">
+        <!-- Header -->
+        <header class="mb-8 border-b pb-6">
+            <h1 class="text-3xl font-bold text-slate-800">13.8.3 Guided Practice</h1>
+            <p class="text-slate-600 mt-2">Mastering Python List Comprehensions</p>
+        </header>
+
+        <!-- Concept Card: Basics -->
+        <section class="bg-white rounded-xl shadow-sm border p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm mr-3">Concept</span>
+                The Basic Structure
+            </h2>
+            <div class="bg-slate-900 text-slate-300 p-4 rounded-lg mb-4 text-sm">
+                <code>[expression <span class="text-pink-400">for</span> item <span class="text-pink-400">in</span> iterable]</code>
+            </div>
+            <ul class="space-y-2 text-slate-700">
+                <li>👉 <strong>Expression:</strong> What we produce (the math or change).</li>
+                <li>👉 <strong>For Item in Iterable:</strong> Where the values come from.</li>
+            </ul>
+        </section>
+
+        <!-- Interactive Challenge 1 -->
+        <section class="bg-white rounded-xl shadow-sm border p-6 mb-8">
+            <div class="mb-4">
+                <h3 class="font-bold text-lg text-slate-800">1️⃣ Task: Create the Source List</h3>
+                <p class="text-slate-600 mb-4 text-sm italic">Create a list named <code>numbers</code> containing integers 1 through 10.</p>
+                <input type="text" id="task1-input" class="code-input" placeholder="numbers = [1, 2, ...]" autocomplete="off">
+            </div>
+            <div id="task1-feedback" class="feedback-box p-4 rounded text-sm hidden"></div>
+            <button onclick="checkTask1()" class="mt-4 bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-slate-700 transition">Run Code</button>
+        </section>
+
+        <!-- Interactive Challenge 2 -->
+        <section id="task2-section" class="bg-white rounded-xl shadow-sm border p-6 mb-8 opacity-50 pointer-events-none transition-opacity">
+            <div class="mb-4">
+                <h3 class="font-bold text-lg text-slate-800">2️⃣ Task: Double the Numbers</h3>
+                <p class="text-slate-600 mb-4 text-sm italic">Now, use a <strong>comprehension</strong> to create a new list named <code>doubled</code> that doubles every item in your <code>numbers</code> list.</p>
+                <input type="text" id="task2-input" class="code-input" placeholder="doubled = [x * 2 ...]" autocomplete="off">
+            </div>
+            <div id="task2-feedback" class="feedback-box p-4 rounded text-sm hidden"></div>
+            <button onclick="checkTask2()" class="mt-4 bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-slate-700 transition">Run Code</button>
+        </section>
+
+        <!-- Advanced Concept: Conditions -->
+        <section id="condition-section" class="bg-white rounded-xl shadow-sm border p-6 mb-8 hidden">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm mr-3">Advanced</span>
+                🟨 Adding a Condition
+            </h2>
+            <p class="text-sm text-slate-600 mb-4">You can filter lists by adding an <code>if</code> statement at the end:</p>
+            <div class="bg-slate-900 text-slate-300 p-4 rounded-lg mb-4 text-sm font-mono">
+                evens = [x for x in range(10) if x % 2 == 0]
+            </div>
+            <p class="text-sm font-semibold">Discussion Prompt:</p>
+            <p class="text-slate-700 italic border-l-4 border-slate-200 pl-4 py-2 my-2">
+                "Which version is easier to read? When might a regular loop be better?"
+            </p>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="text-center pb-12">
+            <button onclick="location.reload()" class="text-slate-400 hover:text-slate-600 text-sm underline">Restart Activity</button>
+        </div>
+    </div>
+
+    <script>
+        function showFeedback(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = message;
+            el.classList.remove('hidden', 'correct', 'incorrect', 'hint');
+            el.classList.add(type);
+        }
+
+        function checkTask1() {
+            const input = document.getElementById('task1-input').value.trim();
+            const feedbackId = 'task1-feedback';
+            
+            // Basic validation for creating a list 1-10
+            const regex = /numbers\s*=\s*\[\s*(1|range\(1,\s*11\))\s*,?\s*.*\]?/;
+            const listMatch = input.match(/numbers\s*=\s*\[\s*(1,?\s*2,?\s*3,?\s*4,?\s*5,?\s*6,?\s*7,?\s*8,?\s*9,?\s*10)\s*\]/);
+            const rangeMatch = input.match(/numbers\s*=\s*list\(range\(1,\s*11\)\)/);
+
+            if (listMatch || rangeMatch) {
+                showFeedback(feedbackId, "✅ Correct! You've defined the list <code>numbers</code>. Now let's transform it.", "correct");
+                document.getElementById('task2-section').classList.remove('opacity-50', 'pointer-events-none');
+            } else if (input.includes('numbers =')) {
+                showFeedback(feedbackId, "💡 Almost! Make sure your list contains exactly the numbers 1 through 10. Example: <code>numbers = [1, 2, 3...]</code>", "hint");
+            } else {
+                showFeedback(feedbackId, "❌ Use the syntax: <code>numbers = [1, 2, 3, ...]</code>", "incorrect");
+            }
+        }
+
+        function checkTask2() {
+            const input = document.getElementById('task2-input').value.trim();
+            const feedbackId = 'task2-feedback';
+            
+            // Check for list comprehension structure
+            const comprehensionRegex = /doubled\s*=\s*\[\s*(.*)\s+for\s+(.*)\s+in\s+numbers\s*\]/;
+            const match = input.match(comprehensionRegex);
+
+            if (match) {
+                const expression = match[1].replace(/\s/g, '');
+                if (expression === 'x*2' || expression === 'n*2' || expression === 'item*2' || expression === '2*x') {
+                    showFeedback(feedbackId, "🌟 Perfect! You used a list comprehension to double the values. Notice how it's all on one line!", "correct");
+                    document.getElementById('condition-section').classList.remove('hidden');
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                } else {
+                    showFeedback(feedbackId, "💡 You have the structure right, but check your math. How do you double <code>x</code>? (Hint: <code>x * 2</code>)", "hint");
+                }
+            } else {
+                showFeedback(feedbackId, "❌ Remember the structure: <code>[expression for item in iterable]</code>. Try: <code>doubled = [x * 2 for x in numbers]</code>", "incorrect");
+            }
+        }
+    </script>
+</body>
+</html>
+
