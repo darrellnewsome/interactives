@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Color Representation - Guided Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .color-swatch {
+            transition: background-color 0.4s ease, transform 0.2s ease;
+        }
+        .reveal-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .slider-red::-webkit-slider-thumb { background: #ef4444; }
+        .slider-green::-webkit-slider-thumb { background: #22c55e; }
+        .slider-blue::-webkit-slider-thumb { background: #3b82f6; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-6 text-white">
+            <h1 class="text-2xl md:text-3xl font-bold">Guided Practice: RGB Mix</h1>
+            <p class="mt-2 opacity-90 text-sm md:text-base">Understand how computers use 24-bit color (8 bits per channel) to create 16 million possibilities.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200">
+            <button onclick="switchTab('predict')" id="tab-predict" class="flex-1 py-4 font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white">1. Predict Colors</button>
+            <button onclick="switchTab('explore')" id="tab-explore" class="flex-1 py-4 font-bold text-slate-500 hover:text-indigo-600 transition-colors">2. RGB Explorer</button>
+        </div>
+
+        <!-- Prediction Section -->
+        <div id="section-predict" class="p-6 space-y-6">
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
+                <p class="text-blue-800 text-sm">
+                    <strong>Instructions:</strong> Look at the triplets below. Predict the color in your head or with your partner, then click "Reveal" to check your recipe!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Triplet Items -->
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(255, 0, 0)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-1" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(1, 255, 0, 0)" id="btn-1" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(0, 255, 0)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-2" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(2, 0, 255, 0)" id="btn-2" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(0, 0, 255)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-3" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(3, 0, 0, 255)" id="btn-3" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(255, 255, 0)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-4" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(4, 255, 255, 0)" id="btn-4" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(0, 255, 255)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-5" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(5, 0, 255, 255)" id="btn-5" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50">
+                    <div class="font-mono text-lg font-bold">(255, 0, 255)</div>
+                    <div class="flex gap-2">
+                        <div id="swatch-6" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(6, 255, 0, 255)" id="btn-6" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+
+                <div class="prediction-card p-4 border border-slate-200 rounded-xl flex items-center justify-between bg-slate-50 md:col-span-2">
+                    <div class="flex flex-col">
+                        <span class="font-mono text-lg font-bold">(72, 73, 33)</span>
+                        <span class="text-xs text-slate-500 uppercase font-bold">The Lesson Example</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <div id="swatch-7" class="w-12 h-12 rounded-lg border border-slate-300 bg-white"></div>
+                        <button onclick="reveal(7, 72, 73, 33)" id="btn-7" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">Reveal</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center pt-4">
+                <button onclick="resetPredictions()" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold underline">Reset All Predictions</button>
+            </div>
+        </div>
+
+        <!-- Explorer Section -->
+        <div id="section-explore" class="p-6 hidden space-y-8">
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <!-- Color Display -->
+                <div class="w-full md:w-1/2">
+                    <div id="main-preview" class="w-full h-64 rounded-2xl shadow-inner border-4 border-white flex items-center justify-center text-white" style="background-color: rgb(127, 127, 127);">
+                        <div class="text-center drop-shadow-md">
+                            <p id="preview-hex" class="text-3xl font-black">#7F7F7F</p>
+                            <p id="preview-rgb" class="text-xl font-mono">rgb(127, 127, 127)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="w-full md:w-1/2 space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-red-600">Red (0-255)</label>
+                            <span id="val-r" class="font-mono bg-red-100 text-red-700 px-2 py-0.5 rounded">127</span>
+                        </div>
+                        <input type="range" id="input-r" min="0" max="255" value="127" oninput="updateExplorer()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-red accent-red-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-green-600">Green (0-255)</label>
+                            <span id="val-g" class="font-mono bg-green-100 text-green-700 px-2 py-0.5 rounded">127</span>
+                        </div>
+                        <input type="range" id="input-g" min="0" max="255" value="127" oninput="updateExplorer()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-green accent-green-500">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="font-bold text-blue-600">Blue (0-255)</label>
+                            <span id="val-b" class="font-mono bg-blue-100 text-blue-700 px-2 py-0.5 rounded">127</span>
+                        </div>
+                        <input type="range" id="input-b" min="0" max="255" value="127" oninput="updateExplorer()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-blue accent-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+                <button onclick="setExplorer(0,0,0)" class="p-2 border border-slate-200 rounded hover:bg-slate-50 transition text-sm font-semibold">Black (0,0,0)</button>
+                <button onclick="setExplorer(255,255,255)" class="p-2 border border-slate-200 rounded hover:bg-slate-50 transition text-sm font-semibold">White (255,255,255)</button>
+                <button onclick="setExplorer(255,165,0)" class="p-2 border border-slate-200 rounded hover:bg-slate-50 transition text-sm font-semibold">Orange (255,165,0)</button>
+                <button onclick="setExplorer(128,0,128)" class="p-2 border border-slate-200 rounded hover:bg-slate-50 transition text-sm font-semibold">Purple (128,0,128)</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-100 p-4 border-t border-slate-200 text-center text-xs text-slate-500">
+            Remember: 8 bits + 8 bits + 8 bits = 24-bit color. Over 16.7 million combinations!
+        </div>
+    </div>
+
+    <script>
+        function reveal(id, r, g, b) {
+            const swatch = document.getElementById('swatch-' + id);
+            const btn = document.getElementById('btn-' + id);
+            swatch.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            btn.disabled = true;
+            btn.innerText = "Revealed";
+            btn.classList.replace('bg-indigo-500', 'bg-slate-300');
+            swatch.classList.add('scale-110');
+        }
+
+        function resetPredictions() {
+            for (let i = 1; i <= 7; i++) {
+                const swatch = document.getElementById('swatch-' + i);
+                const btn = document.getElementById('btn-' + i);
+                swatch.style.backgroundColor = 'white';
+                swatch.classList.remove('scale-110');
+                btn.disabled = false;
+                btn.innerText = "Reveal";
+                btn.classList.replace('bg-slate-300', 'bg-indigo-500');
+            }
+        }
+
+        function switchTab(tab) {
+            const predictSection = document.getElementById('section-predict');
+            const exploreSection = document.getElementById('section-explore');
+            const predictTab = document.getElementById('tab-predict');
+            const exploreTab = document.getElementById('tab-explore');
+
+            if (tab === 'predict') {
+                predictSection.classList.remove('hidden');
+                exploreSection.classList.add('hidden');
+                predictTab.className = "flex-1 py-4 font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white";
+                exploreTab.className = "flex-1 py-4 font-bold text-slate-500 hover:text-indigo-600 transition-colors";
+            } else {
+                predictSection.classList.add('hidden');
+                exploreSection.classList.remove('hidden');
+                exploreTab.className = "flex-1 py-4 font-bold text-indigo-600 border-b-2 border-indigo-600 bg-white";
+                predictTab.className = "flex-1 py-4 font-bold text-slate-500 hover:text-indigo-600 transition-colors";
+            }
+        }
+
+        function componentToHex(c) {
+            var hex = parseInt(c).toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+        }
+
+        function updateExplorer() {
+            const r = document.getElementById('input-r').value;
+            const g = document.getElementById('input-g').value;
+            const b = document.getElementById('input-b').value;
+
+            document.getElementById('val-r').innerText = r;
+            document.getElementById('val-g').innerText = g;
+            document.getElementById('val-b').innerText = b;
+
+            const preview = document.getElementById('main-preview');
+            const rgbText = document.getElementById('preview-rgb');
+            const hexText = document.getElementById('preview-hex');
+
+            const color = `rgb(${r}, ${g}, ${b})`;
+            preview.style.backgroundColor = color;
+            rgbText.innerText = `rgb(${r}, ${g}, ${b})`;
+            hexText.innerText = rgbToHex(r, g, b).toUpperCase();
+
+            // Calculate luminance to decide text color (black vs white)
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            preview.style.color = luminance > 0.5 ? '#1e293b' : '#ffffff';
+        }
+
+        function setExplorer(r, g, b) {
+            document.getElementById('input-r').value = r;
+            document.getElementById('input-g').value = g;
+            document.getElementById('input-b').value = b;
+            updateExplorer();
+        }
+
+        // Initialize explorer on load
+        window.onload = updateExplorer;
+    </script>
+</body>
+</html>
+
