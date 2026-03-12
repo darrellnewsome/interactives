@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity: itcl11_1_4 - Cloud Computing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .service-row:nth-child(even) { background-color: #f9fafb; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-8 px-4 shadow-lg mb-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-2">☁️ itcl11_1_4: What is Cloud Computing?</h1>
+            <p class="text-blue-100 italic">Independent Activity – Cloud in Your Daily Life</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pb-20">
+        
+        <!-- Introduction & Learning Section -->
+        <section class="glass-panel p-6 rounded-xl shadow-sm mb-8">
+            <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
+                <span class="mr-2">📖</span> Key Concepts
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+                <div class="space-y-3">
+                    <p><strong>Cloud computing</strong> is the on-demand delivery of computing power, database storage, and apps over the internet. It's like "renting" space from a giant remote computer.</p>
+                    <div class="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p class="font-bold">Real-World Fact:</p>
+                        <p>Services live in <strong>Data Centers</strong>—buildings the size of football fields filled with thousands of servers.</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="font-bold border-b pb-1">Local vs. Cloud</p>
+                    <ul class="list-none space-y-1">
+                        <li>💾 <strong>Local:</strong> Internal drives, USB sticks. Risk: Device lost = data lost.</li>
+                        <li>☁️ <strong>Cloud:</strong> Data centers, internet required. Benefit: Data stays safe even if hardware breaks.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Activity -->
+        <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+            <h2 class="text-2xl font-bold mb-6 text-slate-700 border-b pb-2">Part 1: Analyze Your Cloud Services</h2>
+            <p class="mb-6 text-slate-600">Identify at least <strong>5 cloud services</strong> you use (School tools, Gaming, Social Media, etc.) and explain why they use the cloud.</p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100">
+                            <th class="p-3 border">1. Service Name</th>
+                            <th class="p-3 border">2. Type of Data Stored</th>
+                            <th class="p-3 border">3. Why Cloud Helps?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceTableBody">
+                        <!-- Rows generated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button onclick="addRow()" class="mt-4 text-sm text-blue-600 font-semibold hover:underline flex items-center">
+                + Add Another Service
+            </button>
+
+            <h2 class="text-2xl font-bold mt-12 mb-6 text-slate-700 border-b pb-2">Part 2: Reflection Questions</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="block font-medium mb-2">1. Could these services still work if cloud computing did not exist? Explain.</label>
+                    <textarea id="ref1" rows="3" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Write 2-3 sentences..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium mb-2">2. What advantages does cloud computing provide to users?</label>
+                    <textarea id="ref2" rows="3" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Write 2-3 sentences..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium mb-2">3. What risks or concerns might exist when storing information in the cloud?</label>
+                    <textarea id="ref3" rows="3" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hacking, privacy, internet reliance..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submission Area -->
+            <div class="mt-12 p-6 bg-slate-900 text-white rounded-xl shadow-xl">
+                <h3 class="text-xl font-bold mb-2">Ready to submit?</h3>
+                <p class="text-slate-400 mb-6 text-sm">Click the button below to copy all your answers to your clipboard. Then, paste (Ctrl+V) them into your Schoology submission box.</p>
+                
+                <button id="copyBtn" onclick="copyToClipboard()" class="w-full bg-green-500 hover:bg-green-400 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                    <span id="btnIcon">📋</span> <span id="btnText">Copy Responses for Schoology</span>
+                </button>
+                <p id="successMsg" class="text-center mt-3 text-green-400 font-bold opacity-0 transition-opacity">Successfully copied to clipboard!</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize the table with 5 rows
+        const tableBody = document.getElementById('serviceTableBody');
+        
+        function createRow(index) {
+            const tr = document.createElement('tr');
+            tr.className = 'service-row';
+            tr.innerHTML = `
+                <td class="p-2 border">
+                    <input type="text" class="w-full p-2 border-none focus:ring-0 text-sm service-name" placeholder="e.g. Netflix">
+                </td>
+                <td class="p-2 border">
+                    <input type="text" class="w-full p-2 border-none focus:ring-0 text-sm service-data" placeholder="e.g. Watch history">
+                </td>
+                <td class="p-2 border">
+                    <input type="text" class="w-full p-2 border-none focus:ring-0 text-sm service-why" placeholder="e.g. Start on TV, finish on phone">
+                </td>
+            `;
+            return tr;
+        }
+
+        for(let i=0; i<5; i++) {
+            tableBody.appendChild(createRow(i));
+        }
+
+        function addRow() {
+            tableBody.appendChild(createRow(tableBody.children.length));
+        }
+
+        function copyToClipboard() {
+            // Compile text
+            let textOutput = `STUDENT ACTIVITY: itcl11_1_4 - Cloud Computing\n`;
+            textOutput += `--------------------------------------------------\n\n`;
+            textOutput += `STEP 1 & 2: ANALYZING SERVICES\n`;
+            
+            const rows = document.querySelectorAll('.service-row');
+            rows.forEach((row, i) => {
+                const name = row.querySelector('.service-name').value;
+                const data = row.querySelector('.service-data').value;
+                const why = row.querySelector('.service-why').value;
+                
+                if (name.trim() !== "") {
+                    textOutput += `${i+1}. Service: ${name}\n   - Data Stored: ${data}\n   - Why Cloud: ${why}\n\n`;
+                }
+            });
+
+            textOutput += `--------------------------------------------------\n`;
+            textOutput += `STEP 4: REFLECTION QUESTIONS\n\n`;
+            textOutput += `1. Could these services work without cloud?\n${document.getElementById('ref1').value}\n\n`;
+            textOutput += `2. Advantages of cloud computing:\n${document.getElementById('ref2').value}\n\n`;
+            textOutput += `3. Risks/Concerns:\n${document.getElementById('ref3').value}\n\n`;
+            textOutput += `--------------------------------------------------\n`;
+            textOutput += `End of Submission`;
+
+            // Use execCommand fallback for wider browser compatibility in iframes
+            const textArea = document.createElement("textarea");
+            textArea.value = textOutput;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    showFeedback();
+                }
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showFeedback() {
+            const btn = document.getElementById('copyBtn');
+            const icon = document.getElementById('btnIcon');
+            const text = document.getElementById('btnText');
+            const msg = document.getElementById('successMsg');
+
+            btn.classList.replace('bg-green-500', 'bg-blue-500');
+            icon.innerText = "✅";
+            text.innerText = "Copied!";
+            msg.style.opacity = "1";
+
+            setTimeout(() => {
+                btn.classList.replace('bg-blue-500', 'bg-green-500');
+                icon.innerText = "📋";
+                text.innerText = "Copy Responses for Schoology";
+                msg.style.opacity = "0";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
