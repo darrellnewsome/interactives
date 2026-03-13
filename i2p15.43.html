@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Coding: Class Score Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            transition: all 0.3s ease;
+        }
+        .highlight-line {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+            transform: translateX(4px);
+        }
+        .step-active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .pulse {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900">Guided Coding: Scores & Statistics</h1>
+            <p class="text-slate-600 mt-2">Combine file reading and writing to generate a Class Score Report.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left: Instructional Steps -->
+            <div class="space-y-6">
+                <div id="step1" class="step-card p-6 bg-white rounded-xl shadow-sm border-2 border-transparent cursor-pointer transition-all step-active" onclick="showStep(1)">
+                    <h2 class="font-bold text-lg flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3 text-sm">1</span>
+                        Read the Scores File
+                    </h2>
+                    <p class="mt-2 text-slate-600">Open the source file and extract the numerical scores into a list.</p>
+                </div>
+
+                <div id="step2" class="step-card p-6 bg-white rounded-xl shadow-sm border-2 border-transparent cursor-pointer transition-all" onclick="showStep(2)">
+                    <h2 class="font-bold text-lg flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3 text-sm">2</span>
+                        Calculate Statistics
+                    </h2>
+                    <p class="mt-2 text-slate-600">Process the data to find the sum, the total count of students, and the average.</p>
+                </div>
+
+                <div id="step3" class="step-card p-6 bg-white rounded-xl shadow-sm border-2 border-transparent cursor-pointer transition-all" onclick="showStep(3)">
+                    <h2 class="font-bold text-lg flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3 text-sm">3</span>
+                        Write the Output Report
+                    </h2>
+                    <p class="mt-2 text-slate-600">Format the findings and save them to <code>report.txt</code>.</p>
+                </div>
+
+                <!-- Simulation/Output Preview -->
+                <div class="mt-8 p-6 bg-slate-900 rounded-xl text-white">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Console / File Preview</h3>
+                    <div id="output-display" class="font-mono text-sm space-y-2 min-h-[120px]">
+                        <p class="text-green-400">> Program ready.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Code Editor Simulation -->
+            <div class="bg-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col">
+                <div class="bg-slate-700 px-4 py-2 flex items-center justify-between">
+                    <span class="text-slate-300 text-xs font-mono">score_processor.py</span>
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                </div>
+                <div class="p-6 overflow-auto code-block text-slate-300 text-sm leading-relaxed" id="code-container">
+                    <!-- Code lines will be populated here -->
+                </div>
+                <div class="p-4 bg-slate-700 border-t border-slate-600 flex justify-end">
+                    <button onclick="runCode()" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold transition-all flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4.5 3.5v13L16 10l-11.5-6.5z"/></svg>
+                        Run Script
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const codeSteps = [
+            {
+                lines: [
+                    { content: "# Step 1: Read the scores file", type: "comment" },
+                    { content: "with open('scores.txt', 'r') as file:", type: "code", step: 1 },
+                    { content: "    scores = [int(line.strip()) for line in file]", type: "code", step: 1 },
+                    { content: "", type: "empty" },
+                    { content: "# Step 2: Calculate stats", type: "comment" },
+                    { content: "total = sum(scores)", type: "code", step: 2 },
+                    { content: "count = len(scores)", type: "code", step: 2 },
+                    { content: "average = total / count", type: "code", step: 2 },
+                    { content: "", type: "empty" },
+                    { content: "# Step 3: Write report", type: "comment" },
+                    { content: "with open('report.txt', 'w') as out:", type: "code", step: 3 },
+                    { content: "    out.write('Class Score Report\\n')", type: "code", step: 3 },
+                    { content: "    out.write('------------------\\n')", type: "code", step: 3 },
+                    { content: "    out.write(f'Total Score: {total}\\n')", type: "code", step: 3 },
+                    { content: "    out.write(f'Students: {count}\\n')", type: "code", step: 3 },
+                    { content: "    out.write(f'Average Score: {average:.1f}')", type: "code", step: 3 }
+                ]
+            }
+        ];
+
+        let currentStep = 1;
+
+        function renderCode() {
+            const container = document.getElementById('code-container');
+            container.innerHTML = '';
+            
+            codeSteps[0].lines.forEach((line, index) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = `px-2 py-0.5 rounded transition-all duration-300 ${line.step === currentStep ? 'highlight-line' : ''}`;
+                
+                if (line.type === 'comment') {
+                    lineDiv.innerHTML = `<span class="text-slate-500 italic">${line.content}</span>`;
+                } else if (line.type === 'empty') {
+                    lineDiv.innerHTML = `&nbsp;`;
+                } else {
+                    // Simple syntax highlighting
+                    let html = line.content
+                        .replace(/\b(with|open|as|sum|len|int|for|in|write|f)\b/g, '<span class="text-pink-400">$1</span>')
+                        .replace(/('.*?')/g, '<span class="text-yellow-200">$1</span>');
+                    lineDiv.innerHTML = `<span>${html}</span>`;
+                }
+                
+                container.appendChild(lineDiv);
+            });
+        }
+
+        function showStep(step) {
+            currentStep = step;
+            
+            // Update UI Sidebar
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('step-active', 'pulse');
+                card.classList.add('opacity-60');
+            });
+            
+            const activeCard = document.getElementById(`step${step}`);
+            activeCard.classList.add('step-active', 'pulse');
+            activeCard.classList.remove('opacity-60');
+
+            renderCode();
+
+            // Update Preview
+            const output = document.getElementById('output-display');
+            if (step === 1) {
+                output.innerHTML = `<p class="text-blue-400">> scores.txt loaded.</p><p class="text-slate-400">Data: [82, 95, 70, 88, 94]</p>`;
+            } else if (step === 2) {
+                output.innerHTML = `<p class="text-blue-400">> Calculating...</p><p class="text-slate-400">Total: 429 | Count: 5 | Avg: 85.8</p>`;
+            } else {
+                output.innerHTML = `<p class="text-blue-400">> Preparing report.txt...</p>`;
+            }
+        }
+
+        function runCode() {
+            const output = document.getElementById('output-display');
+            output.innerHTML = `<p class="text-yellow-400 italic">Processing file output...</p>`;
+            
+            setTimeout(() => {
+                output.innerHTML = `
+                    <div class="border border-slate-700 p-3 bg-slate-800 rounded">
+                        <p class="text-white font-bold">Class Score Report</p>
+                        <p class="text-white">------------------</p>
+                        <p class="text-white">Total Score: 429</p>
+                        <p class="text-white">Students: 5</p>
+                        <p class="text-white">Average Score: 85.8</p>
+                    </div>
+                    <p class="text-green-400 mt-2">✓ report.txt generated successfully.</p>
+                `;
+            }, 800);
+        }
+
+        // Initialize
+        renderCode();
+    </script>
+</body>
+</html>
+
