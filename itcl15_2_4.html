@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITCL 11.2.4 - Cloud Computing Activity</title>
+    <!-- Tailwind CSS for styling via GitHub Pages CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom transitions and hidden states */
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .tab-button.active { 
+            background-color: white; 
+            color: #2563eb; 
+            border-bottom: 2px solid #2563eb; 
+        }
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        
+        <!-- Header -->
+        <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><path d="M17.5 19a3.5 3.5 0 0 0 .5-6.91A7 7 0 0 0 5 11c0 3.87 3.13 7 7 7h5.5z"/></svg>
+                    Interactive Cloud Computing Guide
+                </h1>
+                <p class="text-blue-100 mt-1">Section 11.2.2 & 11.2.4 Activity</p>
+            </div>
+            <div id="step-indicator" class="text-right hidden sm:block text-xs font-semibold uppercase tracking-wider bg-blue-500 px-3 py-1 rounded-full">
+                Step 1 of 5
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto bg-slate-100 border-b scrollbar-hide" id="tabs">
+            <button onclick="goToStep(0)" class="tab-button active px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">1. How it Works</button>
+            <button onclick="goToStep(1)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">2. The Three Layers</button>
+            <button onclick="goToStep(2)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">3. Your Daily Cloud</button>
+            <button onclick="goToStep(3)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">4. Discussion</button>
+            <button onclick="goToStep(4)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">5. Submit Work</button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 min-h-[500px]" id="content">
+            
+            <!-- Step 1: Concepts -->
+            <div class="step-content active animate-fade">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    The Loop of Cloud Computing
+                </h2>
+                <div class="grid md:grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <h3 class="font-bold text-blue-700 mb-1">1. Devices</h3>
+                        <p class="text-sm text-slate-600">The "Entry Point". Phones and laptops show results but don't do the heavy lifting.</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                        <h3 class="font-bold text-green-700 mb-1">2. The Internet</h3>
+                        <p class="text-sm text-slate-600">The "Bridge". Without a connection, your device cannot reach the "brain" of the app.</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                        <h3 class="font-bold text-purple-700 mb-1">3. Data Centers</h3>
+                        <p class="text-sm text-slate-600">The "Physical Cloud". Massive buildings full of powerful servers running 24/7.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-100 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2 flex items-center gap-2">💡 Key Concept:</h4>
+                    <p class="text-slate-700 italic">"Cloud apps usually require Wi-Fi or mobile data because the 'brain' of the app lives somewhere else."</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Layers -->
+            <div class="step-content animate-fade">
+                <h2 class="text-xl font-bold mb-4">The Three Layers: SaaS, PaaS, IaaS</h2>
+                <div class="space-y-4">
+                    <div class="p-4 border rounded-xl bg-orange-50 border-orange-100">
+                        <h3 class="font-bold text-orange-700">SaaS (Software as a Service)</h3>
+                        <p class="text-sm text-slate-600 font-medium mb-1">Target: Everyone (User-focused)</p>
+                        <p class="text-sm text-slate-600">You just use the app. Provider handles everything. (Google Docs, Netflix, Spotify)</p>
+                    </div>
+                    <div class="p-4 border rounded-xl bg-indigo-50 border-indigo-100">
+                        <h3 class="font-bold text-indigo-700">PaaS (Platform as a Service)</h3>
+                        <p class="text-sm text-slate-600 font-medium mb-1">Target: Developers (Creator-focused)</p>
+                        <p class="text-sm text-slate-600">You provide code; they provide tools and platform. (Google App Engine)</p>
+                    </div>
+                    <div class="p-4 border rounded-xl bg-emerald-50 border-emerald-100">
+                        <h3 class="font-bold text-emerald-700">IaaS (Infrastructure as a Service)</h3>
+                        <p class="text-sm text-slate-600 font-medium mb-1">Target: IT Professionals (Admin-focused)</p>
+                        <p class="text-sm text-slate-600">You rent virtual hardware and manage the OS. (AWS, Azure)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Student Task -->
+            <div class="step-content animate-fade">
+                <h2 class="text-xl font-bold mb-2">Activity: Cloud in Your Daily Life</h2>
+                <p class="text-sm text-slate-600 mb-4">Identify 5 cloud services you use (School, Gaming, Social Media, etc.)</p>
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-left border-collapse bg-white">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="p-3 border text-xs uppercase font-bold text-slate-500">Service Name</th>
+                                <th class="p-3 border text-xs uppercase font-bold text-slate-500">Type of Data</th>
+                                <th class="p-3 border text-xs uppercase font-bold text-slate-500">Why Cloud helps?</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-rows">
+                            <!-- JS will populate rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Step 4: Questions -->
+            <div class="step-content animate-fade space-y-6">
+                <h2 class="text-xl font-bold">Discussion & Review</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block font-medium mb-1 text-slate-700">1. What are the advantages of cloud computing?</label>
+                        <textarea id="ans-adv" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" rows="2" placeholder="e.g. Backups, accessibility..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1 text-slate-700">2. Are there any risks to storing files online?</label>
+                        <textarea id="ans-risk" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" rows="2" placeholder="e.g. Security, internet dependency..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1 text-slate-700">3. Could this service work without cloud computing?</label>
+                        <textarea id="ans-dep" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" rows="2" placeholder="Explain why or why not..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Final Submission -->
+            <div class="step-content animate-fade flex flex-col items-center justify-center text-center py-6">
+                <div class="bg-blue-100 p-6 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">Ready to Submit!</h2>
+                <p class="text-slate-600 mb-6 max-w-md">Copy your report below and paste it into the assignment box on Schoology.</p>
+                
+                <button onclick="copyAnswers()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy to Clipboard
+                </button>
+
+                <div id="toast" class="hidden mt-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-bounce">
+                    Copied Successfully!
+                </div>
+
+                <div class="mt-8 w-full text-left">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">Report Preview:</h3>
+                    <pre id="preview" class="bg-slate-900 text-slate-300 p-4 rounded-lg text-xs overflow-y-auto max-h-48 w-full whitespace-pre-wrap font-mono"></pre>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="bg-slate-50 p-4 border-t flex justify-between">
+            <button id="prevBtn" onclick="prevStep()" class="px-6 py-2 rounded-lg font-medium">Back</button>
+            <button id="nextBtn" onclick="nextStep()" class="px-6 py-2 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700">Next Step</button>
+        </div>
+    </div>
+    
+    <p class="text-center text-slate-400 text-sm mt-6 italic">GitHub Hosted Interactive Guide • 11.2.4 Activity</p>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 5;
+
+        // Initialize Service Table Rows
+        const tbody = document.getElementById('service-rows');
+        for(let i=1; i<=5; i++) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="p-2 border"><input type="text" id="svc-${i}-n" class="w-full p-2 border-0 outline-none focus:bg-blue-50" placeholder="e.g. Netflix"></td>
+                <td class="p-2 border"><input type="text" id="svc-${i}-d" class="w-full p-2 border-0 outline-none focus:bg-blue-50" placeholder="e.g. Videos"></td>
+                <td class="p-2 border"><input type="text" id="svc-${i}-b" class="w-full p-2 border-0 outline-none focus:bg-blue-50" placeholder="e.g. Stream on any device"></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function updateUI() {
+            // Update tabs
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach((tab, idx) => {
+                tab.classList.toggle('active', idx === currentStep);
+            });
+
+            // Update content blocks
+            const contents = document.querySelectorAll('.step-content');
+            contents.forEach((content, idx) => {
+                content.classList.toggle('active', idx === currentStep);
+            });
+
+            // Update footer buttons
+            const prevBtn = document.getElementById('prevBtn');
+            prevBtn.disabled = currentStep === 0;
+            prevBtn.className = currentStep === 0 ? 
+                "px-6 py-2 rounded-lg font-medium text-slate-300 cursor-not-allowed" : 
+                "px-6 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-200";
+
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.style.display = currentStep === totalSteps - 1 ? 'none' : 'block';
+
+            document.getElementById('step-indicator').innerText = `Step ${currentStep + 1} of ${totalSteps}`;
+            
+            // Refresh preview if on final step
+            if (currentStep === 4) generatePreview();
+        }
+
+        function goToStep(idx) { currentStep = idx; updateUI(); }
+        function nextStep() { if (currentStep < totalSteps - 1) { currentStep++; updateUI(); } }
+        function prevStep() { if (currentStep > 0) { currentStep--; updateUI(); } }
+
+        function getReportText() {
+            let report = `### CLOUD COMPUTING ACTIVITY REPORT ###\n`;
+            report += `Date: ${new Date().toLocaleDateString()}\n\n`;
+            report += `[ACTIVITY: CLOUD IN DAILY LIFE]\n`;
+            for(let i=1; i<=5; i++) {
+                const name = document.getElementById(`svc-${i}-n`).value || 'Not entered';
+                const data = document.getElementById(`svc-${i}-d`).value || 'Not entered';
+                const benefit = document.getElementById(`svc-${i}-b`).value || 'Not entered';
+                report += `${i}. Service: ${name}\n   Data Type: ${data}\n   Benefit: ${benefit}\n\n`;
+            }
+            report += `[REFLECTION & DISCUSSION]\n`;
+            report += `1. Advantages: ${document.getElementById('ans-adv').value || 'N/A'}\n\n`;
+            report += `2. Risks: ${document.getElementById('ans-risk').value || 'N/A'}\n\n`;
+            report += `3. Offline Dependency: ${document.getElementById('ans-dep').value || 'N/A'}\n`;
+            return report;
+        }
+
+        function generatePreview() {
+            document.getElementById('preview').innerText = getReportText();
+        }
+
+        function copyAnswers() {
+            const text = getReportText();
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    const toast = document.getElementById('toast');
+                    toast.classList.remove('hidden');
+                    setTimeout(() => toast.classList.add('hidden'), 3000);
+                }
+            } catch (err) {
+                console.error('Copy failed');
+            }
+            document.body.removeChild(el);
+        }
+
+        // Initialize state
+        updateUI();
+    </script>
+</body>
+</html>
