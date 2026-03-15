@@ -22,6 +22,9 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Hide scrollbar but allow scrolling for tabs on mobile */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-900 p-4 md:p-8">
@@ -44,11 +47,11 @@
 
         <!-- Navigation Tabs -->
         <div class="flex overflow-x-auto bg-slate-100 border-b scrollbar-hide" id="tabs">
-            <button onclick="goToStep(0)" class="tab-button active px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">1. How it Works</button>
-            <button onclick="goToStep(1)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">2. The Three Layers</button>
-            <button onclick="goToStep(2)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">3. Your Daily Cloud</button>
-            <button onclick="goToStep(3)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">4. Discussion</button>
-            <button onclick="goToStep(4)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700">5. Submit Work</button>
+            <button onclick="goToStep(0)" class="tab-button active px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700 border-b-2 border-transparent">1. How it Works</button>
+            <button onclick="goToStep(1)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700 border-b-2 border-transparent">2. The Three Layers</button>
+            <button onclick="goToStep(2)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700 border-b-2 border-transparent">3. Your Daily Cloud</button>
+            <button onclick="goToStep(3)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700 border-b-2 border-transparent">4. Discussion</button>
+            <button onclick="goToStep(4)" class="tab-button px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors text-slate-500 hover:text-slate-700 border-b-2 border-transparent">5. Submit Work</button>
         </div>
 
         <!-- Content Area -->
@@ -141,26 +144,28 @@
                 </div>
             </div>
 
-            <!-- Step 5: Final Submission -->
-            <div class="step-content animate-fade flex flex-col items-center justify-center text-center py-6">
-                <div class="bg-blue-100 p-6 rounded-full mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                </div>
-                <h2 class="text-2xl font-bold mb-2">Ready to Submit!</h2>
-                <p class="text-slate-600 mb-6 max-w-md">Copy your report below and paste it into the assignment box on Schoology.</p>
-                
-                <button onclick="copyAnswers()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    Copy to Clipboard
-                </button>
+            <!-- Step 5: Final Submission (COMPLETELY ENCAPSULATED) -->
+            <div class="step-content animate-fade">
+                <div class="flex flex-col items-center justify-center text-center py-6">
+                    <div class="bg-blue-100 p-6 rounded-full mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2">Ready to Submit!</h2>
+                    <p class="text-slate-600 mb-6 max-w-md">Copy your report below and paste it into the assignment box on Schoology.</p>
+                    
+                    <button onclick="copyAnswers()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy to Clipboard
+                    </button>
 
-                <div id="toast" class="hidden mt-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-bounce">
-                    Copied Successfully!
-                </div>
+                    <div id="toast" class="hidden mt-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-bounce">
+                        Copied Successfully!
+                    </div>
 
-                <div class="mt-8 w-full text-left">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">Report Preview:</h3>
-                    <pre id="preview" class="bg-slate-900 text-slate-300 p-4 rounded-lg text-xs overflow-y-auto max-h-48 w-full whitespace-pre-wrap font-mono"></pre>
+                    <div class="mt-8 w-full text-left">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-2">Report Preview:</h3>
+                        <pre id="preview" class="bg-slate-900 text-slate-300 p-4 rounded-lg text-xs overflow-y-auto max-h-48 w-full whitespace-pre-wrap font-mono"></pre>
+                    </div>
                 </div>
             </div>
 
@@ -192,19 +197,19 @@
         }
 
         function updateUI() {
-            // Update tabs
+            // Update tab button styles
             const tabs = document.querySelectorAll('.tab-button');
             tabs.forEach((tab, idx) => {
                 tab.classList.toggle('active', idx === currentStep);
             });
 
-            // Update content blocks
+            // Update content block visibility
             const contents = document.querySelectorAll('.step-content');
             contents.forEach((content, idx) => {
                 content.classList.toggle('active', idx === currentStep);
             });
 
-            // Update footer buttons
+            // Update footer button state
             const prevBtn = document.getElementById('prevBtn');
             prevBtn.disabled = currentStep === 0;
             prevBtn.className = currentStep === 0 ? 
@@ -212,17 +217,35 @@
                 "px-6 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-200";
 
             const nextBtn = document.getElementById('nextBtn');
-            nextBtn.style.display = currentStep === totalSteps - 1 ? 'none' : 'block';
+            // Hide next button on the final step
+            nextBtn.style.visibility = (currentStep === totalSteps - 1) ? 'hidden' : 'visible';
 
             document.getElementById('step-indicator').innerText = `Step ${currentStep + 1} of ${totalSteps}`;
             
-            // Refresh preview if on final step
-            if (currentStep === 4) generatePreview();
+            // Only generate report if on the final step
+            if (currentStep === 4) {
+                generatePreview();
+            }
         }
 
-        function goToStep(idx) { currentStep = idx; updateUI(); }
-        function nextStep() { if (currentStep < totalSteps - 1) { currentStep++; updateUI(); } }
-        function prevStep() { if (currentStep > 0) { currentStep--; updateUI(); } }
+        function goToStep(idx) { 
+            currentStep = idx; 
+            updateUI(); 
+        }
+
+        function nextStep() { 
+            if (currentStep < totalSteps - 1) { 
+                currentStep++; 
+                updateUI(); 
+            } 
+        }
+
+        function prevStep() { 
+            if (currentStep > 0) { 
+                currentStep--; 
+                updateUI(); 
+            } 
+        }
 
         function getReportText() {
             let report = `### CLOUD COMPUTING ACTIVITY REPORT ###\n`;
@@ -242,13 +265,19 @@
         }
 
         function generatePreview() {
-            document.getElementById('preview').innerText = getReportText();
+            const previewEl = document.getElementById('preview');
+            if (previewEl) {
+                previewEl.innerText = getReportText();
+            }
         }
 
         function copyAnswers() {
             const text = getReportText();
             const el = document.createElement('textarea');
             el.value = text;
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
             document.body.appendChild(el);
             el.select();
             
@@ -265,7 +294,6 @@
             document.body.removeChild(el);
         }
 
-        // Initialize state
         updateUI();
     </script>
 </body>
