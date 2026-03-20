@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Case Study Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 1);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .copy-toast {
+            visibility: hidden;
+            min-width: 200px;
+            margin-left: -100px;
+            background-color: #334155;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            font-size: 14px;
+        }
+        .copy-toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Cloud Computing Case Study Analysis</h1>
+            <p class="text-slate-600 font-medium">Analyze how different businesses use cloud computing.</p>
+        </header>
+
+        <!-- Scenario 1 -->
+        <section class="glass-card rounded-xl p-6 mb-6 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-sm">Scenario 1</span>
+                <h2 class="text-xl font-bold text-slate-800">Online Retail Store</h2>
+            </div>
+            <p class="text-slate-600 mb-6 text-sm italic border-l-4 border-blue-400 pl-4">"A company sells products online and has customers across the country."</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">What data does this company store?</label>
+                    <textarea id="q1-1" placeholder="e.g., Customer addresses, credit card info, inventory..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">How does cloud computing help this business?</label>
+                    <textarea id="q1-2" placeholder="e.g., Scaling during holiday sales, global access..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">What could happen if their cloud system goes down?</label>
+                    <textarea id="q1-3" placeholder="e.g., Lost sales, customers can't log in..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scenario 2 -->
+        <section class="glass-card rounded-xl p-6 mb-6 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-sm">Scenario 2</span>
+                <h2 class="text-xl font-bold text-slate-800">School System</h2>
+            </div>
+            <p class="text-slate-600 mb-6 text-sm italic border-l-4 border-green-400 pl-4">"A school uses Google Classroom and email for students and teachers."</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">What information is stored in the cloud?</label>
+                    <textarea id="q2-1" placeholder="e.g., Homework assignments, grades, student emails..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-green-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Why is cloud computing useful for a school?</label>
+                    <textarea id="q2-2" placeholder="e.g., Accessing work from home, collaboration on docs..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-green-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">What are potential risks?</label>
+                    <textarea id="q2-3" placeholder="e.g., Data breaches, internet outages during class..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-green-400 outline-none"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scenario 3 -->
+        <section class="glass-card rounded-xl p-6 mb-8 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-purple-100 text-purple-700 font-bold px-3 py-1 rounded-full text-sm">Scenario 3</span>
+                <h2 class="text-xl font-bold text-slate-800">Streaming Service</h2>
+            </div>
+            <p class="text-slate-600 mb-6 text-sm italic border-l-4 border-purple-400 pl-4">"A company provides movies and shows to users worldwide."</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">How does cloud computing deliver content?</label>
+                    <textarea id="q3-1" placeholder="e.g., Servers located in different regions, streaming bandwidth..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-purple-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Why is cloud computing necessary for this service?</label>
+                    <textarea id="q3-2" placeholder="e.g., Storing petabytes of video data, supporting millions of users..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-purple-400 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">What problems could occur?</label>
+                    <textarea id="q3-3" placeholder="e.g., Buffering, regional outages, licensing issues..." class="w-full px-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-purple-400 outline-none"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Action -->
+        <div class="text-center mb-12">
+            <button onclick="copyToClipboard()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+                Copy All Answers for Schoology
+            </button>
+        </div>
+    </div>
+
+    <!-- Feedback Message -->
+    <div id="toast" class="copy-toast">Answers copied successfully!</div>
+
+    <script>
+        function copyToClipboard() {
+            let output = `BUSINESS CASE STUDY ANALYSIS\n`;
+            output += `-------------------------------------------\n\n`;
+
+            // Scenario 1
+            output += `SCENARIO 1: ONLINE RETAIL STORE\n`;
+            output += `1. What data does this company store?\n   ${document.getElementById('q1-1').value || "No answer provided"}\n`;
+            output += `2. How does cloud computing help this business?\n   ${document.getElementById('q1-2').value || "No answer provided"}\n`;
+            output += `3. What could happen if their cloud system goes down?\n   ${document.getElementById('q1-3').value || "No answer provided"}\n\n`;
+
+            // Scenario 2
+            output += `SCENARIO 2: SCHOOL SYSTEM\n`;
+            output += `1. What information is stored in the cloud?\n   ${document.getElementById('q2-1').value || "No answer provided"}\n`;
+            output += `2. Why is cloud computing useful for a school?\n   ${document.getElementById('q2-2').value || "No answer provided"}\n`;
+            output += `3. What are potential risks?\n   ${document.getElementById('q2-3').value || "No answer provided"}\n\n`;
+
+            // Scenario 3
+            output += `SCENARIO 3: STREAMING SERVICE\n`;
+            output += `1. How does cloud computing deliver content?\n   ${document.getElementById('q3-1').value || "No answer provided"}\n`;
+            output += `2. Why is cloud computing necessary for this service?\n   ${document.getElementById('q3-2').value || "No answer provided"}\n`;
+            output += `3. What problems could occur?\n   ${document.getElementById('q3-3').value || "No answer provided"}\n`;
+
+            // Copy logic for clipboard compatibility
+            const tempInput = document.createElement("textarea");
+            tempInput.value = output;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand("copy");
+                // Toast feedback
+                const toast = document.getElementById("toast");
+                toast.className = "copy-toast show";
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            } catch (err) {
+                console.error('Unable to copy', err);
+            }
+            document.body.removeChild(tempInput);
+        }
+    </script>
+</body>
+</html>
+
