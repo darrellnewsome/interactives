@@ -1,0 +1,277 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Countdown Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            color: white;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-family: 'JetBrains+Mono', monospace;
+            font-size: 4.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin: 1rem 0;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-ring {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Message Box UI */
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #10b981;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        #notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="notification">Time's up! 🔔</div>
+
+    <div class="glass-card">
+        <!-- SVG Progress Circle -->
+        <div class="relative flex items-center justify-center mb-4">
+            <svg width="240" height="240" class="drop-shadow-2xl">
+                <circle
+                    stroke="rgba(255,255,255,0.1)"
+                    stroke-width="8"
+                    fill="transparent"
+                    r="110"
+                    cx="120"
+                    cy="120"
+                />
+                <circle
+                    id="progress-bar"
+                    class="progress-ring"
+                    stroke="#6366f1"
+                    stroke-width="8"
+                    stroke-linecap="round"
+                    fill="transparent"
+                    r="110"
+                    cx="120"
+                    cy="120"
+                />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div id="timer" class="timer-display">05:00</div>
+                <div id="status-label" class="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold">Ready</div>
+            </div>
+        </div>
+
+        <!-- Input Controls -->
+        <div id="setup-controls" class="flex gap-2 justify-center mb-6">
+            <div class="flex flex-col">
+                <label class="text-[10px] uppercase text-slate-400 mb-1">Min</label>
+                <input type="number" id="minutes-input" value="5" min="0" max="99" 
+                    class="w-16 bg-white/10 border border-white/10 rounded-lg p-2 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-[10px] uppercase text-slate-400 mb-1">Sec</label>
+                <input type="number" id="seconds-input" value="0" min="0" max="59" 
+                    class="w-16 bg-white/10 border border-white/10 rounded-lg p-2 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 justify-center">
+            <button id="start-btn" class="btn flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/20">
+                START
+            </button>
+            <button id="reset-btn" class="btn bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl">
+                RESET
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const minutesInput = document.getElementById('minutes-input');
+        const secondsInput = document.getElementById('seconds-input');
+        const progressBar = document.getElementById('progress-bar');
+        const statusLabel = document.getElementById('status-label');
+        const notification = document.getElementById('notification');
+
+        // Progress Circle Logic
+        const radius = progressBar.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        progressBar.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressBar.style.strokeDashoffset = circumference;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100 * circumference);
+            progressBar.style.strokeDashoffset = offset;
+        }
+
+        // Timer State
+        let countdown;
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+        let isRunning = false;
+
+        function updateDisplay() {
+            const m = Math.floor(remainingSeconds / 60);
+            const s = remainingSeconds % 60;
+            timerDisplay.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            
+            const percentage = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+            setProgress(100 - percentage);
+        }
+
+        function showAlert() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        function startTimer() {
+            if (isRunning) {
+                // Pause Logic
+                clearInterval(countdown);
+                startBtn.textContent = 'RESUME';
+                startBtn.classList.replace('bg-amber-500', 'bg-indigo-600');
+                statusLabel.textContent = 'Paused';
+                isRunning = false;
+                return;
+            }
+
+            // Initialization if starting fresh
+            if (remainingSeconds <= 0) {
+                const mins = parseInt(minutesInput.value) || 0;
+                const secs = parseInt(secondsInput.value) || 0;
+                totalSeconds = (mins * 60) + secs;
+                remainingSeconds = totalSeconds;
+
+                if (totalSeconds <= 0) return;
+            }
+
+            isRunning = true;
+            statusLabel.textContent = 'Running';
+            startBtn.textContent = 'PAUSE';
+            startBtn.classList.remove('bg-indigo-600');
+            startBtn.classList.add('bg-amber-500');
+
+            countdown = setInterval(() => {
+                remainingSeconds--;
+                updateDisplay();
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdown);
+                    isRunning = false;
+                    statusLabel.textContent = 'Finished';
+                    startBtn.textContent = 'START';
+                    startBtn.classList.remove('bg-amber-500');
+                    startBtn.classList.add('bg-indigo-600');
+                    showAlert();
+                    
+                    // Small vibrate for mobile
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(countdown);
+            isRunning = false;
+            remainingSeconds = 0;
+            const mins = parseInt(minutesInput.value) || 0;
+            const secs = parseInt(secondsInput.value) || 0;
+            timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            setProgress(100);
+            statusLabel.textContent = 'Ready';
+            startBtn.textContent = 'START';
+            startBtn.classList.remove('bg-amber-500');
+            startBtn.classList.add('bg-indigo-600');
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        
+        // Sync display with inputs immediately
+        [minutesInput, secondsInput].forEach(input => {
+            input.addEventListener('input', () => {
+                if (!isRunning) {
+                    const m = String(minutesInput.value || 0).padStart(2, '0');
+                    const s = String(secondsInput.value || 0).padStart(2, '0');
+                    timerDisplay.textContent = `${m}:${s}`;
+                }
+            });
+        });
+
+        // Initialize display
+        setProgress(100);
+    </script>
+</body>
+</html>
+
+```
