@@ -211,15 +211,11 @@
         }
 
         window.setScore = function(sIdx, qIdx, score) {
-            // Update internal state
             scores[`${sIdx}-${qIdx}`] = score;
-
-            // Update UI buttons
             [1, 2, 3].forEach(val => {
                 const btn = document.getElementById(`btn-${sIdx}-${qIdx}-${val}`);
                 btn.className = `score-btn w-10 h-10 rounded-lg border-2 font-bold transition ${val === score ? 'active-' + val : 'border-slate-200 hover:bg-slate-50'}`;
             });
-
             calculateScores();
         };
 
@@ -230,7 +226,6 @@
             auditData.forEach((section, sIdx) => {
                 let sectionSum = 0;
                 let sectionCount = 0;
-                
                 section.questions.forEach((_, qIdx) => {
                     const score = scores[`${sIdx}-${qIdx}`];
                     if (score) {
@@ -238,31 +233,26 @@
                         sectionCount++;
                     }
                 });
-
                 const avg = sectionCount > 0 ? (sectionSum / sectionCount).toFixed(1) : "0.0";
                 document.getElementById(`avg-${sIdx + 1}`).innerText = avg;
                 document.getElementById(`sum-${sIdx + 1}`).innerText = avg;
-                
                 totalSum += sectionSum;
                 answeredCount += sectionCount;
             });
 
             const totalAvg = answeredCount > 0 ? (totalSum / answeredCount).toFixed(1) : "0.0";
             document.getElementById('total-avg').innerText = totalAvg;
-            
             updateLevel(parseFloat(totalAvg), answeredCount);
         }
 
         function updateLevel(avg, count) {
             const display = document.getElementById('level-display');
             const meaning = document.getElementById('level-meaning');
-            
             if (count < 20) {
                 display.innerText = "In Progress...";
                 meaning.innerText = `You have answered ${count}/20 statements.`;
                 return;
             }
-
             if (avg >= 2.6) {
                 display.innerText = "💪 Strong Cyber Hygiene";
                 meaning.innerText = "You’re consistent and secure! Keep up the great work.";
@@ -281,18 +271,15 @@
         window.copyToClipboard = function() {
             const totalAvg = document.getElementById('total-avg').innerText;
             const level = document.getElementById('level-display').innerText;
-            
             let text = `Cyber Hygiene Audit Results\n`;
             text += `------------------------------\n`;
             text += `Total Average Score: ${totalAvg}\n`;
             text += `Hygiene Level: ${level}\n\n`;
-            
             text += `Section Averages:\n`;
             text += `- Password Habits: ${document.getElementById('sum-1').innerText}\n`;
             text += `- Device Security: ${document.getElementById('sum-2').innerText}\n`;
             text += `- Privacy Settings: ${document.getElementById('sum-3').innerText}\n`;
             text += `- Online Behavior: ${document.getElementById('sum-4').innerText}\n\n`;
-            
             text += `Reflection Questions:\n`;
             text += `1. Lowest Section: ${document.getElementById('ref-1').value || "[No answer]"}\n`;
             text += `2. Why improvement is needed: ${document.getElementById('ref-2').value || "[No answer]"}\n`;
