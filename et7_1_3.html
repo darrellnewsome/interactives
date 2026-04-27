@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Hygiene Audit Checklist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .score-btn.active-3 { background-color: #22c55e; color: white; border-color: #16a34a; }
+        .score-btn.active-2 { background-color: #eab308; color: white; border-color: #ca8a04; }
+        .score-btn.active-1 { background-color: #ef4444; color: white; border-color: #dc2626; }
+        @media print { .no-print { display: none; } }
+        
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+        }
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-20">
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-slate-200">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2 text-center">🧩 Cyber Hygiene Audit Checklist</h1>
+            <p class="text-slate-600 text-center mb-6 font-medium">Read each statement and rate yourself honestly. This audit is for personal reflection and improvement.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-green-50 border border-green-200 p-3 rounded-lg text-center">
+                    <span class="block font-bold text-green-700 text-lg">3 - Secure</span>
+                    <span class="text-xs text-green-600">I consistently do this and my habit is safe.</span>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-center">
+                    <span class="block font-bold text-yellow-700 text-lg">2 - Needs Work</span>
+                    <span class="text-xs text-yellow-600">I do this sometimes, but not consistently.</span>
+                </div>
+                <div class="bg-red-50 border border-red-200 p-3 rounded-lg text-center">
+                    <span class="block font-bold text-red-700 text-lg">1 - Risky</span>
+                    <span class="text-xs text-red-600">I rarely do this or haven't thought about it.</span>
+                </div>
+            </div>
+        </header>
+
+        <div id="audit-form">
+            <!-- Sections will be injected here by JS -->
+            <div id="sections-container"></div>
+
+            <!-- Overall Score Summary -->
+            <section class="mb-8 bg-indigo-900 text-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 border-b border-indigo-700 pb-2">📊 Overall Audit Results</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>Password Habits:</span>
+                            <span id="sum-1" class="font-mono">0.0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Device Security:</span>
+                            <span id="sum-2" class="font-mono">0.0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Privacy Settings:</span>
+                            <span id="sum-3" class="font-mono">0.0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Online Behavior:</span>
+                            <span id="sum-4" class="font-mono">0.0</span>
+                        </div>
+                        <div class="pt-4 border-t border-indigo-700 flex justify-between items-center text-xl font-bold">
+                            <span>Total Average:</span>
+                            <span id="total-avg" class="text-yellow-400">0.0</span>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                        <h3 class="text-lg font-bold mb-2">Hygiene Level:</h3>
+                        <div id="level-display" class="text-2xl font-black mb-2 text-yellow-400 italic">Incomplete...</div>
+                        <p id="level-meaning" class="text-indigo-100 text-sm">Rate all statements to see your cyber hygiene level.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reflection -->
+            <section class="mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">🧠 Reflection Questions</h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div>
+                        <label class="block font-semibold mb-2 text-slate-700">1. Which section scored lowest?</label>
+                        <textarea id="ref-1" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" rows="2" placeholder="Enter your response here..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-2 text-slate-700">2. Why do you think that area needs improvement?</label>
+                        <textarea id="ref-2" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" rows="2" placeholder="Enter your response here..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-2 text-slate-700">3. What's one change you can make this week to improve your cyber hygiene?</label>
+                        <textarea id="ref-3" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" rows="2" placeholder="Enter your response here..."></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <div class="flex flex-col md:flex-row gap-4 no-print">
+                <button onclick="copyToClipboard()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    Copy Answers for Schoology
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script>
+        const auditData = [
+            {
+                title: "Section 1: Password Habits",
+                color: "indigo",
+                questions: [
+                    "I use different passwords for different accounts.",
+                    "My passwords include uppercase, lowercase, numbers, and symbols.",
+                    "I avoid using personal info (like name or birthday) in passwords.",
+                    "I use a password manager or another secure method to store passwords.",
+                    "I enable two-factor authentication (2FA) whenever possible."
+                ]
+            },
+            {
+                title: "Section 2: Device Updates & Security",
+                color: "blue",
+                questions: [
+                    "I regularly update my phone, laptop, and apps.",
+                    "I use antivirus or security software if available.",
+                    "I avoid downloading unknown or suspicious software/files.",
+                    "I restart or patch devices when prompted for updates.",
+                    "I have automatic updates turned on when possible."
+                ]
+            },
+            {
+                title: "Section 3: Privacy Settings & Data",
+                color: "cyan",
+                questions: [
+                    "I review privacy settings on my social media accounts.",
+                    "I share only necessary personal info online.",
+                    "I avoid posting my location or school details publicly.",
+                    "I understand how companies use or share my data.",
+                    "I log out of accounts when using shared devices."
+                ]
+            },
+            {
+                title: "Section 4: Online Behavior & Awareness",
+                color: "teal",
+                questions: [
+                    "I think before I click on unknown links or attachments.",
+                    "I can recognize phishing emails or messages.",
+                    "I check that websites start with HTTPS before entering info.",
+                    "I avoid using public Wi-Fi for sensitive activities (like banking).",
+                    "I report or block suspicious messages instead of responding."
+                ]
+            }
+        ];
+
+        let scores = {}; // Key format: 'sectionIndex-questionIndex'
+
+        function initAudit() {
+            const container = document.getElementById('sections-container');
+            auditData.forEach((section, sIdx) => {
+                const sectionHtml = `
+                    <section class="mb-8 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-${section.color}-600 px-6 py-4">
+                            <h2 class="text-xl font-bold text-white">${section.title}</h2>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            ${section.questions.map((q, qIdx) => `
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100 last:border-0">
+                                    <p class="text-slate-700 font-medium leading-tight flex-1">
+                                        <span class="text-slate-400 mr-2">${(sIdx * 5) + qIdx + 1}.</span> ${q}
+                                    </p>
+                                    <div class="flex gap-2 shrink-0">
+                                        <button onclick="setScore(${sIdx}, ${qIdx}, 1)" id="btn-${sIdx}-${qIdx}-1" class="score-btn w-10 h-10 rounded-lg border-2 border-slate-200 font-bold hover:bg-red-50 transition">1</button>
+                                        <button onclick="setScore(${sIdx}, ${qIdx}, 2)" id="btn-${sIdx}-${qIdx}-2" class="score-btn w-10 h-10 rounded-lg border-2 border-slate-200 font-bold hover:bg-yellow-50 transition">2</button>
+                                        <button onclick="setScore(${sIdx}, ${qIdx}, 3)" id="btn-${sIdx}-${qIdx}-3" class="score-btn w-10 h-10 rounded-lg border-2 border-slate-200 font-bold hover:bg-green-50 transition">3</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center">
+                            <span class="font-semibold text-slate-700">Average:</span>
+                            <span id="avg-${sIdx + 1}" class="text-xl font-bold text-${section.color}-600">0.0</span>
+                        </div>
+                    </section>
+                `;
+                container.insertAdjacentHTML('beforeend', sectionHtml);
+            });
+        }
+
+        window.setScore = function(sIdx, qIdx, score) {
+            // Update internal state
+            scores[`${sIdx}-${qIdx}`] = score;
+
+            // Update UI buttons
+            [1, 2, 3].forEach(val => {
+                const btn = document.getElementById(`btn-${sIdx}-${qIdx}-${val}`);
+                btn.className = `score-btn w-10 h-10 rounded-lg border-2 font-bold transition ${val === score ? 'active-' + val : 'border-slate-200 hover:bg-slate-50'}`;
+            });
+
+            calculateScores();
+        };
+
+        function calculateScores() {
+            let totalSum = 0;
+            let answeredCount = 0;
+            
+            auditData.forEach((section, sIdx) => {
+                let sectionSum = 0;
+                let sectionCount = 0;
+                
+                section.questions.forEach((_, qIdx) => {
+                    const score = scores[`${sIdx}-${qIdx}`];
+                    if (score) {
+                        sectionSum += score;
+                        sectionCount++;
+                    }
+                });
+
+                const avg = sectionCount > 0 ? (sectionSum / sectionCount).toFixed(1) : "0.0";
+                document.getElementById(`avg-${sIdx + 1}`).innerText = avg;
+                document.getElementById(`sum-${sIdx + 1}`).innerText = avg;
+                
+                totalSum += sectionSum;
+                answeredCount += sectionCount;
+            });
+
+            const totalAvg = answeredCount > 0 ? (totalSum / answeredCount).toFixed(1) : "0.0";
+            document.getElementById('total-avg').innerText = totalAvg;
+            
+            updateLevel(parseFloat(totalAvg), answeredCount);
+        }
+
+        function updateLevel(avg, count) {
+            const display = document.getElementById('level-display');
+            const meaning = document.getElementById('level-meaning');
+            
+            if (count < 20) {
+                display.innerText = "In Progress...";
+                meaning.innerText = `You have answered ${count}/20 statements.`;
+                return;
+            }
+
+            if (avg >= 2.6) {
+                display.innerText = "💪 Strong Cyber Hygiene";
+                meaning.innerText = "You’re consistent and secure! Keep up the great work.";
+                display.className = "text-2xl font-black mb-2 text-green-400";
+            } else if (avg >= 1.6) {
+                display.innerText = "⚙️ Developing Cyber Hygiene";
+                meaning.innerText = "You have good habits, but there’s room to grow.";
+                display.className = "text-2xl font-black mb-2 text-yellow-400";
+            } else {
+                display.innerText = "⚠️ At Risk";
+                meaning.innerText = "Your habits may expose you to cyber threats. It's time for a change.";
+                display.className = "text-2xl font-black mb-2 text-red-400";
+            }
+        }
+
+        window.copyToClipboard = function() {
+            const totalAvg = document.getElementById('total-avg').innerText;
+            const level = document.getElementById('level-display').innerText;
+            
+            let text = `Cyber Hygiene Audit Results\n`;
+            text += `------------------------------\n`;
+            text += `Total Average Score: ${totalAvg}\n`;
+            text += `Hygiene Level: ${level}\n\n`;
+            
+            text += `Section Averages:\n`;
+            text += `- Password Habits: ${document.getElementById('sum-1').innerText}\n`;
+            text += `- Device Security: ${document.getElementById('sum-2').innerText}\n`;
+            text += `- Privacy Settings: ${document.getElementById('sum-3').innerText}\n`;
+            text += `- Online Behavior: ${document.getElementById('sum-4').innerText}\n\n`;
+            
+            text += `Reflection Questions:\n`;
+            text += `1. Lowest Section: ${document.getElementById('ref-1').value || "[No answer]"}\n`;
+            text += `2. Why improvement is needed: ${document.getElementById('ref-2').value || "[No answer]"}\n`;
+            text += `3. Weekly Goal: ${document.getElementById('ref-3').value || "[No answer]"}\n`;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            const toast = document.getElementById("toast");
+            toast.className = "toast show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        };
+
+        window.onload = initAudit;
+    </script>
+</body>
+</html>
