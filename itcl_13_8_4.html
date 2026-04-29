@@ -1,0 +1,208 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITCL 13.8.4 - AI and Data Privacy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card { @apply bg-white rounded-xl shadow-md p-6 mb-6 border border-slate-200; }
+        .input-box { @apply w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all text-sm bg-white; }
+        .objective-badge { @apply bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-2 inline-block; }
+        .app-btn { @apply flex items-center justify-center p-3 rounded-xl border-2 transition-all font-bold text-sm cursor-pointer; }
+        .app-selected { @apply border-blue-600 bg-blue-600 text-white shadow-lg scale-105; }
+        .app-unselected { @apply border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-300; }
+        .example-pill { @apply px-3 py-1 rounded-full border border-orange-200 bg-orange-50 text-orange-700 text-xs font-medium cursor-pointer hover:bg-orange-100 transition-colors; }
+        .example-pill.active { @apply bg-orange-500 text-white border-orange-600; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans leading-relaxed pb-20">
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">Data-Driven AI & Your Privacy</h1>
+            <p class="text-lg text-slate-600">Module ITCL 13.8.4: Analyzing the "Fuel" behind your favorite apps.</p>
+        </header>
+
+        <!-- Example Section (New) -->
+        <section class="card border-l-8 border-orange-400 bg-orange-50/30">
+            <div class="flex items-center mb-4">
+                <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded-full mr-2">CLASS EXAMPLE</span>
+                <h2 class="text-xl font-bold text-slate-800">Tutorial: Amazon Shopping AI</h2>
+            </div>
+            <p class="text-sm text-slate-600 mb-4">Before you start your group work, let's look at an app <strong>not</strong> on your list: <strong>Amazon</strong>.</p>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-lg border border-orange-100">
+                    <p class="text-sm font-bold text-slate-700 mb-3">Step 1: Select all the data Amazon's AI might track (Select multiple):</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <div onclick="this.classList.toggle('active')" class="example-pill">Purchase History</div>
+                        <div onclick="this.classList.toggle('active')" class="example-pill">Items in Cart</div>
+                        <div onclick="this.classList.toggle('active')" class="example-pill">Product Reviews read</div>
+                        <div onclick="this.classList.toggle('active')" class="example-pill">Time spent looking at a photo</div>
+                        <div onclick="this.classList.toggle('active')" class="example-pill">Delivery Address</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="p-2 bg-slate-50 rounded"><strong>AI Use:</strong> Predicts what you need next so you buy it.</div>
+                        <div class="p-2 bg-slate-50 rounded"><strong>Benefit:</strong> Saves time finding products.</div>
+                        <div class="p-2 bg-slate-50 rounded"><strong>Risk:</strong> They know your spending habits and home location.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: App Analysis Activity -->
+        <section class="card">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <span class="objective-badge text-indigo-700 bg-indigo-50">Activity 3</span>
+                    <h2 class="text-2xl font-bold text-slate-800">What Data Is Being Collected?</h2>
+                </div>
+                <div class="text-right hidden md:block">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kagan Strategy</span>
+                    <p class="text-xs text-slate-500">Think-Pair-Share</p>
+                </div>
+            </div>
+
+            <p class="mb-6 text-slate-700 italic text-sm bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                <strong>Task:</strong> Work in your pair or group. Select <strong>1 or 2 apps</strong> from the list below and analyze how they handle your data.
+            </p>
+
+            <!-- App Selector -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
+                <button type="button" onclick="toggleApp('TikTok')" id="btn-TikTok" class="app-btn app-unselected">TikTok</button>
+                <button type="button" onclick="toggleApp('Snapchat')" id="btn-Snapchat" class="app-btn app-unselected">Snapchat</button>
+                <button type="button" onclick="toggleApp('YouTube')" id="btn-YouTube" class="app-btn app-unselected">YouTube</button>
+                <button type="button" onclick="toggleApp('Google')" id="btn-Google" class="app-btn app-unselected">Google</button>
+                <button type="button" onclick="toggleApp('Instagram')" id="btn-Instagram" class="app-btn app-unselected">Instagram</button>
+            </div>
+
+            <!-- Analysis Forms Container -->
+            <div id="analysis-container" class="space-y-8">
+                <div id="empty-state" class="text-center text-slate-400 py-10 border-2 border-dashed border-slate-200 rounded-xl">
+                    <p>Click on an app icon above to start your analysis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Reflection -->
+        <section class="card">
+            <span class="objective-badge text-emerald-700 bg-emerald-50">Conclusion</span>
+            <h2 class="text-xl font-bold mb-4 text-slate-800">Final Stance: Risk vs. Benefit</h2>
+            <p class="text-sm text-slate-600 mb-4">Based on your analysis, do you believe the benefits of AI are worth the privacy risks? Why or why not?</p>
+            <textarea id="final-reflection" class="input-box" rows="3" placeholder="Write your thoughts here..."></textarea>
+        </section>
+
+        <!-- Copy to Clipboard Tool -->
+        <div class="bg-slate-900 text-white p-8 rounded-2xl shadow-xl text-center border-t-4 border-indigo-500">
+            <h2 class="text-2xl font-bold mb-2">Submission Summary</h2>
+            <p class="text-slate-400 mb-6 text-sm">Once you've completed your analysis, click below to copy your work for Schoology.</p>
+            
+            <button type="button" onclick="copySubmission()" class="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-4 px-10 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center mx-auto">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                Copy My Submission
+            </button>
+            <p id="copyFeedback" class="mt-4 text-emerald-400 font-bold opacity-0 transition-opacity">✅ Copied to Clipboard!</p>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-400 text-xs">
+            <p>ITCL 13.8.4 | Digital Citizenship Module</p>
+        </footer>
+    </div>
+
+    <script>
+        let appData = {
+            'TikTok': { data: '', use: '', benefit: '', risk: '' },
+            'Snapchat': { data: '', use: '', benefit: '', risk: '' },
+            'YouTube': { data: '', use: '', benefit: '', risk: '' },
+            'Google': { data: '', use: '', benefit: '', risk: '' },
+            'Instagram': { data: '', use: '', benefit: '', risk: '' }
+        };
+        
+        let selectedApps = [];
+
+        function toggleApp(appName) {
+            const index = selectedApps.indexOf(appName);
+            const btn = document.getElementById(`btn-${appName}`);
+
+            if (index > -1) {
+                selectedApps.splice(index, 1);
+                btn.classList.remove('app-selected');
+                btn.classList.add('app-unselected');
+            } else {
+                if (selectedApps.length >= 2) {
+                    alert("Please focus on just 1 or 2 apps as per the task instructions.");
+                    return;
+                }
+                selectedApps.push(appName);
+                btn.classList.add('app-selected');
+                btn.classList.remove('app-unselected');
+            }
+            renderForms();
+        }
+
+        function updateAppData(app, field, value) {
+            appData[app][field] = value;
+        }
+
+        function renderForms() {
+            const container = document.getElementById('analysis-container');
+            if (selectedApps.length === 0) {
+                container.innerHTML = `<div id="empty-state" class="text-center text-slate-400 py-10 border-2 border-dashed border-slate-200 rounded-xl"><p>Click on an app icon above to start your analysis.</p></div>`;
+                return;
+            }
+            container.innerHTML = selectedApps.map(app => `
+                <div class="border-2 border-slate-200 rounded-xl p-5 bg-white shadow-sm transition-all" id="form-${app}">
+                    <div class="flex items-center mb-4 border-b pb-3">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold mr-3 shadow-md">${app[0]}</div>
+                        <h3 class="text-xl font-extrabold text-slate-800">${app} Analysis</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-600 uppercase mb-2 tracking-wide">👉 What data is being collected?</label>
+                            <textarea oninput="updateAppData('${app}', 'data', this.value)" class="input-box" rows="2">${appData[app].data}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-600 uppercase mb-2 tracking-wide">👉 How is AI using that data?</label>
+                            <textarea oninput="updateAppData('${app}', 'use', this.value)" class="input-box" rows="2">${appData[app].use}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-600 uppercase mb-2 tracking-wide">👉 What is the benefit?</label>
+                            <textarea oninput="updateAppData('${app}', 'benefit', this.value)" class="input-box" rows="2">${appData[app].benefit}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-600 uppercase mb-2 tracking-wide">👉 What is the risk?</label>
+                            <textarea oninput="updateAppData('${app}', 'risk', this.value)" class="input-box" rows="2">${appData[app].risk}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copySubmission() {
+            if (selectedApps.length === 0) {
+                alert("Please select and analyze at least one app before copying.");
+                return;
+            }
+            let report = "ITCL 13.8.4: AI DATA PRIVACY ASSIGNMENT\n========================================\n\n";
+            selectedApps.forEach(app => {
+                report += `[ APP: ${app.toUpperCase()} ]\n• DATA: ${appData[app].data || "N/A"}\n• AI USE: ${appData[app].use || "N/A"}\n• BENEFIT: ${appData[app].benefit || "N/A"}\n• RISK: ${appData[app].risk || "N/A"}\n\n`;
+            });
+            report += `[ FINAL REFLECTION ]\n${document.getElementById('final-reflection').value || "No reflection provided."}\n`;
+            const textArea = document.createElement("textarea");
+            textArea.value = report;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.getElementById('copyFeedback').classList.remove('opacity-0');
+            setTimeout(() => document.getElementById('copyFeedback').classList.add('opacity-0'), 3000);
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
+
+```
