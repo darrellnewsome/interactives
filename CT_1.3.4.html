@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CT 1.3.4 - Algorithmic Thinking & Sequential Logic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .ghost-card {
+      opacity: 0.4;
+      border: 2px dashed #9ca3af;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-16">
+
+  <!-- Top Header Navigation -->
+  <header class="bg-slate-800/90 backdrop-blur sticky top-0 z-50 border-b border-slate-700 shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-lg flex items-center justify-center w-10 h-10 shadow-indigo-500/20 shadow-lg">
+          CT
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg text-white tracking-tight">CT 1.3.4: Algorithmic Thinking</h1>
+          <p class="text-xs text-indigo-300">Unit 1: Problem-Solving & Design Basics • Day 3</p>
+        </div>
+      </div>
+
+      <!-- Student Info Input -->
+      <div class="flex items-center gap-3 bg-slate-900/80 p-2 rounded-xl border border-slate-700">
+        <i class="fa-solid fa-user-graduate text-indigo-400 pl-2"></i>
+        <input type="text" id="studentName" placeholder="First Name & Last Initial..." 
+               class="bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none w-52 font-medium"
+               oninput="updateStudentHeader()">
+        <div class="bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 text-xs text-indigo-300 font-bold flex items-center gap-1">
+          <span>Score:</span>
+          <span id="headerTotalScore" class="text-emerald-400 text-sm">0</span>
+          <span>/ 100</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-4 pt-6 space-y-8">
+
+    <!-- Objective Hero Banner -->
+    <section class="bg-gradient-to-r from-indigo-900/60 via-slate-800 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col md:flex-row gap-6 items-start justify-between relative z-10">
+        <div class="space-y-2 max-w-3xl">
+          <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold uppercase tracking-wider border border-indigo-500/30">
+            Interactive Learning Activity
+          </span>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-white">Algorithmic Thinking & Sequential Logic</h2>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Master designing finite, ordered, and unambiguous instructions using the Input-Process-Output (IPO) framework, fix logic flaws in sequential execution, and prepare for Certiport IT Specialist questions.
+          </p>
+        </div>
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-xs space-y-2 shrink-0 min-w-[220px]">
+          <div class="text-slate-400 font-semibold mb-1 border-b border-slate-700 pb-1">Activity Checklist</div>
+          <div class="flex items-center gap-2 text-slate-300" id="chk-sec1"><i class="fa-regular fa-circle text-slate-500"></i> Part 1: Core Properties</div>
+          <div class="flex items-center gap-2 text-slate-300" id="chk-sec2"><i class="fa-regular fa-circle text-slate-500"></i> Part 2: IPO Framework</div>
+          <div class="flex items-center gap-2 text-slate-300" id="chk-sec3"><i class="fa-regular fa-circle text-slate-500"></i> Part 3: Unambiguous Logic</div>
+          <div class="flex items-center gap-2 text-slate-300" id="chk-sec4"><i class="fa-regular fa-circle text-slate-500"></i> Part 4: Sequence Fixer</div>
+          <div class="flex items-center gap-2 text-slate-300" id="chk-sec5"><i class="fa-regular fa-circle text-slate-500"></i> Part 5: Exam Prep</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: Mandatory Properties of an Algorithm -->
+    <section class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold">1</div>
+          <div>
+            <h3 class="text-xl font-bold text-white">Mandatory Properties of an Algorithm</h3>
+            <p class="text-xs text-slate-400">Classify scenarios into Finite, Ordered, or Unambiguous</p>
+          </div>
+        </div>
+        <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800 font-mono" id="score-sec1">0 / 20 pts</span>
+      </div>
+
+      <!-- Reference Chips -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-indigo-500/30">
+          <div class="text-indigo-400 font-bold text-sm mb-1"><i class="fa-solid fa-stopwatch mr-2"></i>1. FINITE</div>
+          <p class="text-xs text-slate-300">Must eventually terminate. Cannot loop infinitely without an exit state.</p>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-blue-500/30">
+          <div class="text-blue-400 font-bold text-sm mb-1"><i class="fa-solid fa-arrow-down-1-9 mr-2"></i>2. ORDERED</div>
+          <p class="text-xs text-slate-300">Executes in exact sequence. Step 1 must occur before Step 2.</p>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/30">
+          <div class="text-emerald-400 font-bold text-sm mb-1"><i class="fa-solid fa-bullseye mr-2"></i>3. UNAMBIGUOUS</div>
+          <p class="text-xs text-slate-300">Deterministic instructions. Only ONE single interpretation exists for the computer.</p>
+        </div>
+      </div>
+
+      <!-- Scenarios Table -->
+      <div class="space-y-4" id="prop-questions">
+        <!-- JS injected questions -->
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="checkSection1()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i> Check Properties Answers
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Input-Process-Output (IPO) Model -->
+    <section class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold">2</div>
+          <div>
+            <h3 class="text-xl font-bold text-white">The Input-Process-Output (IPO) Framework</h3>
+            <p class="text-xs text-slate-400">Classify components of a store checkout system into their correct IPO buckets</p>
+          </div>
+        </div>
+        <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800 font-mono" id="score-sec2">0 / 20 pts</span>
+      </div>
+
+      <p class="text-sm text-slate-300">
+        Click an item card below, then select the target category bucket (Input, Process, or Output) to sort it.
+      </p>
+
+      <!-- Items Pool -->
+      <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+        <div class="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wider">Unsorted Elements Pool</div>
+        <div class="flex flex-wrap gap-2" id="ipo-pool">
+          <!-- JS injected cards -->
+        </div>
+      </div>
+
+      <!-- Target Buckets -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Input Bucket -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 min-h-[160px] flex flex-col" id="bucket-input">
+          <div class="flex items-center justify-between mb-3 text-cyan-400 font-bold text-sm border-b border-slate-800 pb-2">
+            <span><i class="fa-solid fa-right-to-bracket mr-2"></i>INPUT</span>
+            <span class="text-xs text-slate-500 font-normal">Raw values / data</span>
+          </div>
+          <div class="bucket-content flex-1 space-y-2" data-type="Input"></div>
+        </div>
+
+        <!-- Process Bucket -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 min-h-[160px] flex flex-col" id="bucket-process">
+          <div class="flex items-center justify-between mb-3 text-amber-400 font-bold text-sm border-b border-slate-800 pb-2">
+            <span><i class="fa-solid fa-gears mr-2"></i>PROCESS</span>
+            <span class="text-xs text-slate-500 font-normal">Math & Decisions</span>
+          </div>
+          <div class="bucket-content flex-1 space-y-2" data-type="Process"></div>
+        </div>
+
+        <!-- Output Bucket -->
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 min-h-[160px] flex flex-col" id="bucket-output">
+          <div class="flex items-center justify-between mb-3 text-emerald-400 font-bold text-sm border-b border-slate-800 pb-2">
+            <span><i class="fa-solid fa-desktop mr-2"></i>OUTPUT</span>
+            <span class="text-xs text-slate-500 font-normal">Results produced</span>
+          </div>
+          <div class="bucket-content flex-1 space-y-2" data-type="Output"></div>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="checkSection2()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i> Check IPO Classification
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Ambiguous vs Unambiguous Instructions -->
+    <section class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold">3</div>
+          <div>
+            <h3 class="text-xl font-bold text-white">Writing Unambiguous Instructions</h3>
+            <p class="text-xs text-slate-400">Computers lack human intuition! Identify explicit code vs vague human directions</p>
+          </div>
+        </div>
+        <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800 font-mono" id="score-sec3">0 / 20 pts</span>
+      </div>
+
+      <p class="text-sm text-slate-300">
+        Review each statement. Determine whether it is <strong class="text-rose-400">Ambiguous (Vague)</strong> or <strong class="text-emerald-400">Unambiguous (Explicit)</strong>, and select the reasoning.
+      </p>
+
+      <div class="space-y-4" id="ambig-questions">
+        <!-- JS Injected -->
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="checkSection3()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i> Check Clarity Answers
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Sequence Error Analysis & Dry Run Fixer -->
+    <section class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold">4</div>
+          <div>
+            <h3 class="text-xl font-bold text-white">Certiport Exam Focus: Sequence & Logic Errors</h3>
+            <p class="text-xs text-slate-400">Fix the fatal logic flaw caused by out-of-order execution steps, then test your algorithm!</p>
+          </div>
+        </div>
+        <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800 font-mono" id="score-sec4">0 / 20 pts</span>
+      </div>
+
+      <!-- Problem Statement -->
+      <div class="bg-rose-950/40 border border-rose-500/30 p-4 rounded-xl text-slate-300 space-y-2">
+        <div class="text-rose-400 font-bold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation"></i> BROKEN ALGORITHM (Logic Error)
+        </div>
+        <p class="text-xs">
+          A store checkout program is giving undefined variable errors and outputting $0 total! Re-order the 4 scrambled lines into the precise sequential order required for deterministic execution.
+        </p>
+      </div>
+
+      <!-- Reordering Box -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-3">
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wider flex justify-between">
+            <span>Drag / Use Buttons to Order Code</span>
+            <span class="text-indigo-400">Step 1 to Step 4</span>
+          </div>
+          <div class="space-y-2" id="sequence-list">
+            <!-- JS Injected lines -->
+          </div>
+          <button onclick="checkSequenceOrder()" class="w-full py-2 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded-xl text-xs font-semibold transition">
+            Validate Code Sequence
+          </button>
+        </div>
+
+        <!-- Dry Run Simulator -->
+        <div class="bg-slate-900 rounded-xl border border-slate-700 p-4 space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="text-xs font-bold text-indigo-300 flex items-center justify-between border-b border-slate-800 pb-2">
+              <span><i class="fa-solid fa-terminal mr-2"></i>Virtual Computer Dry-Run</span>
+              <span id="seq-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30">Awaiting Valid Sequence</span>
+            </div>
+
+            <!-- Input Simulator Controls -->
+            <div class="space-y-2 text-xs">
+              <label class="text-slate-400 block font-medium">Test Case: Enter Item Price ($)</label>
+              <div class="flex gap-2">
+                <input type="number" id="dry-price" value="50.00" step="5" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white w-full focus:outline-none focus:border-indigo-500">
+                <button onclick="runDryRun()" id="btn-dry-run" disabled class="px-4 py-1.5 bg-slate-700 text-slate-400 cursor-not-allowed rounded-lg font-bold transition shrink-0">
+                  Execute Code
+                </button>
+              </div>
+            </div>
+
+            <!-- Execution Console Output -->
+            <div class="bg-black/80 rounded-lg p-3 font-mono text-xs text-emerald-400 space-y-1 border border-slate-800 min-h-[110px]" id="dry-console">
+              <div class="text-slate-500">// Computer Console Output:</div>
+              <div class="text-slate-400">Press "Validate Code Sequence" to activate simulator...</div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 italic">
+            * Remember: Computers execute line by line from top to bottom. Variables must exist before being used in math equations!
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Certiport / IT Specialist Exam Practice -->
+    <section class="bg-slate-800 rounded-2xl border border-slate-700 p-6 shadow-lg space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold">5</div>
+          <div>
+            <h3 class="text-xl font-bold text-white">Certiport IT Specialist Exam Practice</h3>
+            <p class="text-xs text-slate-400">Standardized multiple-choice questions assessing Day 3 concepts</p>
+          </div>
+        </div>
+        <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800 font-mono" id="score-sec5">0 / 20 pts</span>
+      </div>
+
+      <div class="space-y-6" id="exam-questions">
+        <!-- JS Injected questions -->
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="checkSection5()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i> Check Exam Answers
+        </button>
+      </div>
+    </section>
+
+    <!-- FINAL REPORT SECTION -->
+    <section class="bg-gradient-to-b from-slate-800 to-indigo-950/80 rounded-2xl border border-indigo-500/40 p-6 shadow-2xl space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/80 pb-4">
+        <div>
+          <h3 class="text-2xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-award text-amber-400"></i> Performance & Activity Report
+          </h3>
+          <p class="text-xs text-slate-300">Generate your final score break-down to submit into Schoology</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div class="text-xs text-slate-400">Total Score</div>
+            <div class="text-3xl font-extrabold text-emerald-400 font-mono" id="finalTotalScore">0 / 100</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Printable Text Area for Schoology Copy -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
+          <span>Formatted Clipboard Text (Ready to paste)</span>
+          <span id="copy-status-msg" class="text-emerald-400 font-normal opacity-0 transition">Copied to clipboard!</span>
+        </div>
+        <textarea id="reportTextarea" readonly rows="8" 
+                  class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 font-mono text-xs text-indigo-200 focus:outline-none shadow-inner leading-relaxed"></textarea>
+      </div>
+
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <p class="text-xs text-slate-400">
+          * Enter your First Name and Last Initial in the top bar to auto-generate the submission signature.
+        </p>
+        <div class="flex gap-3">
+          <button onclick="generateReport()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2">
+            <i class="fa-solid fa-rotate"></i> Refresh Report
+          </button>
+          <button onclick="copyToClipboard()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+            <i class="fa-solid fa-copy"></i> Copy Results for Schoology
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // GLOBAL STATE
+    const state = {
+      studentName: '',
+      scores: { sec1: 0, sec2: 0, sec3: 0, sec4: 0, sec5: 0 },
+      maxScores: { sec1: 20, sec2: 20, sec3: 20, sec4: 20, sec5: 20 },
+      selectedIpoCard: null,
+      sequenceOrder: [
+        { id: 'L1', code: 'OUTPUT total_price', correctIdx: 3 },
+        { id: 'L2', code: 'tax = price * 0.06', correctIdx: 1 },
+        { id: 'L3', code: 'INPUT price', correctIdx: 0 },
+        { id: 'L4', code: 'total_price = price + tax', correctIdx: 2 }
+      ]
+    };
+
+    // --- DATA SETS ---
+
+    // Section 1 Data
+    const sec1Data = [
+      {
+        id: 'p1',
+        scenario: 'A program checks user login credentials, but if the password is wrong, it jumps back to the login step without any counter or exit condition.',
+        question: 'Which mandatory algorithm property is missing or violated here?',
+        options: [
+          { val: 'FINITE', label: 'FINITE (Will loop infinitely without terminating)' },
+          { val: 'ORDERED', label: 'ORDERED (Steps are executing in the wrong sequence)' },
+          { val: 'UNAMBIGUOUS', label: 'UNAMBIGUOUS (Computer cannot interpret the command)' }
+        ],
+        correct: 'FINITE'
+      },
+      {
+        id: 'p2',
+        scenario: 'A recipe says: "Cook the steak until it looks nice and tender, then add a pinch of salt if needed."',
+        question: 'Why does this instruction fail as a computational algorithm?',
+        options: [
+          { val: 'UNAMBIGUOUS', label: 'It is AMBIGUOUS ("nice and tender" and "pinch" have no explicit definition)' },
+          { val: 'FINITE', label: 'It is INFINITE (The cooking step will never end)' },
+          { val: 'ORDERED', label: 'It is UNORDERED (Salt must always be added before cooking)' }
+        ],
+        correct: 'UNAMBIGUOUS'
+      },
+      {
+        id: 'p3',
+        scenario: 'Line 1: Divide total by count.\nLine 2: Ask user for total and count values.',
+        question: 'What core property is directly violated in this code snippet?',
+        options: [
+          { val: 'ORDERED', label: 'ORDERED (Line 1 relies on data collected in Line 2)' },
+          { val: 'FINITE', label: 'FINITE (Division causes an infinite execution loop)' },
+          { val: 'UNAMBIGUOUS', label: 'UNAMBIGUOUS (Divide is an ambiguous keyword)' }
+        ],
+        correct: 'ORDERED'
+      },
+      {
+        id: 'p4',
+        scenario: 'SET price = 19.99\nSET tax = price * 0.06\nDISPLAY tax',
+        question: 'Select the statement that best describes this algorithm:',
+        options: [
+          { val: 'ALL_MET', label: 'It satisfies Finite, Ordered, and Unambiguous properties.' },
+          { val: 'MISSING_ORDER', label: 'It fails because DISPLAY must happen before SET.' },
+          { val: 'AMBIGUOUS', label: 'It fails because 0.06 is ambiguous.' }
+        ],
+        correct: 'ALL_MET'
+      }
+    ];
+
+    // Section 2 Data (IPO Pool)
+    const ipoItems = [
+      { id: 'i1', label: 'User scans item barcode', type: 'Input' },
+      { id: 'i2', label: 'tax_rate = 0.06', type: 'Input' },
+      { id: 'i3', label: 'total = price + (price * tax_rate)', type: 'Process' },
+      { id: 'i4', label: 'IF score >= 70 THEN pass', type: 'Process' },
+      { id: 'i5', label: 'Display $58.30 on LCD Screen', type: 'Output' },
+      { id: 'i6', label: 'Print paper receipt', type: 'Output' }
+    ];
+
+    // Section 3 Data (Ambiguous vs Unambiguous)
+    const sec3Data = [
+      {
+        id: 'a1',
+        text: '"Add some sales tax to the item cost before charging."',
+        typeChoice: 'AMBIGUOUS',
+        reasonChoice: 'No exact numerical percentage or formula is specified.'
+      },
+      {
+        id: 'a2',
+        text: 'SET total = price + (price * 0.07)',
+        typeChoice: 'UNAMBIGUOUS',
+        reasonChoice: 'Uses precise mathematical formula with deterministic operators.'
+      },
+      {
+        id: 'a3',
+        text: '"If the user is old enough, let them buy the ticket."',
+        typeChoice: 'AMBIGUOUS',
+        reasonChoice: '"Old enough" is vague without an explicit boundary like age >= 18.'
+      },
+      {
+        id: 'a4',
+        text: 'IF user_age >= 18 THEN SET allow_entry = TRUE',
+        typeChoice: 'UNAMBIGUOUS',
+        reasonChoice: 'Sets a strict conditional evaluation limit with defined Boolean output.'
+      }
+    ];
+
+    // Section 5 Data (Exam Practice)
+    const sec5Data = [
+      {
+        id: 'q1',
+        question: 'Which property of an algorithm guarantees that execution will come to an end after a discrete number of steps?',
+        options: [
+          'A) Determinism',
+          'B) Finiteness',
+          'C) Sequential Ambiguity',
+          'D) Abstraction'
+        ],
+        correct: 1,
+        explanation: 'Finiteness specifies that an algorithm must terminate after a finite number of steps.'
+      },
+      {
+        id: 'q2',
+        question: 'An algorithm contains the statement: "Repeat the verification process several times." Why will a computer fail to execute this properly?',
+        options: [
+          'A) The statement violates finiteness because it lacks an explicit termination condition.',
+          'B) The statement is unambiguous and too strict for the computer.',
+          'C) The statement is an Input rather than a Process.',
+          'D) Computers cannot process loop structures.'
+        ],
+        correct: 0,
+        explanation: '"Several times" is ambiguous and creates an indefinite loop state.'
+      },
+      {
+        id: 'q3',
+        question: 'In the Input-Process-Output (IPO) framework, where does the calculation `discount_price = original_price * 0.80` belong?',
+        options: [
+          'A) Input stage',
+          'B) Process stage',
+          'C) Output stage',
+          'D) User Feedback stage'
+        ],
+        correct: 1,
+        explanation: 'Mathematical calculations and data transformations belong in the Process stage.'
+      },
+      {
+        id: 'q4',
+        question: 'Consider the following lines of pseudo-code:\nLine 1: tax = item_price * 0.05\nLine 2: INPUT item_price\nLine 3: OUTPUT tax\nWhat is the primary cause of failure in this algorithm?',
+        options: [
+          'A) Syntax error in Line 3.',
+          'B) Logic sequence error: Line 1 uses `item_price` before it is provided in Line 2.',
+          'C) Infinite loop between Line 1 and Line 2.',
+          'D) The tax formula is ambiguous.'
+        ],
+        correct: 1,
+        explanation: 'Line 1 attempts to compute tax with an undefined `item_price` variable.'
+      },
+      {
+        id: 'q5',
+        question: 'A student is building a grading algorithm. Which instruction is completely UNAMBIGUOUS?',
+        options: [
+          'A) Give a high grade if the project looks professional.',
+          'B) IF score >= 90 THEN grade = "A"',
+          'C) Add extra points for good effort.',
+          'D) Check if the student passed or failed.'
+        ],
+        correct: 1,
+        explanation: 'Explicit conditions with exact relational operators (`>=`) leave no room for human interpretation.'
+      }
+    ];
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+      renderSection1();
+      renderSection2();
+      renderSection3();
+      renderSection4();
+      renderSection5();
+      updateStudentHeader();
+      generateReport();
+    };
+
+    function updateStudentHeader() {
+      const inputVal = document.getElementById('studentName').value.trim();
+      state.studentName = inputVal || 'Anonymous Student';
+      generateReport();
+    }
+
+    // --- SECTION 1 RENDERING & LOGIC ---
+    function renderSection1() {
+      const container = document.getElementById('prop-questions');
+      container.innerHTML = sec1Data.map((item, idx) => `
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/70 space-y-3">
+          <div class="text-xs font-bold text-indigo-400">Scenario ${idx + 1}</div>
+          <p class="text-sm text-slate-200 font-mono bg-slate-950 p-3 rounded-lg border border-slate-800">${item.scenario.replace(/\n/g, '<br>')}</p>
+          <div class="text-xs text-slate-300 font-medium">${item.question}</div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+            ${item.options.map(opt => `
+              <label class="flex items-start gap-2 bg-slate-800 p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-indigo-500 transition text-xs">
+                <input type="radio" name="${item.id}" value="${opt.val}" class="mt-0.5 text-indigo-600 focus:ring-0">
+                <span class="text-slate-300">${opt.label}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div id="feedback-${item.id}" class="text-xs hidden mt-2"></div>
+        </div>
+      `).join('');
+    }
+
+    function checkSection1() {
+      let score = 0;
+      sec1Data.forEach(item => {
+        const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+        const fb = document.getElementById(`feedback-${item.id}`);
+        fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+
+        if (selected && selected.value === item.correct) {
+          score += 5;
+          fb.classList.add('text-emerald-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct! You identified the correct algorithmic property.`;
+        } else {
+          fb.classList.add('text-rose-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect. Review the 3 properties (Finite, Ordered, Unambiguous).`;
+        }
+      });
+
+      state.scores.sec1 = score;
+      document.getElementById('score-sec1').innerText = `${score} / 20 pts`;
+      updateChecklists();
+      calculateTotalScore();
+    }
+
+    // --- SECTION 2 RENDERING & LOGIC (IPO) ---
+    function renderSection2() {
+      const pool = document.getElementById('ipo-pool');
+      pool.innerHTML = '';
+      
+      ipoItems.forEach(item => {
+        const card = document.createElement('div');
+        card.id = `card-${item.id}`;
+        card.className = `ipo-card bg-slate-800 hover:bg-slate-700 border border-slate-600 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer transition flex items-center gap-2 text-slate-200 select-none shadow-sm`;
+        card.setAttribute('data-id', item.id);
+        card.setAttribute('data-type', item.type);
+        card.onclick = () => selectIpoCard(item.id);
+        card.innerHTML = `<i class="fa-solid fa-grip-vertical text-slate-500"></i> ${item.label}`;
+        pool.appendChild(card);
+      });
+
+      // Enable bucket click targeting
+      ['bucket-input', 'bucket-process', 'bucket-output'].forEach(bId => {
+        const bucket = document.getElementById(bId);
+        bucket.onclick = (e) => {
+          if (state.selectedIpoCard) {
+            moveCardToBucket(state.selectedIpoCard, bucket.querySelector('.bucket-content'));
+          }
+        };
+      });
+    }
+
+    function selectIpoCard(cardId) {
+      document.querySelectorAll('.ipo-card').forEach(c => c.classList.remove('ring-2', 'ring-indigo-400', 'bg-indigo-900/40'));
+      const card = document.getElementById(`card-${cardId}`);
+      if (card) {
+        state.selectedIpoCard = cardId;
+        card.classList.add('ring-2', 'ring-indigo-400', 'bg-indigo-900/40');
+      }
+    }
+
+    function moveCardToBucket(cardId, targetContainer) {
+      const card = document.getElementById(`card-${cardId}`);
+      if (card && targetContainer) {
+        card.classList.remove('ring-2', 'ring-indigo-400', 'bg-indigo-900/40');
+        targetContainer.appendChild(card);
+        state.selectedIpoCard = null;
+      }
+    }
+
+    function checkSection2() {
+      let score = 0;
+      const totalItems = ipoItems.length; // 6 items
+      let correctCount = 0;
+
+      document.querySelectorAll('.bucket-content').forEach(bucket => {
+        const targetType = bucket.getAttribute('data-type');
+        const cards = bucket.querySelectorAll('.ipo-card');
+
+        cards.forEach(card => {
+          const itemType = card.getAttribute('data-type');
+          if (itemType === targetType) {
+            correctCount++;
+            card.classList.remove('border-slate-600', 'border-rose-500');
+            card.classList.add('border-emerald-500', 'bg-emerald-950/30');
+          } else {
+            card.classList.remove('border-slate-600', 'border-emerald-500');
+            card.classList.add('border-rose-500', 'bg-rose-950/30');
+          }
+        });
+      });
+
+      score = Math.round((correctCount / totalItems) * 20);
+      state.scores.sec2 = score;
+      document.getElementById('score-sec2').innerText = `${score} / 20 pts`;
+      updateChecklists();
+      calculateTotalScore();
+    }
+
+    // --- SECTION 3 RENDERING & LOGIC ---
+    function renderSection3() {
+      const container = document.getElementById('ambig-questions');
+      container.innerHTML = sec3Data.map((item, idx) => `
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/70 space-y-3">
+          <div class="text-xs font-bold text-indigo-400">Statement ${idx + 1}</div>
+          <p class="text-sm text-amber-300 font-mono bg-slate-950 p-3 rounded-lg border border-slate-800">${item.text}</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-xs text-slate-400 block font-medium">1. Clarity Classification:</label>
+              <select id="sel-type-${item.id}" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+                <option value="">-- Choose Type --</option>
+                <option value="AMBIGUOUS">Ambiguous (Vague / Intuitive)</option>
+                <option value="UNAMBIGUOUS">Unambiguous (Explicit / Code-ready)</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs text-slate-400 block font-medium">2. Computer Science Explanation:</label>
+              <select id="sel-reason-${item.id}" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+                <option value="">-- Choose Justification --</option>
+                <option value="No exact numerical percentage or formula is specified.">No exact numerical percentage or formula is specified.</option>
+                <option value="Uses precise mathematical formula with deterministic operators.">Uses precise mathematical formula with deterministic operators.</option>
+                <option value="&quot;Old enough&quot; is vague without an explicit boundary like age &gt;= 18.">"Old enough" is vague without an explicit boundary.</option>
+                <option value="Sets a strict conditional evaluation limit with defined Boolean output.">Sets a strict conditional evaluation limit with defined Boolean output.</option>
+              </select>
+            </div>
+          </div>
+          <div id="fb-ambig-${item.id}" class="text-xs hidden mt-1"></div>
+        </div>
+      `).join('');
+    }
+
+    function checkSection3() {
+      let score = 0;
+      sec3Data.forEach(item => {
+        const typeAns = document.getElementById(`sel-type-${item.id}`).value;
+        const reasonAns = document.getElementById(`sel-reason-${item.id}`).value;
+        const fb = document.getElementById(`fb-ambig-${item.id}`);
+        fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+
+        const typeCorrect = typeAns === item.typeChoice;
+        // Check text match for justification
+        const reasonCorrect = reasonAns.includes(item.typeChoice === 'AMBIGUOUS' ? (item.id === 'a1' ? 'numerical' : 'vague') : (item.id === 'a2' ? 'mathematical' : 'conditional'));
+
+        if (typeCorrect && reasonCorrect) {
+          score += 5;
+          fb.classList.add('text-emerald-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct classification and justification!`;
+        } else {
+          fb.classList.add('text-rose-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect. Review explicit vs vague instructions.`;
+        }
+      });
+
+      state.scores.sec3 = score;
+      document.getElementById('score-sec3').innerText = `${score} / 20 pts`;
+      updateChecklists();
+      calculateTotalScore();
+    }
+
+    // --- SECTION 4 RENDERING & LOGIC (SEQUENCE) ---
+    function renderSection4() {
+      const container = document.getElementById('sequence-list');
+      container.innerHTML = state.sequenceOrder.map((item, idx) => `
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 flex items-center justify-between gap-2 text-xs font-mono select-none" id="seq-row-${idx}">
+          <div class="flex items-center gap-3">
+            <span class="bg-slate-800 text-indigo-400 px-2 py-1 rounded font-bold border border-slate-700">Line ${idx + 1}</span>
+            <span class="text-slate-200">${item.code}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="moveSeq(${idx}, -1)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700"><i class="fa-solid fa-arrow-up"></i></button>
+            <button onclick="moveSeq(${idx}, 1)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700"><i class="fa-solid fa-arrow-down"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function moveSeq(idx, dir) {
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= state.sequenceOrder.length) return;
+      
+      const temp = state.sequenceOrder[idx];
+      state.sequenceOrder[idx] = state.sequenceOrder[newIdx];
+      state.sequenceOrder[newIdx] = temp;
+      renderSection4();
+      
+      // Reset simulator status on shift
+      document.getElementById('seq-status-badge').className = "px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30";
+      document.getElementById('seq-status-badge').innerText = "Sequence Changed - Validate Again";
+      document.getElementById('btn-dry-run').disabled = true;
+      document.getElementById('btn-dry-run').className = "px-4 py-1.5 bg-slate-700 text-slate-400 cursor-not-allowed rounded-lg font-bold transition shrink-0";
+    }
+
+    function checkSequenceOrder() {
+      // Correct order is:
+      // Line 1: INPUT price (id: L3, correctIdx: 0)
+      // Line 2: tax = price * 0.06 (id: L2, correctIdx: 1)
+      // Line 3: total_price = price + tax (id: L4, correctIdx: 2)
+      // Line 4: OUTPUT total_price (id: L1, correctIdx: 3)
+
+      let isCorrect = true;
+      state.sequenceOrder.forEach((item, idx) => {
+        if (item.correctIdx !== idx) isCorrect = false;
+      });
+
+      const badge = document.getElementById('seq-status-badge');
+      const dryBtn = document.getElementById('btn-dry-run');
+
+      if (isCorrect) {
+        state.scores.sec4 = 20;
+        badge.className = "px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+        badge.innerText = "✓ Valid Sequence! Ready to Execute";
+        
+        dryBtn.disabled = false;
+        dryBtn.className = "px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition shadow-lg shadow-emerald-600/20 shrink-0";
+        
+        document.getElementById('dry-console').innerHTML = `
+          <div class="text-emerald-400">// Sequence Validated successfully.</div>
+          <div class="text-slate-300">Click "Execute Code" to dry-run with input $${parseFloat(document.getElementById('dry-price').value).toFixed(2)}.</div>
+        `;
+      } else {
+        state.scores.sec4 = 0;
+        badge.className = "px-2 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30";
+        badge.innerText = "✕ Logic Error in Sequence";
+        
+        dryBtn.disabled = true;
+        dryBtn.className = "px-4 py-1.5 bg-slate-700 text-slate-400 cursor-not-allowed rounded-lg font-bold transition shrink-0";
+
+        document.getElementById('dry-console').innerHTML = `
+          <div class="text-rose-400">// FATAL LOGIC ERROR:</div>
+          <div class="text-slate-300">Variables are being referenced before they exist, or outputs are triggered prior to computation.</div>
+        `;
+      }
+
+      document.getElementById('score-sec4').innerText = `${state.scores.sec4} / 20 pts`;
+      updateChecklists();
+      calculateTotalScore();
+    }
+
+    function runDryRun() {
+      const priceVal = parseFloat(document.getElementById('dry-price').value) || 0;
+      const taxVal = priceVal * 0.06;
+      const totalVal = priceVal + taxVal;
+
+      const consoleBox = document.getElementById('dry-console');
+      consoleBox.innerHTML = `
+        <div class="text-indigo-400">[EXECUTION TRACE]</div>
+        <div>> Step 1: INPUT price -> <span class="text-amber-300">$${priceVal.toFixed(2)}</span></div>
+        <div>> Step 2: CALCULATE tax = ${priceVal.toFixed(2)} * 0.06 -> <span class="text-amber-300">$${taxVal.toFixed(2)}</span></div>
+        <div>> Step 3: CALCULATE total = ${priceVal.toFixed(2)} + ${taxVal.toFixed(2)} -> <span class="text-amber-300">$${totalVal.toFixed(2)}</span></div>
+        <div class="text-emerald-400 font-bold">> Step 4: OUTPUT total_price -> "$${totalVal.toFixed(2)}"</div>
+      `;
+    }
+
+    // --- SECTION 5 RENDERING & LOGIC (EXAM) ---
+    function renderSection5() {
+      const container = document.getElementById('exam-questions');
+      container.innerHTML = sec5Data.map((item, idx) => `
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/70 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-indigo-400">IT Specialist Practice Question ${idx + 1}</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">Certiport Objective 1.3</span>
+          </div>
+          <p class="text-sm text-slate-200 font-medium whitespace-pre-line">${item.question}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+            ${item.options.map((opt, oIdx) => `
+              <label class="flex items-center gap-2 bg-slate-800 p-2.5 rounded-lg border border-slate-700 cursor-pointer hover:border-indigo-500 transition text-xs">
+                <input type="radio" name="${item.id}" value="${oIdx}" class="text-indigo-600 focus:ring-0">
+                <span class="text-slate-300">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div id="fb-exam-${item.id}" class="text-xs hidden mt-2 p-2 rounded bg-slate-950 border border-slate-800"></div>
+        </div>
+      `).join('');
+    }
+
+    function checkSection5() {
+      let score = 0;
+      sec5Data.forEach(item => {
+        const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+        const fb = document.getElementById(`fb-exam-${item.id}`);
+        fb.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+
+        if (selected && parseInt(selected.value) === item.correct) {
+          score += 4; // 5 questions * 4 pts = 20 pts
+          fb.classList.add('text-emerald-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Correct! ${item.explanation}`;
+        } else {
+          fb.classList.add('text-rose-400');
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect. ${item.explanation}`;
+        }
+      });
+
+      state.scores.sec5 = score;
+      document.getElementById('score-sec5').innerText = `${score} / 20 pts`;
+      updateChecklists();
+      calculateTotalScore();
+    }
+
+    // --- SCORE CALCULATIONS & REPORTING ---
+    function calculateTotalScore() {
+      const total = Object.values(state.scores).reduce((a, b) => a + b, 0);
+      document.getElementById('headerTotalScore').innerText = total;
+      document.getElementById('finalTotalScore').innerText = `${total} / 100`;
+      generateReport();
+    }
+
+    function updateChecklists() {
+      const mappings = [
+        { key: 'sec1', el: 'chk-sec1' },
+        { key: 'sec2', el: 'chk-sec2' },
+        { key: 'sec3', el: 'chk-sec3' },
+        { key: 'sec4', el: 'chk-sec4' },
+        { key: 'sec5', el: 'chk-sec5' }
+      ];
+
+      mappings.forEach(m => {
+        const element = document.getElementById(m.el);
+        if (state.scores[m.key] > 0) {
+          element.className = "flex items-center gap-2 text-emerald-400 font-medium";
+          element.innerHTML = `<i class="fa-solid fa-circle-check"></i> Part ${m.el.slice(-1)} Completed (${state.scores[m.key]} pts)`;
+        }
+      });
+    }
+
+    function generateReport() {
+      const totalScore = Object.values(state.scores).reduce((a, b) => a + b, 0);
+      const timestamp = new Date().toLocaleString();
+      const reportText = 
+`==================================================
+COMPUTATIONAL THINKING DAY 3: ALGORITHMIC THINKING
+STUDENT ACTIVITY RESULTS REPORT
+==================================================
+Student Name : ${state.studentName}
+Completion Date: ${timestamp}
+Overall Score  : ${totalScore} / 100 Points
+
+DETAILED MODULE BREAKDOWN:
+--------------------------------------------------
+1. Mandatory Properties (Finite/Ordered/Unambiguous) : ${state.scores.sec1} / 20 pts
+2. IPO Framework Classification                      : ${state.scores.sec2} / 20 pts
+3. Ambiguous vs Unambiguous Instructions              : ${state.scores.sec3} / 20 pts
+4. Certiport Sequence Logic Fixer & Dry Run          : ${state.scores.sec4} / 20 pts
+5. IT Specialist Standardized Exam Questions          : ${state.scores.sec5} / 20 pts
+--------------------------------------------------
+Verification Code: CT134-${Math.random().toString(36).substring(2, 9).toUpperCase()}-VERIFIED
+==================================================`;
+
+      document.getElementById('reportTextarea').value = reportText;
+    }
+
+    function copyToClipboard() {
+      generateReport();
+      const textarea = document.getElementById('reportTextarea');
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          const msg = document.getElementById('copy-status-msg');
+          msg.classList.remove('opacity-0');
+          setTimeout(() => msg.classList.add('opacity-0'), 2500);
+        }
+      } catch (err) {
+        console.error('Copy failed', err);
+      }
+    }
+  </script>
+</body>
+</html>
+
