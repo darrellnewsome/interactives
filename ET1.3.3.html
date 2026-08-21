@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ET1.3.3 : Guided File Management Activity</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); transform: scale(1); }
+      50% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); transform: scale(1.02); }
+    }
+    @keyframes floatBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes highlightPulse {
+      0% { background-color: rgba(254, 240, 138, 0.2); }
+      50% { background-color: rgba(254, 240, 138, 0.9); }
+      100% { background-color: rgba(254, 240, 138, 0.2); }
+    }
+    @keyframes pointerClick {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-10px, -10px) scale(0.9); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    .animate-pulse-glow { animation: pulseGlow 2.5s infinite ease-in-out; }
+    .animate-bounce-subtle { animation: floatBounce 2s infinite ease-in-out; }
+    .animate-highlight { animation: highlightPulse 2s infinite ease-in-out; }
+    .animate-pointer { animation: pointerClick 1.5s infinite ease-in-out; }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-800 font-sans min-h-screen pb-12">
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-950 border-b border-slate-800 text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-folder-tree text-xl"></i>
+        </div>
+        <div>
+          <span class="text-xs font-mono tracking-widest text-blue-400 font-bold uppercase">ET1.3.3 Activity</span>
+          <h1 class="text-lg md:text-xl font-bold leading-tight">Guided File Management Activity</h1>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-xs font-mono text-slate-300">
+        <i class="fa-solid fa-graduation-cap text-yellow-400"></i>
+        <span>Emerging Technologies Portfolio</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 mt-6 space-y-8">
+
+    <!-- Progress Step Bar -->
+    <nav class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700 shadow-xl" aria-label="Progress">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-xs font-medium">
+        <button onclick="scrollToSection('sec-1')" class="nav-btn p-2.5 rounded-xl bg-blue-600/20 text-blue-300 border border-blue-500/40 hover:bg-blue-600/30 transition flex items-center justify-center space-x-2">
+          <span>1. Why It Matters</span>
+        </button>
+        <button onclick="scrollToSection('sec-2')" class="nav-btn p-2.5 rounded-xl bg-slate-700/50 text-slate-300 border border-slate-600 hover:bg-slate-700 transition flex items-center justify-center space-x-2">
+          <span>2. Folders & Demo</span>
+        </button>
+        <button onclick="scrollToSection('sec-3')" class="nav-btn p-2.5 rounded-xl bg-slate-700/50 text-slate-300 border border-slate-600 hover:bg-slate-700 transition flex items-center justify-center space-x-2">
+          <span>3. File Naming</span>
+        </button>
+        <button onclick="scrollToSection('sec-4')" class="nav-btn p-2.5 rounded-xl bg-slate-700/50 text-slate-300 border border-slate-600 hover:bg-slate-700 transition flex items-center justify-center space-x-2">
+          <span>4. Color & Stars</span>
+        </button>
+        <button onclick="scrollToSection('sec-5')" class="nav-btn col-span-2 md:col-span-1 p-2.5 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/30 transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>5. Practice & Report</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- SECTION 1: Why File Organization Matters -->
+    <section id="sec-1" class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+      
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">Part 1</span>
+        <h2 class="text-2xl font-bold text-slate-900">Why File Organization Matters</h2>
+      </div>
+
+      <!-- Interactive Hook / Hand Raise -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5 mb-6">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-hand text-amber-500 text-xl animate-bounce-subtle"></i>
+              Quick Check: Raise Your Hand!
+            </h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+              Have you ever lost a digital file before—even though you were 100% sure you saved it somewhere?
+            </p>
+          </div>
+          <button id="raiseHandBtn" onclick="toggleHandRaise()" class="px-5 py-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-hand-sparkles"></i>
+            <span>Yes! I've lost a file!</span>
+          </button>
+        </div>
+        <div id="handResponse" class="hidden mt-4 pt-3 border-t border-blue-200 text-sm text-blue-900 font-medium animate-fadeIn">
+          <i class="fa-solid fa-circle-info text-blue-600 mr-1"></i>
+          <strong>Most of us have!</strong> When your digital files are messy, it's kind of like throwing all your school papers loose into your backpack without folders. You might find them later… but it will take a long time!
+        </div>
+      </div>
+
+      <!-- Comparison Visualization -->
+      <div class="grid md:grid-cols-2 gap-6 my-6">
+        <!-- Messy Digital Backpack -->
+        <div class="bg-red-50/80 border border-red-200 rounded-xl p-5 relative group hover:border-red-300 transition">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-red-700 font-bold text-sm flex items-center gap-2">
+              <i class="fa-solid fa-backpack text-red-500 text-lg"></i> Messy Digital Backpack
+            </span>
+            <span class="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded font-mono">Unorganized</span>
+          </div>
+          <ul class="text-xs text-slate-600 space-y-2 font-mono">
+            <li class="bg-white/80 p-2 rounded border border-red-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-circle-xmark text-red-400"></i> myproject123.docx
+            </li>
+            <li class="bg-white/80 p-2 rounded border border-red-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-circle-xmark text-red-400"></i> Untitled_design_final(1).png
+            </li>
+            <li class="bg-white/80 p-2 rounded border border-red-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-circle-xmark text-red-400"></i> doc2_REALLY_FINAL.pdf
+            </li>
+          </ul>
+          <p class="text-xs text-red-600 mt-3 italic">Result: Wasted time, missed deadlines, frustration.</p>
+        </div>
+
+        <!-- Neat Folder System -->
+        <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-5 relative group hover:border-emerald-300 transition">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-emerald-700 font-bold text-sm flex items-center gap-2">
+              <i class="fa-solid fa-box-archive text-emerald-500 text-lg"></i> Organized System
+            </span>
+            <span class="text-xs bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded font-mono">Efficient</span>
+          </div>
+          <ul class="text-xs text-slate-600 space-y-2 font-mono">
+            <li class="bg-white/80 p-2 rounded border border-emerald-100 flex items-center gap-2">
+              <i class="fa-solid fa-folder text-amber-500"></i> Emerging Technologies Portfolio
+            </li>
+            <li class="ml-4 bg-white/80 p-2 rounded border border-emerald-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-lines text-blue-500"></i> Unit2_InternetSafety_JordanS.pptx
+            </li>
+          </ul>
+          <p class="text-xs text-emerald-700 mt-3 italic">Result: Instant retrieval, peace of mind, professional skills!</p>
+        </div>
+      </div>
+
+      <!-- NEW: Interactive Quick Check #1 with Instant Feedback -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 space-y-3">
+        <div class="flex items-center space-x-2 text-amber-400 font-bold">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>Guided Check: Why change how we store files?</span>
+        </div>
+        <p>If your teacher asks for an assignment you made 3 weeks ago, which file name will be hardest to locate quickly?</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono">
+          <button type="button" onclick="checkChoiceSec1(this, false)" class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-left transition text-slate-200">
+            A) Unit1_SafetyEssay_JordanS.docx
+          </button>
+          <button type="button" onclick="checkChoiceSec1(this, true)" class="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-left transition text-slate-200">
+            B) Document1_final_v2.docx
+          </button>
+        </div>
+        <div id="sec1Feedback" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      </div>
+
+      <div class="bg-slate-900 text-slate-200 p-4 rounded-xl border border-slate-800 text-sm flex items-start space-x-3 mt-4">
+      </div>
+
+      <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+        Think of your main folder as a <strong>digital drawer</strong>. Inside that drawer, you add <strong>subfolders</strong> (like dividers) to keep everything neatly sorted by topic or unit.
+      </p>
+
+      <!-- Interactive Folder Tree Preview -->
+      <div class="grid lg:grid-cols-12 gap-6 items-start">
+        <!-- Interactive Folder Visualizer -->
+        <div class="lg:col-span-5 bg-slate-950 rounded-xl p-5 border border-slate-800 text-slate-200 shadow-inner">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+            <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Drive Hierarchy</span>
+            <span class="text-xs text-blue-400 font-mono"><i class="fa-brands fa-google-drive"></i> My Drive</span>
+          </div>
+
+          <!-- Root Folder -->
+          <div class="space-y-2">
+            <div class="flex items-center space-x-2 bg-blue-950/80 border border-blue-800/80 p-2.5 rounded-lg text-blue-200 font-semibold text-sm">
+              <i class="fa-solid fa-folder-open text-amber-400 text-lg"></i>
+              <span>Emerging Technologies Portfolio</span>
+            </div>
+
+            <!-- Subfolders -->
+            <div class="ml-6 space-y-1.5 border-l-2 border-slate-800 pl-3">
+              <div onclick="selectSubfolder('Digital Literacy', 'Notes, Safety guides, Web basics')" class="subfolder-item hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center space-x-2">
+                  <i class="fa-solid fa-folder text-blue-400"></i>
+                  <span>Digital Literacy</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+              </div>
+
+              <div onclick="selectSubfolder('AI Project', 'Prompt logs, Ethics essays, Model tests')" class="subfolder-item hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center space-x-2">
+                  <i class="fa-solid fa-folder text-emerald-400"></i>
+                  <span>AI Project</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+              </div>
+
+              <div onclick="selectSubfolder('Programming', 'Python scripts, HTML files, Logic flowcharts')" class="subfolder-item hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center space-x-2">
+                  <i class="fa-solid fa-folder text-purple-400"></i>
+                  <span>Programming</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+              </div>
+
+              <div onclick="selectSubfolder('Game Design', 'Sprites, Game design docs, Audio assets')" class="subfolder-item hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition flex items-center justify-between text-xs text-slate-300">
+                <span class="flex items-center space-x-2">
+                  <i class="fa-solid fa-folder text-rose-400"></i>
+                  <span>Game Design</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-slate-600 text-[10px]"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Folder Info Box -->
+          <div id="subfolderInfo" class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400">
+            <span class="text-slate-200 font-semibold block mb-1">👈 Click any subfolder above</span>
+            See what kind of student files belong inside each divider.
+          </div>
+        </div>
+
+        <!-- Teacher Demo Simulator -->
+        <div class="lg:col-span-7 bg-indigo-50/50 border border-indigo-200 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-laptop-code text-indigo-600"></i> Teacher Demo: Watch How To Create It
+            </h3>
+            <button onclick="runTeacherDemo()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-play"></i> Play Demo Animation
+            </button>
+          </div>
+
+          <!-- Simulated Drive Viewport -->
+          <div class="bg-white border border-slate-300 rounded-xl p-4 min-h-[220px] relative overflow-hidden shadow-inner flex flex-col justify-between">
+            <!-- Top Toolbar -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
+              <div class="flex items-center space-x-2 text-xs text-slate-500 font-medium">
+                <i class="fa-brands fa-google-drive text-blue-500"></i>
+                <span>Google Drive Workspace</span>
+              </div>
+              <span id="demoStepBadge" class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-mono font-bold">Ready</span>
+            </div>
+
+            <!-- Virtual Canvas -->
+            <div id="demoCanvas" class="flex-grow flex items-center justify-center relative p-4">
+              <div id="demoFolderContainer" class="text-center transition-all duration-500">
+                <i class="fa-solid fa-folder-plus text-5xl text-slate-300 mb-2"></i>
+                <p class="text-xs text-slate-400 font-medium">Click "Play Demo Animation" to watch step-by-step.</p>
+              </div>
+
+              <!-- Animated Cursor Hand -->
+              <div id="demoCursor" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden transition-all duration-700 pointer-events-none z-20">
+                <i class="fa-solid fa-arrow-pointer text-indigo-600 text-2xl drop-shadow-md"></i>
+              </div>
+
+              <!-- Context Menu Popup Simulation -->
+              <div id="demoContextMenu" class="hidden absolute bg-white border border-slate-200 rounded-lg shadow-xl text-xs py-1.5 w-44 z-10 left-1/2 top-1/3">
+                <div class="px-3 py-1 text-slate-400 font-bold text-[10px] uppercase">Menu</div>
+                <div id="menuNewFolderOpt" class="px-3 py-1.5 hover:bg-blue-50 text-slate-700 flex items-center gap-2 font-medium">
+                  <i class="fa-solid fa-folder-plus text-blue-500"></i> New Folder
+                </div>
+                <div class="px-3 py-1 text-slate-300">File upload</div>
+              </div>
+            </div>
+
+            <!-- Demo Subtext Log -->
+            <div id="demoStatusText" class="mt-2 text-xs font-mono text-slate-600 bg-slate-100 p-2 rounded-lg border border-slate-200">
+              Status: Ready. Click "Play Demo Animation" to begin.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: File Naming – Good vs. Bad Examples -->
+    <section id="sec-3" class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-wider">Part 3</span>
+        <h2 class="text-2xl font-bold text-slate-900">File Naming – Good vs. Bad Examples</h2>
+      </div>
+
+      <p class="text-slate-600 text-sm mb-6">
+        Here is a common mistake made in school: naming files something like <code class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-mono">project1-final-FINAL-reallyfinal.docx 😬</code>
+      </p>
+
+      <!-- The 3 Core Questions Rule Banner -->
+      <div class="bg-gradient-to-r from-slate-900 to-blue-950 text-white rounded-xl p-5 mb-6 shadow-md border border-slate-800">
+        <h3 class="text-xs font-mono text-blue-400 uppercase tracking-widest font-bold mb-3">
+          <i class="fa-solid fa-key"></i> The 3 Essential Questions Every File Name Must Answer:
+        </h3>
+        <div class="grid md:grid-cols-3 gap-3 text-sm">
+          <div class="bg-slate-800/80 p-3 rounded-lg border border-blue-500/30 flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-xs">1</span>
+            <div>
+              <strong class="text-blue-300 block">Which Unit?</strong>
+              <span class="text-xs text-slate-400">e.g., Unit2</span>
+            </div>
+          </div>
+          <div class="bg-slate-800/80 p-3 rounded-lg border border-emerald-500/30 flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-xs">2</span>
+            <div>
+              <strong class="text-emerald-300 block">What is it?</strong>
+              <span class="text-xs text-slate-400">e.g., InternetSafety</span>
+            </div>
+          </div>
+          <div class="bg-slate-800/80 p-3 rounded-lg border border-purple-500/30 flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center text-xs">3</span>
+            <div>
+              <strong class="text-purple-300 block">Whose file?</strong>
+              <span class="text-xs text-slate-400">e.g., JohnD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Good vs Bad Comparison Display -->
+      <div class="grid md:grid-cols-2 gap-6 my-6">
+        <!-- Bad Example -->
+        <div class="border-2 border-red-200 bg-red-50/50 rounded-xl p-5 relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-red-700 font-bold text-sm flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-xmark text-red-500"></i> ❌ Bad Example
+            </span>
+            <span class="text-[10px] bg-red-200 text-red-800 font-mono px-2 py-0.5 rounded uppercase">Confusing</span>
+          </div>
+          <div class="bg-white p-3 rounded-lg border border-red-200 font-mono text-sm text-red-600 mb-3 break-all shadow-sm">
+            myproject.pptx
+          </div>
+          <ul class="text-xs text-red-700 space-y-1.5">
+            <li>❌ Doesn't tell you which class or unit it is for.</li>
+            <li>❌ Doesn't tell the teacher who created it.</li>
+            <li>❌ Hard to find when searching later.</li>
+          </ul>
+        </div>
+
+        <!-- Good Example with Interactive Anatomy -->
+        <div class="border-2 border-emerald-300 bg-emerald-50/50 rounded-xl p-5 relative animate-pulse-glow">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-emerald-800 font-bold text-sm flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i> ✅ Good Example
+            </span>
+            <span class="text-[10px] bg-emerald-200 text-emerald-800 font-mono px-2 py-0.5 rounded uppercase font-bold">Self-Descriptive</span>
+          </div>
+          
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 font-mono text-sm text-white mb-3 flex flex-wrap gap-1 items-center shadow-sm">
+            <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-bold animate-bounce-subtle">Unit2</span>
+            <span class="text-slate-400">_</span>
+            <span class="bg-emerald-600 text-white px-2 py-0.5 rounded text-xs font-bold animate-bounce-subtle" style="animation-delay: 0.2s">InternetSafety</span>
+            <span class="text-slate-400">_</span>
+            <span class="bg-purple-600 text-white px-2 py-0.5 rounded text-xs font-bold animate-bounce-subtle" style="animation-delay: 0.4s">JohnD</span>
+            <span class="text-slate-400">.pptx</span>
+          </div>
+
+          <ul class="text-xs text-emerald-800 space-y-1.5 font-medium">
+            <li><i class="fa-solid fa-check text-emerald-600 mr-1"></i> <strong>Unit2</strong> = Answers <em>Which Unit?</em></li>
+            <li><i class="fa-solid fa-check text-emerald-600 mr-1"></i> <strong>InternetSafety</strong> = Answers <em>What topic?</em></li>
+            <li><i class="fa-solid fa-check text-emerald-600 mr-1"></i> <strong>JohnD</strong> = Answers <em>Whose file?</em></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Bonus - Color Coding and Starred Files -->
+    <section id="sec-4" class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative">
+      <div class="flex items-center space-x-3 mb-4">
+        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold uppercase tracking-wider">Part 4</span>
+        <h2 class="text-2xl font-bold text-slate-900">Bonus: Color Coding & Starred Files</h2>
+      </div>
+
+      <p class="text-slate-600 text-sm mb-6">
+        Google Drive provides quick visual organizational tools to help you identify active projects instantly:
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Interactive Color Coding Sandbox -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+        <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-palette text-purple-600"></i> Color Coding Folders
+        </h3>
+        <p class="text-xs text-slate-500 mb-4">
+          Right-click a folder in Google Drive to change its color (e.g., Blue for Programming, Green for Cybersecurity!).
+        </p>
+
+        <!-- Interactive Color Swatch Demo -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-3">
+          <div id="demoColorFolder" class="inline-flex items-center space-x-2 text-blue-600 transition-colors duration-300">
+            <i id="demoFolderIcon" class="fa-solid fa-folder text-5xl"></i>
+          </div>
+          <div id="demoFolderNameText" class="text-xs font-bold text-slate-700">Programming Folder</div>
+
+          <div class="flex items-center justify-center gap-2 pt-2 border-t border-slate-100">
+            <button type="button" onclick="changeFolderColor('text-blue-600', 'Blue (Great choice for coding!)')" class="w-6 h-6 rounded-full bg-blue-600 hover:scale-110 transition shadow-sm"></button>
+            <button type="button" onclick="changeFolderColor('text-emerald-500', 'Green (Perfect for Cybersecurity/AI!)')" class="w-6 h-6 rounded-full bg-emerald-500 hover:scale-110 transition shadow-sm"></button>
+            <button type="button" onclick="changeFolderColor('text-purple-600', 'Purple (Great for Game Design!)')" class="w-6 h-6 rounded-full bg-purple-600 hover:scale-110 transition shadow-sm"></button>
+            <button type="button" onclick="changeFolderColor('text-amber-500', 'Amber/Yellow (Great for Digital Literacy!)')" class="w-6 h-6 rounded-full bg-amber-500 hover:scale-110 transition shadow-sm"></button>
+            <button type="button" onclick="changeFolderColor('text-rose-600', 'Rose/Red (Great for Urgent Deadlines!)')" class="w-6 h-6 rounded-full bg-rose-600 hover:scale-110 transition shadow-sm"></button>
+          </div>
+          <div id="colorFeedback" class="text-[11px] font-medium text-slate-600">Click a color above to customize your folder theme!</div>
+        </div>
+      </div>
+
+      <!-- Interactive Starred Files Sandbox -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+        <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-star text-amber-400"></i> Starred Files Sandbox
+        </h3>
+        <p class="text-xs text-slate-500 mb-4">
+          Click the star icon next to urgent or current assignments to pin them to your Google Drive "Starred" quick navigation tab!
+        </p>
+
+        <!-- Simulated Drive List with Star Action -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition">
+            <div class="flex items-center space-x-2 text-xs font-mono text-slate-700">
+              <i class="fa-solid fa-file-code text-purple-500 text-sm"></i>
+              <span>Unit4_Calculator_JordanS.py</span>
+            </div>
+            <button type="button" onclick="toggleStar(this, 'Unit4 Calculator Script')" class="text-slate-300 hover:text-amber-400 text-lg transition-transform duration-200 active:scale-125 focus:outline-none">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition">
+            <div class="flex items-center space-x-2 text-xs font-mono text-slate-700">
+              <i class="fa-solid fa-file-powerpoint text-amber-500 text-sm"></i>
+              <span>Unit3_AIEthics_JordanS.pptx</span>
+            </div>
+            <button type="button" onclick="toggleStar(this, 'AI Ethics Presentation')" class="text-slate-300 hover:text-amber-400 text-lg transition-transform duration-200 active:scale-125 focus:outline-none">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border border-slate-100 transition">
+            <div class="flex items-center space-x-2 text-xs font-mono text-slate-700">
+              <i class="fa-solid fa-file-word text-blue-500 text-sm"></i>
+              <span>Unit1_SafetyEssay_JordanS.docx</span>
+            </div>
+            <button type="button" onclick="toggleStar(this, 'Safety Essay Doc')" class="text-slate-300 hover:text-amber-400 text-lg transition-transform duration-200 active:scale-125 focus:outline-none">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </div>
+        </div>
+        <div id="starFeedback" class="text-[11px] font-medium text-slate-600 mt-3 text-center">Click a star above to prioritize an active assignment!</div>
+      </div>
+    </div>
+    </section>
+
+    <!-- SECTION 5: Practice Activity & Schoology Report Generator -->
+    <section id="sec-5" class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl relative border-2 border-emerald-400/50">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+        <div class="flex items-center space-x-3">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase tracking-wider">Part 5</span>
+          <h2 class="text-2xl font-bold text-slate-900">Practice Activity & Schoology Submission</h2>
+        </div>
+        <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold">
+          Key Takeaway: "If you can’t find it, you can’t use it!"
+        </span>
+      </div>
+
+      <p class="text-slate-600 text-sm mb-6">
+        Complete the practice checks below with live feedback, generate your activity report, and copy it to submit in Schoology!
+      </p>
+
+      <!-- Practice Form -->
+      <form id="practiceForm" onsubmit="event.preventDefault(); generateSchoologyReport();" class="space-y-6">
+        
+        <!-- Privacy-Safe Student Identifier -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="flex items-center justify-between mb-1">
+            <label for="studentAlias" class="block text-xs font-bold text-slate-700">
+              <i class="fa-solid fa-user-shield text-emerald-600 mr-1"></i> First Name & Last Initial (Privacy Safe):
+            </label>
+          </div>
+          <input type="text" id="studentAlias" required placeholder="e.g. JordanS or AlexM" oninput="validateAliasInput(this)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono">
+          <p id="aliasFeedback" class="text-[11px] text-slate-500 mt-1">Please enter your first name and last initial only (e.g., JordanS).</p>
+        </div>
+
+        <!-- Practice Challenge 1: Fix bad file name with Live Interactive Feedback -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+              Fix the Bad File Name (Interactive Checks)
+            </h3>
+            <span class="text-[10px] text-slate-500">Format: Unit_Topic_Alias.ext</span>
+          </div>
+          
+          <p class="text-xs text-slate-600">
+            Scenario: Re-write the file <code class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-mono">myproject123.pptx</code> for a <strong>Unit 3 AI Ethics</strong> presentation using your privacy alias (e.g., JordanS).
+          </p>
+
+          <input type="text" id="fixedFileNameInput" required placeholder="e.g. Unit3_AIEthics_JordanS.pptx" oninput="checkFileNameFeedback()" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+
+          <!-- Live Rule Validation Feedback Cards -->
+          <div id="fileNameValidationBadges" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1">
+            <div id="ruleUnit" class="p-1.5 rounded bg-slate-100 text-slate-500 font-mono text-center border border-slate-200">❌ Unit Number</div>
+            <div id="ruleTopic" class="p-1.5 rounded bg-slate-100 text-slate-500 font-mono text-center border border-slate-200">❌ Topic Name</div>
+            <div id="ruleAlias" class="p-1.5 rounded bg-slate-100 text-slate-500 font-mono text-center border border-slate-200">❌ First Name + Initial</div>
+            <div id="ruleExt" class="p-1.5 rounded bg-slate-100 text-slate-500 font-mono text-center border border-slate-200">❌ Extension (.pptx)</div>
+          </div>
+          <div id="fileNameFeedbackText" class="text-xs font-semibold text-slate-600 bg-slate-50 p-2 rounded border border-slate-200">
+            Start typing above to see live formatting feedback!
+          </div>
+        </div>
+
+        <!-- Practice Challenge 2: Matching folder placement with Instant Feedback -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center font-bold">2</span>
+            Subfolder Matching Check
+          </h3>
+          <p class="text-xs text-slate-600">Where should you save a Python script named <code class="bg-slate-100 text-slate-800 px-1 rounded font-mono">Unit4_Calculator_JordanS.py</code>?</p>
+          
+          <select id="subfolderSelect" required onchange="checkSubfolderFeedback()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <option value="">-- Select Target Subfolder --</option>
+            <option value="Digital Literacy">Digital Literacy</option>
+            <option value="AI Project">AI Project</option>
+            <option value="Programming">Programming</option>
+            <option value="Game Design">Game Design</option>
+          </select>
+
+          <div id="subfolderFeedback" class="hidden text-xs p-2.5 rounded-lg font-medium"></div>
+        </div>
+
+        <!-- Practice Challenge 3: Reflection Check with Instant Evaluation -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center font-bold">3</span>
+            Reflection & Key Takeaway Check
+          </h3>
+          <p class="text-xs text-slate-600">Why is organizing folders and naming files clearly worth your time?</p>
+          <textarea id="reflectionInput" rows="2" required oninput="checkReflectionFeedback()" placeholder="Type your 1-2 sentence reflection here..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+          <div id="reflectionFeedback" class="text-[11px] text-slate-500">Provide a clear explanation to earn a 100% completion checkmark.</div>
+        </div>
+
+        <!-- Generate Button -->
+        <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition transform active:scale-98 flex items-center justify-center space-x-2 text-sm">
+          <i class="fa-solid fa-gears"></i>
+          <span>Generate Schoology Assignment Report</span>
+        </button>
+      </form>
+
+      <!-- REPORT DISPLAY & COPY TO CLIPBOARD SECTION -->
+      <div id="reportContainer" class="hidden mt-8 pt-6 border-t-2 border-emerald-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+            <i class="fa-solid fa-file-circle-check text-emerald-600"></i> Your Assignment Completion Report
+          </h3>
+          <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Ready to Submit</span>
+        </div>
+
+        <p class="text-xs text-slate-600">
+          Click the button below to copy this entire report, then open Schoology and paste it (<kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-[10px] font-mono">Ctrl + V</kbd> or <kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-[10px] font-mono">Cmd + V</kbd>) into your assignment text box.
+        </p>
+
+        <!-- Formatted Text Area Output -->
+        <textarea id="reportTextarea" readonly class="w-full h-56 p-4 font-mono text-xs bg-slate-950 text-emerald-400 border border-slate-800 rounded-xl focus:outline-none shadow-inner leading-relaxed resize-none"></textarea>
+
+        <!-- Action Button -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button onclick="copyReportToClipboard()" class="flex-grow py-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-2 text-sm">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copy Report to Clipboard</span>
+          </button>
+          <a href="#sec-1" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center space-x-1 transition">
+            <i class="fa-solid fa-arrow-up"></i>
+            <span>Back to Top</span>
+          </a>
+        </div>
+
+        <!-- Custom Copy Toast Notification -->
+        <div id="toastNotification" class="hidden p-3 bg-emerald-600 text-white rounded-xl text-center font-bold text-xs shadow-lg animate-bounce-subtle flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-circle-check text-base"></i>
+          <span>Report Copied to Clipboard! Now paste into Schoology.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-5xl mx-auto px-4 mt-12 text-center text-xs text-slate-500">
+    <p>ET1.3.3.html : – Guided File management Activity &bull; Emerging Technologies Curriculum</p>
+  </footer>
+
+  <!-- JavaScript App Logic -->
+  <script>
+    // Scroll Navigation
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Interactive Check in Section 1 with Instant Feedback
+    function checkChoiceSec1(btn, isCorrect) {
+      const fb = document.getElementById('sec1Feedback');
+      fb.classList.remove('hidden', 'bg-red-950', 'text-red-200', 'border-red-800', 'bg-emerald-950', 'text-emerald-200', 'border-emerald-800');
+      
+      if (isCorrect) {
+        fb.classList.add('bg-emerald-950', 'text-emerald-200', 'border', 'border-emerald-800');
+        fb.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i> <strong>Correct!</strong> "Document1_final_v2.docx" gives no topic, no unit, and no name. You would have to open every file to find what you need!';
+      } else {
+        fb.classList.add('bg-red-950', 'text-red-200', 'border', 'border-red-800');
+        fb.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400 mr-1"></i> <strong>Incorrect.</strong> "Unit1_SafetyEssay_JordanS.docx" is actually a GREAT file name! It tells you the unit, topic, and author right away.';
+      }
+    }
+
+    // Part 1: Hand Raise Toggle
+    function toggleHandRaise() {
+      const resp = document.getElementById('handResponse');
+      const btn = document.getElementById('raiseHandBtn');
+      resp.classList.toggle('hidden');
+      if (!resp.classList.contains('hidden')) {
+        btn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+        btn.classList.add('bg-slate-700', 'hover:bg-slate-800');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Hand Raised!';
+      }
+    }
+
+    // Part 2: Subfolder Info Click
+    function selectSubfolder(title, details) {
+      const info = document.getElementById('subfolderInfo');
+      info.innerHTML = `
+        <span class="text-blue-400 font-bold block text-xs">📁 Subfolder: ${title}</span>
+        <span class="text-slate-300">Typical contents: ${details}</span>
+      `;
+    }
+
+    // Part 2: Animated Teacher Demo Runner
+    let demoRunning = false;
+    function runTeacherDemo() {
+      if (demoRunning) return;
+      demoRunning = true;
+
+      const cursor = document.getElementById('demoCursor');
+      const menu = document.getElementById('demoContextMenu');
+      const container = document.getElementById('demoFolderContainer');
+      const badge = document.getElementById('demoStepBadge');
+      const status = document.getElementById('demoStatusText');
+
+      menu.classList.add('hidden');
+      cursor.classList.remove('hidden');
+      container.innerHTML = `<i class="fa-solid fa-square-plus text-5xl text-slate-300 mb-2"></i><p class="text-xs text-slate-400">Google Drive Root</p>`;
+      badge.textContent = "Step 1/3: Right Click";
+      status.textContent = "Action: Right-clicking in Drive blank space...";
+
+      setTimeout(() => {
+        menu.classList.remove('hidden');
+        badge.textContent = "Step 2/3: Select New Folder";
+        status.textContent = "Action: Context menu opens -> Clicking 'New Folder'...";
+      }, 1200);
+
+      setTimeout(() => {
+        menu.classList.add('hidden');
+        container.innerHTML = `
+          <div class="animate-bounce-subtle">
+            <i class="fa-solid fa-folder text-5xl text-amber-400 mb-1"></i>
+            <p class="text-xs font-bold text-slate-800">Emerging Technologies Portfolio</p>
+          </div>
+        `;
+        badge.textContent = "Step 3/3: Subfolders";
+        status.textContent = "Action: Main folder created! Now adding subfolders inside...";
+      }, 2600);
+
+      setTimeout(() => {
+        container.innerHTML = `
+          <div class="text-left space-y-1">
+            <div class="text-xs font-bold text-blue-700 flex items-center gap-1">
+              <i class="fa-solid fa-folder-open text-amber-400"></i> Emerging Technologies Portfolio
+            </div>
+            <div class="ml-4 space-y-1 text-[11px] text-slate-600 font-mono">
+              <div>📁 Digital Literacy</div>
+              <div>📁 AI Project</div>
+              <div>📁 Programming</div>
+              <div>📁 Game Design</div>
+            </div>
+          </div>
+        `;
+        cursor.classList.add('hidden');
+        badge.textContent = "Completed";
+        status.textContent = "Demo Finished! Folders and subfolders successfully structured.";
+        demoRunning = false;
+      }, 4200);
+    }
+
+    // Part 4: Color Coding Sandbox with Feedback
+    function changeFolderColor(colorClass, feedbackMessage) {
+      const folderIcon = document.getElementById('demoFolderIcon');
+      folderIcon.className = `fa-solid fa-folder text-5xl ${colorClass} transition-colors duration-300`;
+      const fb = document.getElementById('colorFeedback');
+      fb.textContent = `Selected: ${feedbackMessage}`;
+    }
+
+    // Part 4: Starred Files Sandbox
+    function toggleStar(btn, fileName) {
+      const fb = document.getElementById('starFeedback');
+      if (btn.classList.contains('text-amber-400')) {
+        btn.className = 'text-slate-300 hover:text-amber-400 text-lg transition-transform duration-200 active:scale-125 focus:outline-none';
+        fb.innerHTML = `<span class="text-slate-600">Unstarred <strong>${fileName}</strong>.</span>`;
+      } else {
+        btn.className = 'text-amber-400 text-lg transition-transform duration-200 active:scale-125 animate-bounce-subtle focus:outline-none';
+        fb.innerHTML = `<span class="text-amber-600 font-bold"><i class="fa-solid fa-star mr-1"></i> Starred ${fileName}!</span> Now available instantly from your Google Drive Starred tab.`;
+      }
+    }
+
+    // Privacy Alias Validation
+    function validateAliasInput(input) {
+      const fb = document.getElementById('aliasFeedback');
+      const val = input.value.trim();
+      if (val.length === 0) {
+        fb.textContent = "Please enter your first name and last initial only (e.g., JordanS).";
+        fb.className = "text-[11px] text-slate-500 mt-1";
+      } else if (val.includes(' ')) {
+        fb.textContent = "Tip: Combine first name and last initial without spaces (e.g., JordanS).";
+        fb.className = "text-[11px] text-amber-600 font-semibold mt-1";
+      } else {
+        fb.textContent = "✅ Privacy-safe student alias set!";
+        fb.className = "text-[11px] text-emerald-600 font-semibold mt-1";
+      }
+    }
+
+    // Live Interactive File Naming Checker with Visual Indicators
+    function checkFileNameFeedback() {
+      const val = document.getElementById('fixedFileNameInput').value.trim();
+      const alias = document.getElementById('studentAlias').value.trim() || "JordanS";
+      
+      const uBadge = document.getElementById('ruleUnit');
+      const tBadge = document.getElementById('ruleTopic');
+      const aBadge = document.getElementById('ruleAlias');
+      const eBadge = document.getElementById('ruleExt');
+      const fbText = document.getElementById('fileNameFeedbackText');
+
+      const hasUnit = /Unit\d/i.test(val);
+      const hasTopic = /AI/i.test(val) || /Ethics/i.test(val) || /AIEthics/i.test(val);
+      const hasAlias = val.toLowerCase().includes(alias.toLowerCase()) || (alias.length > 2 && val.toLowerCase().includes(alias.substring(0, 3).toLowerCase()));
+      const hasExt = val.endsWith('.pptx') || val.endsWith('.ppt');
+
+      // Update Badges
+      updateBadge(uBadge, hasUnit, "Unit Number");
+      updateBadge(tBadge, hasTopic, "Topic Name");
+      updateBadge(aBadge, hasAlias, "First Name + Initial");
+      updateBadge(eBadge, hasExt, "Extension (.pptx)");
+
+      if (hasUnit && hasTopic && hasAlias && hasExt) {
+        fbText.className = "text-xs font-semibold text-emerald-700 bg-emerald-50 p-2 rounded border border-emerald-300";
+        fbText.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>Excellent!</strong> Your file name is self-descriptive and follows the exact rule!';
+      } else if (val.includes(' ')) {
+        fbText.className = "text-xs font-semibold text-amber-700 bg-amber-50 p-2 rounded border border-amber-300";
+        fbText.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> <strong>Tip:</strong> Avoid spaces in file names! Use underscores (<code>_</code>) instead.';
+      } else {
+        fbText.className = "text-xs font-semibold text-slate-600 bg-slate-50 p-2 rounded border border-slate-200";
+        fbText.innerHTML = 'Keep typing... ensure you include Unit, Topic, your Privacy Alias, and <code>.pptx</code> extension.';
+      }
+    }
+
+    function updateBadge(badge, isValid, text) {
+      if (isValid) {
+        badge.className = "p-1.5 rounded bg-emerald-100 text-emerald-800 font-mono text-center border border-emerald-300 font-bold";
+        badge.textContent = `✅ ${text}`;
+      } else {
+        badge.className = "p-1.5 rounded bg-slate-100 text-slate-500 font-mono text-center border border-slate-200";
+        badge.textContent = `❌ ${text}`;
+      }
+    }
+
+    // Interactive Subfolder Dropdown Feedback
+    function checkSubfolderFeedback() {
+      const val = document.getElementById('subfolderSelect').value;
+      const fb = document.getElementById('subfolderFeedback');
+      fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'border-emerald-300', 'bg-amber-100', 'text-amber-800', 'border-amber-300');
+
+      if (val === 'Programming') {
+        fb.classList.add('bg-emerald-100', 'text-emerald-800', 'border', 'border-emerald-300');
+        fb.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>Correct Choice!</strong> Python scripts (<code>.py</code>) belong inside your <strong>Programming</strong> subfolder.';
+      } else if (val !== '') {
+        fb.classList.add('bg-amber-100', 'text-amber-800', 'border', 'border-amber-300');
+        fb.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> <strong>Not quite:</strong> A <code>.py</code> Python file is a programming script. It belongs in <strong>Programming</strong>, not ${val}.`;
+      } else {
+        fb.classList.add('hidden');
+      }
+    }
+
+    // Interactive Reflection Check
+    function checkReflectionFeedback() {
+      const val = document.getElementById('reflectionInput').value.trim();
+      const fb = document.getElementById('reflectionFeedback');
+      if (val.length > 15) {
+        fb.textContent = "✅ Great reflection! Ready to generate report.";
+        fb.className = "text-[11px] text-emerald-600 font-bold";
+      } else {
+        fb.textContent = "Type at least 1 full sentence explaining why file organization matters.";
+        fb.className = "text-[11px] text-slate-500";
+      }
+    }
+
+    // Part 5: Generate Schoology Report (Privacy-Safe Format)
+    function generateSchoologyReport() {
+      const alias = document.getElementById('studentAlias').value.trim();
+      const fixedName = document.getElementById('fixedFileNameInput').value.trim();
+      const subfolder = document.getElementById('subfolderSelect').value;
+      const reflection = document.getElementById('reflectionInput').value.trim();
+
+      const timestamp = new Date().toLocaleString();
+
+      const reportContent = 
+`==================================================
+ET1.3.3: FILE MANAGEMENT ACTIVITY REPORT
+==================================================
+Student Alias : ${alias} (Privacy-Safe ID)
+Completed On  : ${timestamp}
+
+--------------------------------------------------
+PART 1: FILE RENAMING PRACTICE
+--------------------------------------------------
+Original Bad File Name : myproject123.pptx
+Student Corrected Name : ${fixedName}
+
+--------------------------------------------------
+PART 2: SUBFOLDER PLACEMENT CHECK
+--------------------------------------------------
+Target File : Unit4_Calculator_${alias}.py
+Target Subfolder Choice : ${subfolder}
+
+--------------------------------------------------
+PART 3: REFLECTION
+--------------------------------------------------
+Q: Why is organizing files worth your time?
+A: "${reflection}"
+
+--------------------------------------------------
+KEY LESSON TAKEAWAY:
+"If you can't find it, you can't use it!"
+==================================================`;
+
+      const textarea = document.getElementById('reportTextarea');
+      textarea.value = reportContent;
+
+      const reportContainer = document.getElementById('reportContainer');
+      reportContainer.classList.remove('hidden');
+      reportContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Copy to Clipboard Logic with ExecCommand Fallback for iFrame Execution
+    function copyReportToClipboard() {
+      const textarea = document.getElementById('reportTextarea');
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+
+      let copied = false;
+      try {
+        copied = document.execCommand('copy');
+      } catch (err) {
+        copied = false;
+      }
+
+      if (!copied && navigator.clipboard) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          showToast();
+        }).catch(() => {
+          alert("Please select the text box and press Ctrl+C (or Cmd+C) to copy.");
+        });
+      } else if (copied) {
+        showToast();
+      } else {
+        alert("Please select the text box and press Ctrl+C (or Cmd+C) to copy.");
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toastNotification');
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
+
