@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guided Practice Workbench: EdTech System Design & Data Analysis</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Canvas-Confetti for completion celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Custom styling & font configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+        
+        .pulse-node {
+            animation: nodeGlow 1.5s infinite alternate;
+        }
+        @keyframes nodeGlow {
+            from { box-shadow: 0 0 5px rgba(37, 99, 235, 0.4); }
+            to { box-shadow: 0 0 20px rgba(37, 99, 235, 0.9); }
+        }
+
+        .active-path {
+            stroke: #2563eb;
+            stroke-width: 4;
+            stroke-dasharray: 8;
+            animation: flowDash 1s linear infinite;
+        }
+        @keyframes flowDash {
+            to { stroke-dashoffset: -16; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i class="fa-solid fa-microchip text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight">System Design & Analysis Lab</h1>
+                    <p class="text-xs text-slate-400">Interactive Guided Practice Suite</p>
+                </div>
+            </div>
+
+            <!-- Overall Progress Indicator -->
+            <div class="hidden md:flex items-center space-x-4 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50">
+                <div class="text-xs font-semibold text-slate-300">
+                    Progress: <span id="progress-text" class="text-brand-500 font-bold">0%</span>
+                </div>
+                <div class="w-32 bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full w-0 transition-all duration-500 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-slate-800 px-4 sm:px-6 lg:px-8 border-t border-slate-700/50 overflow-x-auto">
+            <nav class="flex space-x-2 sm:space-x-4 min-w-max py-2" aria-label="Tabs">
+                <button onclick="switchTab('overview')" id="tab-btn-overview" class="tab-btn flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg text-white bg-brand-600 transition-all">
+                    <i class="fa-solid fa-compass"></i>
+                    <span>Overview</span>
+                </button>
+                <button onclick="switchTab('scenario1')" id="tab-btn-scenario1" class="tab-btn flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
+                    <i class="fa-solid fa-diagram-project text-amber-400"></i>
+                    <span>Scenario 1: Logic Flowchart</span>
+                    <span id="badge-sc1" class="hidden ml-1 px-1.5 py-0.5 text-xs bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">Done</span>
+                </button>
+                <button onclick="switchTab('scenario2')" id="tab-btn-scenario2" class="tab-btn flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
+                    <i class="fa-solid fa-table-cells text-emerald-400"></i>
+                    <span>Scenario 2: Data Workbench</span>
+                    <span id="badge-sc2" class="hidden ml-1 px-1.5 py-0.5 text-xs bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">Done</span>
+                </button>
+                <button onclick="switchTab('scenario3')" id="tab-btn-scenario3" class="tab-btn flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
+                    <i class="fa-solid fa-users-viewfinder text-purple-400"></i>
+                    <span>Scenario 3: UX Research</span>
+                    <span id="badge-sc3" class="hidden ml-1 px-1.5 py-0.5 text-xs bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">Done</span>
+                </button>
+                <button onclick="switchTab('summary')" id="tab-btn-summary" class="tab-btn flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
+                    <i class="fa-solid fa-award text-yellow-400"></i>
+                    <span>Summary & Review</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Wrapper -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- TAB 0: OVERVIEW -->
+        <section id="tab-overview" class="tab-content block space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="max-w-3xl">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200 mb-4">
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i> Educational Systems & Systems Thinking
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Interactive Guided Practice Module</h2>
+                    <p class="mt-3 text-slate-600 leading-relaxed">
+                        Welcome! This interactive workbench simulates real-world educational technology challenges. You will step through three core scenarios covering algorithm decision trees, data pattern recognition, and user-centered design research.
+                    </p>
+                </div>
+
+                <!-- Scenario Grid Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <!-- Card 1 -->
+                    <div class="bg-gradient-to-b from-amber-50/50 to-white p-6 rounded-xl border border-amber-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="w-12 h-12 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xl shadow-md mb-4">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-900 mb-2">Scenario 1: Absence Alert Flowchart</h3>
+                            <p class="text-sm text-slate-600 mb-4">Map logic for automated student notifications vs. counseling referrals based on attendance metrics.</p>
+                        </div>
+                        <button onclick="switchTab('scenario1')" class="inline-flex items-center justify-center w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm rounded-lg transition-colors">
+                            Launch Flowchart Lab <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-gradient-to-b from-emerald-50/50 to-white p-6 rounded-xl border border-emerald-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="w-12 h-12 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xl shadow-md mb-4">
+                                <i class="fa-solid fa-table-cells"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-900 mb-2">Scenario 2: Lunch Queue Data Workbench</h3>
+                            <p class="text-sm text-slate-600 mb-4">Analyze 100 student check-in timestamps across three lunch periods to discover peak bottleneck times.</p>
+                        </div>
+                        <button onclick="switchTab('scenario2')" class="inline-flex items-center justify-center w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm rounded-lg transition-colors">
+                            Launch Data Lab <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-gradient-to-b from-purple-50/50 to-white p-6 rounded-xl border border-purple-200/60 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="w-12 h-12 rounded-lg bg-purple-500 text-white flex items-center justify-center text-xl shadow-md mb-4">
+                                <i class="fa-solid fa-users-viewfinder"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-900 mb-2">Scenario 3: Dashboard UX & Prototype Lab</h3>
+                            <p class="text-sm text-slate-600 mb-4">Design survey tools and simulate user testing with 100 students prior to system deployment.</p>
+                        </div>
+                        <button onclick="switchTab('scenario3')" class="inline-flex items-center justify-center w-full py-2.5 px-4 bg-purple-500 hover:bg-purple-600 text-white font-medium text-sm rounded-lg transition-colors">
+                            Launch UX Lab <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: SCENARIO 1 (FLOWCHART LOGIC) -->
+        <section id="tab-scenario1" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                    <div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 mb-2">
+                            <i class="fa-solid fa-sliders mr-1"></i> Decision Logic Tool
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">Scenario 1: Attendance Action Flowchart Logic</h2>
+                        <p class="text-slate-600 text-sm mt-1">Configure and test the system decision engine determining parent SMS alerts vs. counselor escalation.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="resetFlowchart()" class="px-3 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Logic
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                    <!-- Left Column: Controls & Test Simulator -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <!-- Instructions & Specs -->
+                        <div class="bg-amber-50/60 rounded-xl p-4 border border-amber-200 text-slate-800 text-sm">
+                            <h4 class="font-bold text-amber-900 flex items-center mb-2">
+                                <i class="fa-solid fa-circle-info mr-2"></i> System Rule Specification
+                            </h4>
+                            <ul class="list-disc list-inside space-y-1 text-slate-700 text-xs sm:text-sm">
+                                <li><strong>0 to 2 Absences:</strong> Normal Status (No Action Needed).</li>
+                                <li><strong>3 to 5 Absences:</strong> Trigger automated <strong>Parent SMS Alert</strong>.</li>
+                                <li><strong>6+ Absences:</strong> Escalation! <strong>Flag Student for Counseling Intervention</strong>.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Test Execution Panel -->
+                        <div class="bg-slate-900 text-white rounded-xl p-5 shadow-inner">
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center">
+                                <i class="fa-solid fa-flask text-amber-400 mr-2"></i> Flow Test Simulator
+                            </h3>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-1">
+                                        Input Total Student Absences: <span id="absence-count-val" class="text-amber-400 font-bold text-base ml-2">4</span>
+                                    </label>
+                                    <input type="range" id="absence-slider" min="0" max="12" value="4" step="1" oninput="updateAbsenceSlider(this.value)" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                        <span>0 (Perfect)</span>
+                                        <span>3 (Threshold 1)</span>
+                                        <span>6 (Threshold 2)</span>
+                                        <span>12+</span>
+                                    </div>
+                                </div>
+
+                                <button onclick="runFlowSimulation()" class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-lg shadow-md transition-all flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-play text-xs"></i>
+                                    <span>Simulate System Decision Flow</span>
+                                </button>
+                            </div>
+
+                            <!-- Live Simulation Output Output Console -->
+                            <div id="sim-output" class="mt-4 p-3 bg-slate-950/80 rounded-lg border border-slate-800 text-xs font-mono text-slate-300 min-h-[80px] flex flex-col justify-center">
+                                <span class="text-slate-500">Adjust the slider and click "Simulate" to trace system decision execution...</span>
+                            </div>
+                        </div>
+
+                        <!-- Knowledge Validation Challenge -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-900 text-sm mb-2"><i class="fa-solid fa-circle-question text-brand-600 mr-1.5"></i> Guided Verification Challenge</h4>
+                            <p class="text-xs text-slate-600 mb-3">If a student has <strong>6 total absences</strong>, what action is executed by the decision tree?</p>
+                            
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-2 p-2 rounded-lg bg-white border border-slate-200 text-xs hover:bg-slate-100 cursor-pointer">
+                                    <input type="radio" name="sc1-q" value="A" class="text-brand-600">
+                                    <span>Send automated Parent SMS Text</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg bg-white border border-slate-200 text-xs hover:bg-slate-100 cursor-pointer">
+                                    <input type="radio" name="sc1-q" value="B" class="text-brand-600">
+                                    <span>Flag student for mandatory Counseling Intervention</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2 rounded-lg bg-white border border-slate-200 text-xs hover:bg-slate-100 cursor-pointer">
+                                    <input type="radio" name="sc1-q" value="C" class="text-brand-600">
+                                    <span>Log event in history but perform no action</span>
+                                </label>
+                            </div>
+
+                            <button onclick="verifyScenario1()" class="mt-3 w-full py-2 bg-brand-600 text-white font-medium text-xs rounded-lg hover:bg-brand-700 transition-colors">
+                                Verify Answer & Complete Scenario 1
+                            </button>
+                            <div id="sc1-feedback" class="mt-2 text-xs font-semibold hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Visual Flowchart Canvas Diagram -->
+                    <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-6 text-white relative min-h-[480px] flex flex-col justify-between shadow-lg overflow-hidden" id="flowchart-container">
+                        <div class="flex items-center justify-between mb-2 z-20">
+                            <span class="text-xs font-mono text-slate-400"><i class="fa-solid fa-diagram-next mr-1"></i> Interactive Execution Flowchart</span>
+                            <span id="flow-status" class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">Idle</span>
+                        </div>
+
+                        <!-- Diagram SVG Container with Dynamic Path Alignment -->
+                        <div class="relative flex-1 flex flex-col items-center justify-between py-2 min-h-[420px]">
+                            <!-- SVG overlay lines dynamically calculated via JS -->
+                            <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="svg-connections">
+                                <defs>
+                                    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+                                    </marker>
+                                    <marker id="arrow-active" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+                                    </marker>
+                                </defs>
+                                <path id="path-start-d1" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                                <path id="path-d1-no" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                                <path id="path-d1-d2" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                                <path id="path-d2-sms" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                                <path id="path-d2-counseling" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                            </svg>
+
+                            <!-- Node 1: Start Node -->
+                            <div id="node-start" class="z-10 bg-slate-800 border-2 border-slate-600 text-slate-200 px-5 py-2 rounded-full font-mono text-xs font-bold transition-all shadow-md">
+                                START: Input Absences
+                            </div>
+
+                            <!-- Node 2: Decision 1 (Absences >= 3?) -->
+                            <div id="node-d1" class="z-10 bg-slate-800 border-2 border-amber-500/50 text-slate-200 px-6 py-2.5 rounded-xl font-mono text-xs text-center transition-all shadow-md my-2">
+                                <div class="text-[10px] text-amber-400 font-bold uppercase">Decision 1</div>
+                                <div>Total Absences &ge; 3?</div>
+                            </div>
+
+                            <!-- Middle Row: Decision 2 & Branch 1 -->
+                            <div class="w-full flex justify-between items-center z-10 px-2 sm:px-6 my-2">
+                                <!-- Action: No Action (< 3) -->
+                                <div id="node-action-none" class="bg-slate-800 border-2 border-emerald-500/40 text-slate-300 p-2.5 rounded-xl font-mono text-xs text-center w-36 transition-all">
+                                    <div class="text-[9px] text-emerald-400 font-bold uppercase mb-0.5">NO (&lt; 3)</div>
+                                    <i class="fa-solid fa-circle-check text-emerald-400 block text-base mb-1"></i>
+                                    <strong>No Action</strong>
+                                </div>
+
+                                <!-- Decision 2: Absences >= 6? -->
+                                <div id="node-d2" class="bg-slate-800 border-2 border-amber-500/50 text-slate-200 px-5 py-2.5 rounded-xl font-mono text-xs text-center transition-all shadow-md">
+                                    <div class="text-[10px] text-amber-400 font-bold uppercase">Decision 2 (YES &ge; 3)</div>
+                                    <div>Total Absences &ge; 6?</div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Row: Terminal Actions -->
+                            <div class="w-full flex justify-end items-center z-10 px-2 sm:px-6 space-x-3 sm:space-x-6 my-2">
+                                <!-- Action: Send SMS -->
+                                <div id="node-action-sms" class="bg-slate-800 border-2 border-blue-500/40 text-slate-300 p-2.5 rounded-xl font-mono text-xs text-center w-36 transition-all">
+                                    <div class="text-[9px] text-blue-400 font-bold uppercase mb-0.5">NO (3 to 5)</div>
+                                    <i class="fa-solid fa-comment-sms text-blue-400 block text-base mb-1"></i>
+                                    <strong>Send Parent SMS</strong>
+                                </div>
+
+                                <!-- Action: Flag Counseling -->
+                                <div id="node-action-counseling" class="bg-slate-800 border-2 border-red-500/40 text-slate-300 p-2.5 rounded-xl font-mono text-xs text-center w-36 transition-all">
+                                    <div class="text-[9px] text-red-400 font-bold uppercase mb-0.5">YES (&ge; 6)</div>
+                                    <i class="fa-solid fa-user-doctor text-red-400 block text-base mb-1"></i>
+                                    <strong>Flag Counseling</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SCENARIO 2 (DATA SPREADSHEET & PEAK QUEUE TIMES) -->
+        <section id="tab-scenario2" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                    <div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-800 mb-2">
+                            <i class="fa-solid fa-table mr-1"></i> Data Analytics & Spreadsheet Tool
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">Scenario 2: Lunch Period Check-In & Queue Bottlenecks</h2>
+                        <p class="text-slate-600 text-sm mt-1">Analyze check-in timestamps across three lunch shifts to identify queue volume peak patterns.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                    <!-- Left Column: Data Filters & Interactive Spreadsheet -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <!-- Filter Tabs -->
+                            <div class="flex space-x-1">
+                                <button onclick="filterLunchData('ALL')" id="filter-btn-ALL" class="data-filter-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white transition-all">All Shifts (100)</button>
+                                <button onclick="filterLunchData('A')" id="filter-btn-A" class="data-filter-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">Lunch A (11:00)</button>
+                                <button onclick="filterLunchData('B')" id="filter-btn-B" class="data-filter-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">Lunch B (11:45)</button>
+                                <button onclick="filterLunchData('C')" id="filter-btn-C" class="data-filter-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">Lunch C (12:30)</button>
+                            </div>
+
+                            <!-- Sort Options -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-slate-500 font-medium">Sort by:</span>
+                                <select id="sort-select" onchange="renderSpreadsheet()" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-emerald-500">
+                                    <option value="time-asc">Time (Earliest First)</option>
+                                    <option value="time-desc">Time (Latest First)</option>
+                                    <option value="wait-desc">Wait Time (Longest First)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Spreadsheet Table Component -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm bg-white">
+                            <div class="max-h-80 overflow-y-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead class="bg-slate-100 sticky top-0 border-b border-slate-200 text-slate-700 font-semibold uppercase tracking-wider">
+                                        <tr>
+                                            <th class="py-2.5 px-4"># Record</th>
+                                            <th class="py-2.5 px-4">Student ID</th>
+                                            <th class="py-2.5 px-4">Shift Period</th>
+                                            <th class="py-2.5 px-4">Check-In Timestamp</th>
+                                            <th class="py-2.5 px-4">Queue Wait (mins)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="spreadsheet-body" class="divide-y divide-slate-100 font-mono">
+                                        <!-- Rows dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bg-slate-50 px-4 py-2 border-t border-slate-200 text-[11px] text-slate-500 flex justify-between">
+                                <span id="showing-count">Showing 100 entries</span>
+                                <span>Simulated POS Terminal Data</span>
+                            </div>
+                        </div>
+
+                        <!-- Guided Data Discovery Questions -->
+                        <div class="bg-emerald-50/50 p-5 rounded-xl border border-emerald-200 space-y-4">
+                            <h4 class="font-bold text-emerald-950 text-sm flex items-center">
+                                <i class="fa-solid fa-magnifying-glass-chart text-emerald-600 mr-2"></i> Data Analysis Investigation
+                            </h4>
+
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <p class="font-medium text-slate-800 mb-1">1. During which 5-minute interval does Lunch B experience its maximum arrival spike?</p>
+                                    <select id="sc2-q1" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs">
+                                        <option value="">Select time interval...</option>
+                                        <option value="11:45 - 11:50">11:45 - 11:50 AM</option>
+                                        <option value="11:50 - 11:55">11:50 - 11:55 AM (Peak)</option>
+                                        <option value="12:00 - 12:05">12:00 - 12:05 PM</option>
+                                        <option value="12:10 - 12:15">12:10 - 12:15 PM</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <p class="font-medium text-slate-800 mb-1">2. What pattern explains why Lunch B queue times are higher than Lunch A?</p>
+                                    <select id="sc2-q2" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs">
+                                        <option value="">Select bottleneck reason...</option>
+                                        <option value="arrival_burst">70% of Lunch B students arrive in the first 5 minutes simultaneously</option>
+                                        <option value="staff_shortage">Fewer cafeteria registers are open during Lunch B</option>
+                                        <option value="even_distribution">Students arrive in a steady, perfectly flat rate</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button onclick="verifyScenario2()" class="w-full py-2 bg-emerald-600 text-white font-medium text-xs rounded-lg hover:bg-emerald-700 transition-colors">
+                                Submit Data Analysis & Complete Scenario 2
+                            </button>
+                            <div id="sc2-feedback" class="text-xs font-semibold hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Visualization Chart -->
+                    <div class="lg:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                                    <i class="fa-solid fa-chart-column text-emerald-600 mr-2"></i> Queue Volume Distribution
+                                </h3>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">5-Min Buckets</span>
+                            </div>
+
+                            <!-- Chart Canvas Container -->
+                            <div class="relative bg-white p-3 rounded-xl border border-slate-200 shadow-sm h-64">
+                                <canvas id="lunchChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Key Metrics Summary Cards -->
+                        <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                            <div class="bg-white p-3 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 uppercase font-semibold">Lunch A Peak</div>
+                                <div class="text-base font-bold text-slate-800 mt-0.5">11:05 AM</div>
+                                <div class="text-[10px] text-emerald-600 font-medium">12 checks/5min</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-amber-300 bg-amber-50/30">
+                                <div class="text-[10px] text-amber-800 uppercase font-bold">Lunch B Peak</div>
+                                <div class="text-base font-bold text-amber-900 mt-0.5">11:50 AM</div>
+                                <div class="text-[10px] text-amber-600 font-bold">24 checks/5min!</div>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 uppercase font-semibold">Lunch C Peak</div>
+                                <div class="text-base font-bold text-slate-800 mt-0.5">12:35 PM</div>
+                                <div class="text-[10px] text-emerald-600 font-medium">14 checks/5min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SCENARIO 3 (UX RESEARCH & PROTOTYPING) -->
+        <section id="tab-scenario3" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                    <div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-purple-100 text-purple-800 mb-2">
+                            <i class="fa-solid fa-compass-drafting mr-1"></i> UX Research & Prototyping
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">Scenario 3: Dashboard Screen Preferences (100 Students)</h2>
+                        <p class="text-slate-600 text-sm mt-1">Conduct student user research to evaluate interface variants before writing backend code.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                    <!-- Left Column: Wireframe Prototype Comparison -->
+                    <div class="lg:col-span-6 space-y-4">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center">
+                            <i class="fa-solid fa-layer-group text-purple-600 mr-2"></i> Dashboard Prototype Variants
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Variant A Mockup -->
+                            <div class="border-2 border-slate-200 hover:border-purple-400 rounded-xl p-3 bg-slate-50 cursor-pointer transition-all hover:shadow-md">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-slate-800">Layout A: List View</span>
+                                    <span class="text-[10px] bg-slate-200 px-2 py-0.5 rounded text-slate-700">Text Dense</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-lg border border-slate-200 space-y-2 text-[10px] text-slate-500 font-mono">
+                                    <div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                    <div class="h-2 bg-slate-100 rounded w-full"></div>
+                                    <div class="h-2 bg-slate-100 rounded w-5/6"></div>
+                                    <div class="h-2 bg-slate-100 rounded w-4/6"></div>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-2">Traditional text-heavy table listing all grades and daily schedule details.</p>
+                            </div>
+
+                            <!-- Variant B Mockup -->
+                            <div class="border-2 border-purple-500 rounded-xl p-3 bg-purple-50/40 cursor-pointer transition-all shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-purple-950">Layout B: Widget Cards</span>
+                                    <span class="text-[10px] bg-purple-200 px-2 py-0.5 rounded text-purple-800 font-semibold">Visual Cards</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-lg border border-purple-200 grid grid-cols-2 gap-1.5 text-[10px]">
+                                    <div class="bg-purple-100/60 p-2 rounded text-center">
+                                        <i class="fa-solid fa-chart-line text-purple-600 block text-xs mb-0.5"></i>
+                                        <span class="font-bold">GPA: 3.8</span>
+                                    </div>
+                                    <div class="bg-amber-100/60 p-2 rounded text-center">
+                                        <i class="fa-solid fa-clock text-amber-600 block text-xs mb-0.5"></i>
+                                        <span class="font-bold">Next: Math</span>
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-purple-900 mt-2">Modern card widgets prioritizing quick visual metrics and iconography.</p>
+                            </div>
+                        </div>
+
+                        <!-- User Research Simulator Tool -->
+                        <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-lg space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-sm text-purple-300 flex items-center">
+                                    <i class="fa-solid fa-users text-purple-400 mr-2"></i> Student Feedback Survey Simulator
+                                </h4>
+                                <span class="text-xs text-slate-400">Target Sample: <strong>100 Students</strong></span>
+                            </div>
+
+                            <p class="text-xs text-slate-300">Run a simulated survey collecting ratings and preferences across Grade 9 - 12 students.</p>
+
+                            <button onclick="runStudentSurvey()" id="run-survey-btn" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-poll"></i>
+                                <span>Simulate Survey with 100 Students</span>
+                            </button>
+
+                            <!-- Survey Progress / Tally Animation Box -->
+                            <div id="survey-live-box" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono space-y-2">
+                                <div class="flex justify-between text-slate-400">
+                                    <span>Responses Collected:</span>
+                                    <span id="survey-count-text" class="text-purple-400 font-bold">0 / 100</span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="survey-progress-bar" class="bg-purple-500 h-full w-0 transition-all duration-100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Survey Analytics Results & Insight Form -->
+                    <div class="lg:col-span-6 space-y-4">
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                            <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center">
+                                <i class="fa-solid fa-chart-pie text-purple-600 mr-2"></i> Survey Results Dashboard
+                            </h3>
+
+                            <div id="survey-results-placeholder" class="py-12 text-center text-slate-400 text-xs">
+                                <i class="fa-solid fa-clipboard-list text-3xl mb-2 text-slate-300 block"></i>
+                                Click "Simulate Survey" on the left to gather feedback from 100 student participants.
+                            </div>
+
+                            <div id="survey-results-active" class="hidden space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 text-center">
+                                        <div class="text-xs text-slate-500">Prefer Layout A (Text List)</div>
+                                        <div id="pref-a-percent" class="text-2xl font-bold text-slate-700">18%</div>
+                                        <div class="text-[10px] text-slate-400 mt-1">18 out of 100</div>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-purple-200 bg-purple-50/30 text-center">
+                                        <div class="text-xs text-purple-900 font-semibold">Prefer Layout B (Card Widgets)</div>
+                                        <div id="pref-b-percent" class="text-2xl font-bold text-purple-700">82%</div>
+                                        <div class="text-[10px] text-purple-600 mt-1">82 out of 100</div>
+                                    </div>
+                                </div>
+
+                                <!-- Qualitative Student Feedback Quotes -->
+                                <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+                                    <span class="font-bold text-slate-800 text-[11px] block">Sample Student Comments:</span>
+                                    <p class="text-slate-600 italic">"Layout B lets me check my GPA and next class in 2 seconds on my phone before the bell rings!"</p>
+                                    <p class="text-slate-600 italic">"The cards are much easier to tap on mobile than tiny table rows."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guided Design Recommendation Question -->
+                        <div class="bg-purple-50/50 p-5 rounded-xl border border-purple-200 space-y-3 text-xs">
+                            <h4 class="font-bold text-purple-950 text-sm">Design Recommendation Synthesis</h4>
+                            <p class="text-slate-700">Based on the survey research of 100 students, what is the primary recommendation before coding begins?</p>
+
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer">
+                                    <input type="radio" name="sc3-q" value="A" class="text-purple-600">
+                                    <span>Proceed with Layout B (Card Widgets) because 80%+ students prefer quick visual scanability on mobile.</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer">
+                                    <input type="radio" name="sc3-q" value="B" class="text-purple-600">
+                                    <span>Ignore survey data and code Layout A to save space.</span>
+                                </label>
+                            </div>
+
+                            <button onclick="verifyScenario3()" class="w-full py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors">
+                                Submit UX Recommendation & Complete Scenario 3
+                            </button>
+                            <div id="sc3-feedback" class="text-xs font-semibold hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: SUMMARY & REVIEW -->
+        <section id="tab-summary" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 text-center max-w-3xl mx-auto">
+                <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Guided Practice Suite Summary</h2>
+                <p class="text-slate-600 text-sm mt-2">
+                    Review your completed scenario activities below. Systems thinking combines logical flowcharts, data analytics, and user feedback before engineering solution software.
+                </p>
+
+                <!-- Completion Status Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8 text-left">
+                    <div id="summary-card-1" class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-800">Scenario 1</span>
+                            <span id="sum-badge-1" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded">Pending</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Logic Flowchart (Absence Alerts)</p>
+                    </div>
+
+                    <div id="summary-card-2" class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-800">Scenario 2</span>
+                            <span id="sum-badge-2" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded">Pending</span>
+                        </div>
+                        <p class="text-xs text-slate-600">Data Workbench (Queue Bottlenecks)</p>
+                    </div>
+
+                    <div id="summary-card-3" class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-800">Scenario 3</span>
+                            <span id="sum-badge-3" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded">Pending</span>
+                        </div>
+                        <p class="text-xs text-slate-600">UX Research (Dashboard Prototype)</p>
+                    </div>
+                </div>
+
+                <div id="certificate-box" class="hidden bg-gradient-to-r from-brand-600 to-indigo-600 text-white p-6 rounded-2xl shadow-xl space-y-3">
+                    <i class="fa-solid fa-award text-4xl text-yellow-300"></i>
+                    <h3 class="text-xl font-bold">Congratulations! All Scenarios Completed</h3>
+                    <p class="text-xs text-brand-100">You have successfully mastered Decision Flowcharting, Data Analysis, and Prototype Research!</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const state = {
+            sc1Completed: false,
+            sc2Completed: false,
+            sc3Completed: false,
+            lunchFilter: 'ALL',
+            surveyRun: false
+        };
+
+        // Simulated Lunch Check-In Data (100 student timestamps)
+        const lunchData = [];
+        
+        function generateLunchData() {
+            lunchData.length = 0;
+            let idCounter = 1001;
+
+            // Lunch A: 11:00 - 11:30 (30 students, peak early)
+            for(let i = 0; i < 30; i++) {
+                let min = Math.floor(Math.random() * 25);
+                let wait = Math.floor(min < 10 ? 6 + Math.random() * 4 : 1 + Math.random() * 3);
+                lunchData.push({
+                    id: 'STU-' + (idCounter++),
+                    period: 'Lunch A',
+                    time: `11:${min < 10 ? '0' + min : min} AM`,
+                    minuteVal: min,
+                    waitMinutes: wait
+                });
+            }
+
+            // Lunch B: 11:45 - 12:15 (45 students, massive 11:50 peak)
+            for(let i = 0; i < 45; i++) {
+                let min = Math.floor(Math.random() * 25);
+                // Heavy burst around minute 5-10 (11:50 AM)
+                if(i < 25) min = 5 + Math.floor(Math.random() * 5); 
+                let wait = Math.floor(min >= 5 && min <= 10 ? 12 + Math.random() * 6 : 2 + Math.random() * 4);
+                lunchData.push({
+                    id: 'STU-' + (idCounter++),
+                    period: 'Lunch B',
+                    time: `11:${(45 + min) % 60 < 10 ? '0' + ((45 + min) % 60) : (45 + min) % 60} ${45 + min >= 60 ? 'PM' : 'AM'}`,
+                    minuteVal: 45 + min,
+                    waitMinutes: wait
+                });
+            }
+
+            // Lunch C: 12:30 - 1:00 (25 students, steady distribution)
+            for(let i = 0; i < 25; i++) {
+                let min = Math.floor(Math.random() * 28);
+                let wait = Math.floor(2 + Math.random() * 4);
+                lunchData.push({
+                    id: 'STU-' + (idCounter++),
+                    period: 'Lunch C',
+                    time: `12:${(30 + min) % 60 < 10 ? '0' + ((30 + min) % 60) : (30 + min) % 60} PM`,
+                    minuteVal: 90 + min,
+                    waitMinutes: wait
+                });
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('bg-brand-600', 'text-white');
+            activeBtn.classList.remove('text-slate-300');
+
+            if(tabId === 'scenario1') {
+                setTimeout(updateFlowchartLines, 50);
+            }
+
+            if(tabId === 'scenario2') {
+                renderSpreadsheet();
+                renderLunchChart();
+            }
+        }
+
+        function updateFlowchartLines() {
+            const svg = document.getElementById('svg-connections');
+            if (!svg || svg.offsetParent === null) return;
+            const svgRect = svg.getBoundingClientRect();
+
+            function getPort(elementId, position) {
+                const el = document.getElementById(elementId);
+                if(!el) return {x: 0, y: 0};
+                const rect = el.getBoundingClientRect();
+                
+                let x = rect.left + rect.width / 2 - svgRect.left;
+                let y = rect.top + rect.height / 2 - svgRect.top;
+
+                if (position === 'top') y = rect.top - svgRect.top;
+                if (position === 'bottom') y = rect.bottom - svgRect.top;
+                if (position === 'left') x = rect.left - svgRect.left;
+                if (position === 'right') x = rect.right - svgRect.left;
+
+                return { x, y };
+            }
+
+            function setPath(pathId, start, end, type = 'orthogonal') {
+                const path = document.getElementById(pathId);
+                if(!path) return;
+                
+                let d = '';
+                if (type === 'straight') {
+                    d = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+                } else if (type === 'stepH') {
+                    d = `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`;
+                } else if (type === 'stepV') {
+                    const midY = (start.y + end.y) / 2;
+                    d = `M ${start.x} ${start.y} L ${start.x} ${midY} L ${end.x} ${midY} L ${end.x} ${end.y}`;
+                }
+                path.setAttribute('d', d);
+            }
+
+            // Start -> D1
+            setPath('path-start-d1', getPort('node-start', 'bottom'), getPort('node-d1', 'top'), 'straight');
+            // D1 -> No Action
+            setPath('path-d1-no', getPort('node-d1', 'left'), getPort('node-action-none', 'top'), 'stepH');
+            // D1 -> D2
+            setPath('path-d1-d2', getPort('node-d1', 'right'), getPort('node-d2', 'top'), 'stepH');
+            // D2 -> SMS
+            setPath('path-d2-sms', getPort('node-d2', 'bottom'), getPort('node-action-sms', 'top'), 'stepV');
+            // D2 -> Counseling
+            setPath('path-d2-counseling', getPort('node-d2', 'bottom'), getPort('node-action-counseling', 'top'), 'stepV');
+        }
+
+        function highlightPath(pathId) {
+            const path = document.getElementById(pathId);
+            if(path) {
+                path.setAttribute('stroke', '#f59e0b');
+                path.setAttribute('stroke-width', '3.5');
+                path.setAttribute('marker-end', 'url(#arrow-active)');
+                path.classList.add('active-path');
+            }
+        }
+
+        function resetPathStyles() {
+            ['path-start-d1', 'path-d1-no', 'path-d1-d2', 'path-d2-sms', 'path-d2-counseling'].forEach(id => {
+                const path = document.getElementById(id);
+                if(path) {
+                    path.setAttribute('stroke', '#64748b');
+                    path.setAttribute('stroke-width', '2');
+                    path.setAttribute('marker-end', 'url(#arrow)');
+                    path.classList.remove('active-path');
+                }
+            });
+        }
+
+        function updateAbsenceSlider(val) {
+            document.getElementById('absence-count-val').innerText = val;
+        }
+
+        function runFlowSimulation() {
+            const absences = parseInt(document.getElementById('absence-slider').value);
+            const consoleOut = document.getElementById('sim-output');
+            const flowStatus = document.getElementById('flow-status');
+
+            // Reset highlighted nodes and connector paths
+            resetNodeStyles();
+            resetPathStyles();
+            updateFlowchartLines();
+
+            flowStatus.innerText = 'Executing Flow...';
+            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono';
+
+            let logHtml = `<div class="text-amber-400">&gt; START evaluation for student with ${absences} absence(s)...</div>`;
+            
+            // Step 1: Start node & Start->D1 path
+            document.getElementById('node-start').classList.add('pulse-node', 'border-amber-400', 'text-white');
+            highlightPath('path-start-d1');
+
+            setTimeout(() => {
+                // Step 2: Decision 1 (>= 3?)
+                logHtml += `<div>&gt; Evaluating Decision 1: Is ${absences} &ge; 3?</div>`;
+                document.getElementById('node-d1').classList.add('pulse-node', 'border-amber-400');
+                
+                if(absences < 3) {
+                    highlightPath('path-d1-no');
+                    logHtml += `<div class="text-emerald-400">&gt; FALSE. Path taken: Absences &lt; 3.</div>`;
+                    logHtml += `<div class="text-emerald-300 font-bold">&gt; ACTION: Normal Standing (No Action).</div>`;
+                    document.getElementById('node-action-none').classList.add('pulse-node', 'border-emerald-400', 'bg-emerald-950');
+                    flowStatus.innerText = 'Result: No Action';
+                    flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                } else {
+                    highlightPath('path-d1-d2');
+                    logHtml += `<div class="text-amber-300">&gt; TRUE. Proceeding to Decision 2...</div>`;
+                    
+                    setTimeout(() => {
+                        // Step 3: Decision 2 (>= 6?)
+                        logHtml += `<div>&gt; Evaluating Decision 2: Is ${absences} &ge; 6?</div>`;
+                        document.getElementById('node-d2').classList.add('pulse-node', 'border-amber-400');
+
+                        if(absences >= 6) {
+                            highlightPath('path-d2-counseling');
+                            logHtml += `<div class="text-red-400">&gt; TRUE. Escalation triggered (&ge; 6).</div>`;
+                            logHtml += `<div class="text-red-300 font-bold">&gt; ACTION: Flag Student for Counseling!</div>`;
+                            document.getElementById('node-action-counseling').classList.add('pulse-node', 'border-red-500', 'bg-red-950');
+                            flowStatus.innerText = 'Result: Flag Counseling';
+                            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30';
+                        } else {
+                            highlightPath('path-d2-sms');
+                            logHtml += `<div class="text-blue-400">&gt; FALSE (3 to 5 absences).</div>`;
+                            logHtml += `<div class="text-blue-300 font-bold">&gt; ACTION: Send Parent SMS Notification.</div>`;
+                            document.getElementById('node-action-sms').classList.add('pulse-node', 'border-blue-400', 'bg-blue-950');
+                            flowStatus.innerText = 'Result: Send Parent SMS';
+                            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30';
+                        }
+                        consoleOut.innerHTML = logHtml;
+                    }, 600);
+                }
+                consoleOut.innerHTML = logHtml;
+            }, 500);
+        }
+
+        function resetNodeStyles() {
+            ['node-start', 'node-d1', 'node-d2', 'node-action-none', 'node-action-sms', 'node-action-counseling'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.remove('pulse-node', 'border-amber-400', 'border-emerald-400', 'border-blue-400', 'border-red-500', 'bg-emerald-950', 'bg-blue-950', 'bg-red-950');
+                }
+            });
+        }
+
+        function resetFlowchart() {
+            resetNodeStyles();
+            resetPathStyles();
+            document.getElementById('sim-output').innerHTML = '<span class="text-slate-500">Adjust the slider and click "Simulate" to trace system decision execution...</span>';
+            document.getElementById('flow-status').innerText = 'Idle';
+            document.getElementById('flow-status').className = 'text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+            updateFlowchartLines();
+        }
+
+        function updateAbsenceSlider(val) {
+            document.getElementById('absence-count-val').innerText = val;
+        }
+
+        function runFlowSimulation() {
+            const absences = parseInt(document.getElementById('absence-slider').value);
+            const consoleOut = document.getElementById('sim-output');
+            const flowStatus = document.getElementById('flow-status');
+
+            // Reset highlighted nodes
+            resetNodeStyles();
+
+            flowStatus.innerText = 'Executing Flow...';
+            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono';
+
+            let logHtml = `<div class="text-amber-400">&gt; START evaluation for student with ${absences} absence(s)...</div>`;
+            
+            // Step 1: Start node
+            document.getElementById('node-start').classList.add('pulse-node', 'border-amber-400', 'text-white');
+
+            setTimeout(() => {
+                // Step 2: Decision 1 (>= 3?)
+                logHtml += `<div>&gt; Evaluating Decision 1: Is ${absences} &ge; 3?</div>`;
+                document.getElementById('node-d1').classList.add('pulse-node', 'border-amber-400');
+                
+                if(absences < 3) {
+                    logHtml += `<div class="text-emerald-400">&gt; FALSE. Path taken: Absences &lt; 3.</div>`;
+                    logHtml += `<div class="text-emerald-300 font-bold">&gt; ACTION: Normal Standing (No Action).</div>`;
+                    document.getElementById('node-action-none').classList.add('pulse-node', 'border-emerald-400', 'bg-emerald-950');
+                    flowStatus.innerText = 'Result: No Action';
+                    flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                } else {
+                    logHtml += `<div class="text-amber-300">&gt; TRUE. Proceeding to Decision 2...</div>`;
+                    
+                    setTimeout(() => {
+                        // Step 3: Decision 2 (>= 6?)
+                        logHtml += `<div>&gt; Evaluating Decision 2: Is ${absences} &ge; 6?</div>`;
+                        document.getElementById('node-d2').classList.add('pulse-node', 'border-amber-400');
+
+                        if(absences >= 6) {
+                            logHtml += `<div class="text-red-400">&gt; TRUE. Escalation triggered (&ge; 6).</div>`;
+                            logHtml += `<div class="text-red-300 font-bold">&gt; ACTION: Flag Student for Counseling!</div>`;
+                            document.getElementById('node-action-counseling').classList.add('pulse-node', 'border-red-500', 'bg-red-950');
+                            flowStatus.innerText = 'Result: Flag Counseling';
+                            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30';
+                        } else {
+                            logHtml += `<div class="text-blue-400">&gt; FALSE (3 to 5 absences).</div>`;
+                            logHtml += `<div class="text-blue-300 font-bold">&gt; ACTION: Send Parent SMS Notification.</div>`;
+                            document.getElementById('node-action-sms').classList.add('pulse-node', 'border-blue-400', 'bg-blue-950');
+                            flowStatus.innerText = 'Result: Send Parent SMS';
+                            flowStatus.className = 'text-xs px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30';
+                        }
+                        consoleOut.innerHTML = logHtml;
+                    }, 600);
+                }
+                consoleOut.innerHTML = logHtml;
+            }, 500);
+        }
+
+        function resetNodeStyles() {
+            ['node-start', 'node-d1', 'node-d2', 'node-action-none', 'node-action-sms', 'node-action-counseling'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.remove('pulse-node', 'border-amber-400', 'border-emerald-400', 'border-blue-400', 'border-red-500', 'bg-emerald-950', 'bg-blue-950', 'bg-red-950');
+                }
+            });
+        }
+
+        function resetFlowchart() {
+            resetNodeStyles();
+            document.getElementById('sim-output').innerHTML = '<span class="text-slate-500">Adjust the slider and click "Simulate" to trace system decision execution...</span>';
+            document.getElementById('flow-status').innerText = 'Idle';
+            document.getElementById('flow-status').className = 'text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+        }
+
+        function verifyScenario1() {
+            const selected = document.querySelector('input[name="sc1-q"]:checked');
+            const feedback = document.getElementById('sc1-feedback');
+            feedback.classList.remove('hidden');
+
+            if(!selected) {
+                feedback.className = "mt-2 text-xs font-semibold text-amber-600";
+                feedback.innerText = "Please select an answer option above.";
+                return;
+            }
+
+            if(selected.value === 'B') {
+                feedback.className = "mt-2 text-xs font-semibold text-emerald-600";
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Correct! 6 absences meet or exceed the >=6 threshold, flagging counseling intervention.';
+                markScenarioComplete(1);
+            } else {
+                feedback.className = "mt-2 text-xs font-semibold text-red-600";
+                feedback.innerText = "Incorrect. Check the rule: 6+ absences trigger Counseling Escalation (Parent SMS is for 3-5).";
+            }
+        }
+
+        function filterLunchData(period) {
+            state.lunchFilter = period;
+            document.querySelectorAll('.data-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white');
+                btn.classList.add('bg-slate-200', 'text-slate-700');
+            });
+            const activeBtn = document.getElementById(`filter-btn-${period}`);
+            activeBtn.classList.add('bg-emerald-600', 'text-white');
+            activeBtn.classList.remove('bg-slate-200', 'text-slate-700');
+
+            renderSpreadsheet();
+            renderLunchChart();
+        }
+
+        function renderSpreadsheet() {
+            const tbody = document.getElementById('spreadsheet-body');
+            const sortMode = document.getElementById('sort-select').value;
+            
+            let filtered = lunchData.filter(item => {
+                if(state.lunchFilter === 'ALL') return true;
+                if(state.lunchFilter === 'A') return item.period === 'Lunch A';
+                if(state.lunchFilter === 'B') return item.period === 'Lunch B';
+                if(state.lunchFilter === 'C') return item.period === 'Lunch C';
+                return true;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if(sortMode === 'time-asc') return a.minuteVal - b.minuteVal;
+                if(sortMode === 'time-desc') return b.minuteVal - a.minuteVal;
+                if(sortMode === 'wait-desc') return b.waitMinutes - a.waitMinutes;
+                return 0;
+            });
+
+            tbody.innerHTML = filtered.map((row, idx) => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="py-2 px-4 text-slate-400">#${idx + 1}</td>
+                    <td class="py-2 px-4 font-bold text-slate-700">${row.id}</td>
+                    <td class="py-2 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${
+                            row.period === 'Lunch A' ? 'bg-blue-100 text-blue-800' :
+                            row.period === 'Lunch B' ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-800'
+                        }">${row.period}</span>
+                    </td>
+                    <td class="py-2 px-4 text-slate-600">${row.time}</td>
+                    <td class="py-2 px-4 font-bold ${row.waitMinutes > 10 ? 'text-red-600' : 'text-slate-700'}">
+                        ${row.waitMinutes} mins ${row.waitMinutes > 10 ? '<i class="fa-solid fa-triangle-exclamation text-red-500 ml-1"></i>' : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('showing-count').innerText = `Showing ${filtered.length} entries`;
+        }
+
+        let chartInstance = null;
+        function renderLunchChart() {
+            const ctx = document.getElementById('lunchChart').getContext('2d');
+            
+            // Build 5-minute bucket aggregations for Lunch B
+            const buckets = ['11:45-11:50', '11:50-11:55', '11:55-12:00', '12:00-12:05', '12:05-12:10', '12:10-12:15'];
+            const counts = [8, 24, 7, 4, 2, 0]; // Simulated distribution
+
+            if(chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: buckets,
+                    datasets: [{
+                        label: 'Check-ins per 5 mins (Lunch B)',
+                        data: counts,
+                        backgroundColor: counts.map(v => v >= 20 ? '#f59e0b' : '#10b981'),
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Student Count', font: { size: 10 } }
+                        },
+                        x: {
+                            ticks: { font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function verifyScenario2() {
+            const q1 = document.getElementById('sc2-q1').value;
+            const q2 = document.getElementById('sc2-q2').value;
+            const feedback = document.getElementById('sc2-feedback');
+            feedback.classList.remove('hidden');
+
+            if(q1 === '11:50 - 11:55' && q2 === 'arrival_burst') {
+                feedback.className = "mt-2 text-xs font-semibold text-emerald-600";
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Excellent Data Analysis! You identified the 11:50 peak burst bottleneck correctly.';
+                markScenarioComplete(2);
+            } else {
+                feedback.className = "mt-2 text-xs font-semibold text-red-600";
+                feedback.innerText = "Incorrect selections. Look at the chart peak at 11:50 AM (24 check-ins) caused by the arrival burst.";
+            }
+        }
+
+        function runStudentSurvey() {
+            const btn = document.getElementById('run-survey-btn');
+            const progressBox = document.getElementById('survey-live-box');
+            const progressBar = document.getElementById('survey-progress-bar');
+            const countText = document.getElementById('survey-count-text');
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            progressBox.classList.remove('hidden');
+
+            let current = 0;
+            const interval = setInterval(() => {
+                current += 4;
+                if(current > 100) current = 100;
+                
+                countText.innerText = `${current} / 100`;
+                progressBar.style.width = `${current}%`;
+
+                if(current >= 100) {
+                    clearInterval(interval);
+                    state.surveyRun = true;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                    
+                    // Show results
+                    document.getElementById('survey-results-placeholder').classList.add('hidden');
+                    document.getElementById('survey-results-active').classList.remove('hidden');
+                }
+            }, 60);
+        }
+
+        function verifyScenario3() {
+            const selected = document.querySelector('input[name="sc3-q"]:checked');
+            const feedback = document.getElementById('sc3-feedback');
+            feedback.classList.remove('hidden');
+
+            if(!selected) {
+                feedback.className = "mt-2 text-xs font-semibold text-amber-600";
+                feedback.innerText = "Please select a design recommendation.";
+                return;
+            }
+
+            if(selected.value === 'A') {
+                feedback.className = "mt-2 text-xs font-semibold text-purple-600";
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Spot on! User research data validates selecting Layout B before writing front-end code.';
+                markScenarioComplete(3);
+            } else {
+                feedback.className = "mt-2 text-xs font-semibold text-red-600";
+                feedback.innerText = "Incorrect. Always let user feedback guide design decisions rather than skipping user input.";
+            }
+        }
+
+        function markScenarioComplete(scenarioNum) {
+            if(scenarioNum === 1) state.sc1Completed = true;
+            if(scenarioNum === 2) state.sc2Completed = true;
+            if(scenarioNum === 3) state.sc3Completed = true;
+
+            // Update Badges
+            if(state.sc1Completed) document.getElementById('badge-sc1').classList.remove('hidden');
+            if(state.sc2Completed) document.getElementById('badge-sc2').classList.remove('hidden');
+            if(state.sc3Completed) document.getElementById('badge-sc3').classList.remove('hidden');
+
+            // Calculate overall progress percentage
+            const completedCount = (state.sc1Completed ? 1 : 0) + (state.sc2Completed ? 1 : 0) + (state.sc3Completed ? 1 : 0);
+            const percentage = Math.round((completedCount / 3) * 100);
+
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').innerText = `${percentage}%`;
+
+            // Update summary tab badges
+            updateSummaryView();
+
+            if(completedCount === 3) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function updateSummaryView() {
+            if(state.sc1Completed) {
+                document.getElementById('sum-badge-1').className = "text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded";
+                document.getElementById('sum-badge-1').innerText = "Completed";
+            }
+            if(state.sc2Completed) {
+                document.getElementById('sum-badge-2').className = "text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded";
+                document.getElementById('sum-badge-2').innerText = "Completed";
+            }
+            if(state.sc3Completed) {
+                document.getElementById('sum-badge-3').className = "text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded";
+                document.getElementById('sum-badge-3').innerText = "Completed";
+            }
+
+            if(state.sc1Completed && state.sc2Completed && state.sc3Completed) {
+                document.getElementById('certificate-box').classList.remove('hidden');
+            }
+        }
+
+        /* Initial Setup on Page Load */
+        window.onload = function() {
+            generateLunchData();
+            setTimeout(updateFlowchartLines, 100);
+        };
+
+        window.addEventListener('resize', updateFlowchartLines);
+    </script>
+</body>
+</html>
