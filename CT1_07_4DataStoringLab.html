@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Sorting Lab - CS Activity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Smooth tab transition */
+        .tab-panel {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        .tab-panel.active {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col font-sans antialiased text-slate-200 bg-slate-950">
+
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 font-bold text-white text-xl">
+                    📊
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white leading-tight">Data Sorting Lab</h1>
+                    <p class="text-xs text-slate-400">Classify, Identify & Explain Data</p>
+                </div>
+            </div>
+
+            <!-- Global Completion Counter -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden md:flex flex-col items-end">
+                    <span class="text-xs font-semibold text-slate-400">Score & Progress</span>
+                    <div class="flex items-center gap-2">
+                        <span id="score-text" class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded">0/40 Correct</span>
+                        <span id="progress-percentage-text" class="text-sm font-bold text-indigo-400">0% Completed</span>
+                    </div>
+                </div>
+                <div class="w-32 bg-slate-800 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-700/50">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <button onclick="openReportModal()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-indigo-600/30 transition duration-150 flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>Generate Report</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Student Info Header Card -->
+        <div class="glass-card rounded-2xl p-5 border border-slate-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Student 1 (Your Name)</label>
+                    <input type="text" id="student1-name" placeholder="Enter full name" oninput="updateLabState()"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Student 2 (Partner Name)</label>
+                    <input type="text" id="student2-name" placeholder="Enter partner name (or Solo)" oninput="updateLabState()"
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Navigation Tabs -->
+        <div class="flex flex-wrap border-b border-slate-800 gap-2 pb-1">
+            <button onclick="switchTab('sorting-tab')" id="tab-btn-sorting-tab"
+                class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition flex items-center gap-2 border-b-2 border-indigo-500 text-indigo-400 bg-slate-900/60">
+                <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs flex items-center justify-center font-bold">1-2</span>
+                Rounds 1 & 2: Sort & Label (20 Cards)
+            </button>
+            <button onclick="switchTab('explain-tab')" id="tab-btn-explain-tab"
+                class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition flex items-center gap-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40">
+                <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-400 text-xs flex items-center justify-center font-bold">3</span>
+                Round 3: Explain 3 Cards
+            </button>
+            <button onclick="switchTab('challenge-tab')" id="tab-btn-challenge-tab"
+                class="tab-btn px-4 py-2.5 rounded-t-lg text-sm font-semibold transition flex items-center gap-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40">
+                <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 text-xs flex items-center justify-center font-bold">★</span>
+                Challenge: Number vs Text
+            </button>
+        </div>
+
+        <div id="sorting-tab" class="tab-panel active space-y-4">
+            <!-- Lab Instructions banner -->
+            <div class="bg-indigo-950/40 border border-indigo-800/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+                <div class="space-y-1">
+                    <p class="font-bold text-indigo-200 flex items-center gap-1.5">
+                        <span>🎯 Instructions for Rounds 1 & 2:</span>
+                    </p>
+                    <p class="text-indigo-300/80">
+                        1. Classify each card as <strong class="text-white">Structured</strong> or <strong class="text-white">Unstructured</strong> organization.<br>
+                        2. Select the most reasonable <strong class="text-white">Data Type</strong> (Text, Integer, Decimal, Boolean, Date/Time, Image, Audio).
+                    </p>
+                </div>
+                <div class="flex gap-2 self-end sm:self-center">
+                    <button onclick="filterCards('all')" id="filter-all" class="filter-btn px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium text-xs">All (20)</button>
+                    <button onclick="filterCards('pending')" id="filter-pending" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs">Incomplete</button>
+                    <button onclick="filterCards('done')" id="filter-done" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs">Completed</button>
+                </div>
+            </div>
+
+            <!-- Cards Container Grid -->
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically generated via JS -->
+            </div>
+        </div>
+
+        <div id="explain-tab" class="tab-panel space-y-6">
+            <div class="bg-indigo-950/40 border border-indigo-800/50 rounded-xl p-4">
+                <h2 class="text-base font-bold text-indigo-200 mb-1">Round 3 • Computational System Reasoning</h2>
+                <p class="text-xs sm:text-sm text-indigo-300/80">
+                    Choose <span class="font-bold text-white">THREE cards</span> from your lab setup. Write one sentence for each explaining how or why it is stored this way in a computational system.
+                    <br>Format template: <em class="text-amber-300">"This is [Data Type / Organization] because [Reason]."</em>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Explanation Box 1 -->
+                <div class="glass-card rounded-xl p-5 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs">1</span>
+                            Card Selection #1
+                        </span>
+                        <span id="explain-status-1" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">Not selected</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Select Card:</label>
+                        <select id="explain-card-1" onchange="updateExplanationCard(1)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="">-- Choose a card --</option>
+                        </select>
+                    </div>
+
+                    <div id="explain-card-preview-1" class="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 hidden text-xs text-slate-400">
+                        <!-- Preview injected here -->
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Sentence Explanation:</label>
+                        <textarea id="explain-text-1" rows="3" oninput="updateLabState()"
+                            placeholder="This is [Data Type] because..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
+                    </div>
+                </div>
+
+                <!-- Explanation Box 2 -->
+                <div class="glass-card rounded-xl p-5 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs">2</span>
+                            Card Selection #2
+                        </span>
+                        <span id="explain-status-2" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">Not selected</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Select Card:</label>
+                        <select id="explain-card-2" onchange="updateExplanationCard(2)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="">-- Choose a card --</option>
+                        </select>
+                    </div>
+
+                    <div id="explain-card-preview-2" class="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 hidden text-xs text-slate-400">
+                        <!-- Preview injected here -->
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Sentence Explanation:</label>
+                        <textarea id="explain-text-2" rows="3" oninput="updateLabState()"
+                            placeholder="This is [Data Type] because..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
+                    </div>
+                </div>
+
+                <!-- Explanation Box 3 -->
+                <div class="glass-card rounded-xl p-5 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-bold text-indigo-400 text-sm flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-xs">3</span>
+                            Card Selection #3
+                        </span>
+                        <span id="explain-status-3" class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400">Not selected</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Select Card:</label>
+                        <select id="explain-card-3" onchange="updateExplanationCard(3)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                            <option value="">-- Choose a card --</option>
+                        </select>
+                    </div>
+
+                    <div id="explain-card-preview-3" class="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 hidden text-xs text-slate-400">
+                        <!-- Preview injected here -->
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Sentence Explanation:</label>
+                        <textarea id="explain-text-3" rows="3" oninput="updateLabState()"
+                            placeholder="This is [Data Type] because..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="challenge-tab" class="tab-panel space-y-6">
+            <div class="glass-card border border-amber-500/30 rounded-2xl p-6 bg-amber-950/10 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl">
+                        💡
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-amber-300">CHALLENGE QUESTION</h2>
+                        <p class="text-xs sm:text-sm text-slate-300">
+                            Find one value from the cards that <strong class="text-white">LOOKS like a number</strong>, but should probably be stored as <strong class="text-amber-300">TEXT</strong> in a computer system.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Selected Challenge Card:</label>
+                        <select id="challenge-card-select" onchange="updateLabState()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                            <option value="">-- Choose the numeric text card --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Why should this be stored as TEXT instead of a Numeric type (Integer/Decimal)?</label>
+                        <textarea id="challenge-reasoning" rows="4" oninput="updateLabState()"
+                            placeholder="Explain why math will not be done on this number, or why leading zeros (e.g., 07003) or formatting symbols matter..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-amber-500 leading-relaxed"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="report-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl relative">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📋</span>
+                    <h2 class="text-lg font-bold text-white">Schoology Assignment Report</h2>
+                </div>
+                <button onclick="closeReportModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Report Status Banner -->
+            <div id="modal-status-banner" class="text-xs p-3 rounded-lg bg-indigo-950/60 border border-indigo-800/60 text-indigo-300">
+                Checking lab completion...
+            </div>
+
+            <p class="text-xs text-slate-400">
+                Click the button below to copy your complete lab report. Then paste (<kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300 font-mono text-[10px]">Ctrl+V</kbd> or <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300 font-mono text-[10px]">Cmd+V</kbd>) into your Schoology assignment submission text box.
+            </p>
+
+            <textarea id="report-text-area" readonly rows="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-emerald-400 focus:outline-none leading-relaxed select-all resize-none"></textarea>
+
+            <div class="flex items-center justify-between pt-2">
+                <button onclick="closeReportModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">
+                    Close & Edit
+                </button>
+                <button onclick="copyReportToClipboard()" id="copy-report-btn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                    <span>Copy Report to Clipboard</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 text-xs font-semibold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span id="toast-message">Copied to clipboard!</span>
+        </div>
+    </div>
+
+    <script>
+        // Data Types allowed
+        const DATA_TYPES = ['Text', 'Integer', 'Decimal', 'Boolean', 'Date/Time', 'Image', 'Audio'];
+
+        // 20 Lab Data Cards with clean unquoted values and correct answers for autograding
+        const CARDS_DATA = [
+            { id: 1, name: "Customer Phone Number", value: "(555) 019-2834", icon: "📞", note: "Contains digits and formatting dashes/parentheses.", correctOrg: "STRUCTURED", correctType: "Text" },
+            { id: 2, name: "Audio Voice Recording", value: "recording_memo_004.mp3 (Audio Track)", icon: "🎙️", note: "Sound wave data saved as binary stream.", correctOrg: "UNSTRUCTURED", correctType: "Audio" },
+            { id: 3, name: "Weather Temperature", value: "72.5°F", icon: "🌡️", note: "Precise ambient temperature measurement.", correctOrg: "STRUCTURED", correctType: "Decimal" },
+            { id: 4, name: "Account Registration Date", value: "2026-08-27 10:30:00", icon: "📅", note: "Exact timestamp of account creation.", correctOrg: "STRUCTURED", correctType: "Date/Time" },
+            { id: 5, name: "Product Review Paragraph", value: "Great headphones! High quality sound and fast shipping.", icon: "💬", note: "Freeform customer paragraph comment.", correctOrg: "UNSTRUCTURED", correctType: "Text" },
+            { id: 6, name: "Is Account Active Flag", value: "True", icon: "✅", note: "Indicates whether user login is enabled or disabled.", correctOrg: "STRUCTURED", correctType: "Boolean" },
+            { id: 7, name: "Employee ID Code", value: "EMP-80492", icon: "🪪", note: "Company worker identification string.", correctOrg: "STRUCTURED", correctType: "Text" },
+            { id: 8, name: "Security Camera Snapshot", value: "[PNG Image File: front_entrance.png]", icon: "🖼️", note: "Visual photo grid pixel array.", correctOrg: "UNSTRUCTURED", correctType: "Image" },
+            { id: 9, name: "Mailing ZIP Code", value: "07003", icon: "📮", note: "Postal region code (starts with a leading zero).", correctOrg: "STRUCTURED", correctType: "Text" },
+            { id: 10, name: "Social Media Post Photo", value: "[JPEG Image File: vacation_beach.jpg]", icon: "📷", note: "Digital photograph taken on camera.", correctOrg: "UNSTRUCTURED", correctType: "Image" },
+            { id: 11, name: "Customer Support Audio", value: "[WAV Sound File: agent_call_log.wav]", icon: "🔊", note: "Recorded phone call snippet.", correctOrg: "UNSTRUCTURED", correctType: "Audio" },
+            { id: 12, name: "Account Balance", value: "$1,250.75", icon: "💵", note: "Monetary balance in dollars and cents.", correctOrg: "STRUCTURED", correctType: "Decimal" },
+            { id: 13, name: "Book Title", value: "To Kill a Mockingbird", icon: "📖", note: "Published novel name.", correctOrg: "STRUCTURED", correctType: "Text" },
+            { id: 14, name: "Items in Shopping Cart", value: "4", icon: "🛒", note: "Count of items placed in cart.", correctOrg: "STRUCTURED", correctType: "Integer" },
+            { id: 15, name: "Is Student Enrolled?", value: "False", icon: "🎓", note: "Yes/No status indicator.", correctOrg: "STRUCTURED", correctType: "Boolean" },
+            { id: 16, name: "Barometric Air Pressure", value: "1013.25 hPa", icon: "🌤️", note: "Atmospheric pressure float reading.", correctOrg: "STRUCTURED", correctType: "Decimal" },
+            { id: 17, name: "Tweet / X Post Text", value: "Learning data structures today in computer science! #coding", icon: "📱", note: "Short social message text string.", correctOrg: "UNSTRUCTURED", correctType: "Text" },
+            { id: 18, name: "Server Log Timestamp", value: "2026-08-27T14:22:05Z", icon: "⏱️", note: "ISO standardized time entry.", correctOrg: "STRUCTURED", correctType: "Date/Time" },
+            { id: 19, name: "Store Product UPC Barcode", value: "079357318302", icon: "🏷️", note: "12-digit barcode printed on retail packaging.", correctOrg: "STRUCTURED", correctType: "Text" },
+            { id: 20, name: "Patient Heart Rate", value: "72 BPM", icon: "❤️", note: "Beats per minute numeric integer count.", correctOrg: "STRUCTURED", correctType: "Integer" }
+        ];
+
+        // State storage
+        let studentState = {
+            student1: "",
+            student2: "",
+            cards: {}, // cardId: { organization: 'STRUCTURED'|'UNSTRUCTURED', dataType: '' }
+            explanations: {
+                1: { cardId: "", text: "" },
+                2: { cardId: "", text: "" },
+                3: { cardId: "", text: "" }
+            },
+            challenge: {
+                cardId: "",
+                reasoning: ""
+            }
+        };
+
+        let currentFilter = 'all';
+
+        // Initialize State for 20 cards
+        CARDS_DATA.forEach(card => {
+            studentState.cards[card.id] = {
+                organization: "",
+                dataType: ""
+            };
+        });
+
+        window.onload = function() {
+            renderCardsGrid();
+            populateExplanationCardDropdowns();
+            populateChallengeDropdown();
+            updateLabState();
+        };
+
+        function switchTab(tabId) {
+            const panels = document.querySelectorAll('.tab-panel');
+            panels.forEach(p => p.classList.remove('active'));
+            
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'text-indigo-400', 'bg-slate-900/60');
+                btn.classList.add('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-900/40');
+            });
+
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-900/40');
+                activeBtn.classList.add('border-indigo-500', 'text-indigo-400', 'bg-slate-900/60');
+            }
+        }
+
+        function filterCards(filter) {
+            currentFilter = filter;
+            ['all', 'pending', 'done'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = "filter-btn px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium text-xs";
+                    } else {
+                        btn.className = "filter-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs";
+                    }
+                }
+            });
+            renderCardsGrid(filter);
+        }
+
+        function renderCardsGrid(filter = currentFilter) {
+            const container = document.getElementById('cards-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            CARDS_DATA.forEach(card => {
+                const cardState = studentState.cards[card.id];
+                const isComplete = cardState.organization !== "" && cardState.dataType !== "";
+                const isOrgCorrect = cardState.organization === card.correctOrg;
+                const isTypeCorrect = cardState.dataType === card.correctType;
+                const isAllCorrect = isOrgCorrect && isTypeCorrect;
+
+                if (filter === 'pending' && isComplete) return;
+                if (filter === 'done' && !isComplete) return;
+
+                const cardEl = document.createElement('div');
+                cardEl.className = `card-item glass-card rounded-xl p-4 transition-all duration-200 border ${
+                    isAllCorrect ? 'border-emerald-500/50 bg-slate-900/80' : isComplete ? 'border-amber-500/50 bg-slate-900/80' : 'border-slate-800'
+                }`;
+                cardEl.id = `card-container-${card.id}`;
+
+                // Options HTML for Data Type Dropdown
+                let typeOptionsHTML = `<option value="">-- Select Data Type --</option>`;
+                DATA_TYPES.forEach(type => {
+                    const selected = cardState.dataType === type ? 'selected' : '';
+                    typeOptionsHTML += `<option value="${type}" ${selected}>${type}</option>`;
+                });
+
+                // Status Indicator Badge
+                let statusBadgeHTML = `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-800 text-slate-400">Incomplete</span>`;
+                if (isComplete) {
+                    if (isAllCorrect) {
+                        statusBadgeHTML = `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Correct ✓ (2/2)</span>`;
+                    } else if (isOrgCorrect || isTypeCorrect) {
+                        statusBadgeHTML = `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">Partial (1/2)</span>`;
+                    } else {
+                        statusBadgeHTML = `<span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">Needs Review (0/2)</span>`;
+                    }
+                }
+
+                cardEl.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl p-1.5 rounded-lg bg-slate-800 border border-slate-700/60">${card.icon}</span>
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Card #${card.id}</span>
+                                <h3 class="text-xs font-bold text-slate-100">${card.name}</h3>
+                            </div>
+                        </div>
+                        <div id="badge-card-${card.id}">${statusBadgeHTML}</div>
+                    </div>
+
+                    <div class="bg-slate-950/80 rounded-lg p-2.5 my-2 border border-slate-800/80 font-mono text-xs text-indigo-300 break-all">
+                        ${card.value}
+                    </div>
+                    <p class="text-[11px] text-slate-400 italic mb-3">${card.note}</p>
+
+                    <div class="space-y-3 pt-2 border-t border-slate-800/80">
+                        <!-- Round 1: Organization -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">ROUND 1 • Organization</label>
+                                ${cardState.organization ? (isOrgCorrect ? '<span class="text-[10px] text-emerald-400 font-bold">✓ Correct</span>' : '<span class="text-[10px] text-rose-400 font-bold">✗ Incorrect</span>') : ''}
+                            </div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button type="button" onclick="setOrganization(${card.id}, 'STRUCTURED')" 
+                                    class="py-1.5 px-2 rounded-lg text-xs font-semibold border transition ${cardState.organization === 'STRUCTURED' ? 'bg-indigo-600 border-indigo-400 text-white shadow-md' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'}">
+                                    Structured
+                                </button>
+                                <button type="button" onclick="setOrganization(${card.id}, 'UNSTRUCTURED')" 
+                                    class="py-1.5 px-2 rounded-lg text-xs font-semibold border transition ${cardState.organization === 'UNSTRUCTURED' ? 'bg-violet-600 border-violet-400 text-white shadow-md' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'}">
+                                    Unstructured
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Round 2: Data Type -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">ROUND 2 • Data Type</label>
+                                ${cardState.dataType ? (isTypeCorrect ? '<span class="text-[10px] text-emerald-400 font-bold">✓ Correct</span>' : '<span class="text-[10px] text-rose-400 font-bold">✗ Incorrect</span>') : ''}
+                            </div>
+                            <select onchange="setDataType(${card.id}, this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                                ${typeOptionsHTML}
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(cardEl);
+            });
+        }
+
+        function setOrganization(cardId, org) {
+            studentState.cards[cardId].organization = org;
+            renderCardsGrid(currentFilter);
+            updateLabState();
+        }
+
+        function setDataType(cardId, type) {
+            studentState.cards[cardId].dataType = type;
+            renderCardsGrid(currentFilter);
+            updateLabState();
+        }
+
+        function populateExplanationCardDropdowns() {
+            [1, 2, 3].forEach(num => {
+                const select = document.getElementById(`explain-card-${num}`);
+                if (!select) return;
+                select.innerHTML = '<option value="">-- Choose a card --</option>';
+                CARDS_DATA.forEach(card => {
+                    const opt = document.createElement('option');
+                    opt.value = card.id;
+                    opt.textContent = `Card #${card.id}: ${card.name}`;
+                    select.appendChild(opt);
+                });
+            });
+        }
+
+        function populateChallengeDropdown() {
+            const select = document.getElementById('challenge-card-select');
+            if (!select) return;
+            select.innerHTML = '<option value="">-- Choose the numeric text card --</option>';
+            CARDS_DATA.forEach(card => {
+                const opt = document.createElement('option');
+                opt.value = card.id;
+                opt.textContent = `Card #${card.id}: ${card.name} (${card.value})`;
+                select.appendChild(opt);
+            });
+        }
+
+        function updateExplanationCard(index) {
+            const select = document.getElementById(`explain-card-${index}`);
+            const cardId = select ? select.value : '';
+            studentState.explanations[index].cardId = cardId;
+            
+            const previewEl = document.getElementById(`explain-card-preview-${index}`);
+            const statusEl = document.getElementById(`explain-status-${index}`);
+            
+            if (cardId) {
+                const card = CARDS_DATA.find(c => c.id == cardId);
+                if (card && previewEl) {
+                    previewEl.classList.remove('hidden');
+                    previewEl.innerHTML = `<strong>Selected:</strong> Card #${card.id} - ${card.name}<br><span class="font-mono text-indigo-300">${card.value}</span>`;
+                }
+                if (statusEl) {
+                    statusEl.textContent = `Card #${cardId} Selected`;
+                    statusEl.className = "text-xs px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800";
+                }
+            } else {
+                if (previewEl) previewEl.classList.add('hidden');
+                if (statusEl) {
+                    statusEl.textContent = "Not selected";
+                    statusEl.className = "text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+                }
+            }
+            updateLabState();
+        }
+
+        function updateLabState() {
+            const s1El = document.getElementById('student1-name');
+            const s2El = document.getElementById('student2-name');
+            if (s1El) studentState.student1 = s1El.value.trim();
+            if (s2El) studentState.student2 = s2El.value.trim();
+
+            const exp1 = document.getElementById('explain-text-1');
+            const exp2 = document.getElementById('explain-text-2');
+            const exp3 = document.getElementById('explain-text-3');
+            if (exp1) studentState.explanations[1].text = exp1.value.trim();
+            if (exp2) studentState.explanations[2].text = exp2.value.trim();
+            if (exp3) studentState.explanations[3].text = exp3.value.trim();
+
+            const chCardSelect = document.getElementById('challenge-card-select');
+            const chReason = document.getElementById('challenge-reasoning');
+            if (chCardSelect) studentState.challenge.cardId = chCardSelect.value;
+            if (chReason) studentState.challenge.reasoning = chReason.value.trim();
+
+            let correctCount = 0;
+            let completedItems = 0;
+            const totalItems = 40 + 3 + 1; // 40 objective + 3 explanations + 1 challenge
+
+            CARDS_DATA.forEach(card => {
+                const state = studentState.cards[card.id];
+                if (state.organization !== "") {
+                    completedItems += 1;
+                    if (state.organization === card.correctOrg) correctCount += 1;
+                }
+                if (state.dataType !== "") {
+                    completedItems += 1;
+                    if (state.dataType === card.correctType) correctCount += 1;
+                }
+            });
+
+            if (studentState.explanations[1].cardId && studentState.explanations[1].text) completedItems += 1;
+            if (studentState.explanations[2].cardId && studentState.explanations[2].text) completedItems += 1;
+            if (studentState.explanations[3].cardId && studentState.explanations[3].text) completedItems += 1;
+
+            if (studentState.challenge.cardId && studentState.challenge.reasoning) completedItems += 1;
+
+            const percentage = Math.round((completedItems / totalItems) * 100);
+
+            const progressBar = document.getElementById('progress-bar-fill');
+            if (progressBar) progressBar.style.width = `${percentage}%`;
+
+            const progressText = document.getElementById('progress-percentage-text');
+            if (progressText) progressText.textContent = `${percentage}% Completed`;
+
+            const scoreText = document.getElementById('score-text');
+            if (scoreText) scoreText.textContent = `${correctCount}/40 Correct`;
+        }
+
+        function buildSchoologyReportText() {
+            const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            let correctCount = 0;
+            CARDS_DATA.forEach(card => {
+                const state = studentState.cards[card.id];
+                if (state.organization === card.correctOrg) correctCount += 1;
+                if (state.dataType === card.correctType) correctCount += 1;
+            });
+
+            let r = `==================================================\n`;
+            r += `DATA SORTING LAB REPORT - SCHOOLOGY SUBMISSION\n`;
+            r += `==================================================\n`;
+            r += `Student 1: ${studentState.student1 || '[Not Provided]'}\n`;
+            r += `Student 2: ${studentState.student2 || '[Solo Work]'}\n`;
+            r += `Date Submitted: ${dateStr}\n`;
+            r += `Objective Auto-Grade Score: ${correctCount} / 40 Correct (${Math.round((correctCount/40)*100)}% Accuracy)\n`;
+            r += `==================================================\n\n`;
+
+            r += `--- ROUND 1 & ROUND 2: CARD CLASSIFICATIONS (20 Cards) ---\n`;
+            CARDS_DATA.forEach(card => {
+                const state = studentState.cards[card.id];
+                const org = state.organization || '[UNASSIGNED]';
+                const type = state.dataType || '[UNASSIGNED]';
+                const orgStatus = state.organization ? (state.organization === card.correctOrg ? "✓" : "✗") : "-";
+                const typeStatus = state.dataType ? (state.dataType === card.correctType ? "✓" : "✗") : "-";
+
+                r += `Card #${card.id} [${card.name}]:\n`;
+                r += `   Value: ${card.value}\n`;
+                r += `   Organization: ${org} (${orgStatus})  |  Data Type: ${type} (${typeStatus})\n\n`;
+            });
+
+            r += `--- ROUND 3: WRITTEN REASONING (3 Cards) ---\n`;
+            [1, 2, 3].forEach(index => {
+                const exp = studentState.explanations[index];
+                if (exp.cardId) {
+                    const card = CARDS_DATA.find(c => c.id == exp.cardId);
+                    r += `Selection #${index} (Card #${card.id} - ${card.name}):\n`;
+                    r += `   Sentence: "${exp.text || '[No explanation written]'}"\n\n`;
+                } else {
+                    r += `Selection #${index}: [No card selected]\n\n`;
+                }
+            });
+
+            r += `--- CHALLENGE: NUMBER STORED AS TEXT ---\n`;
+            if (studentState.challenge.cardId) {
+                const chCard = CARDS_DATA.find(c => c.id == studentState.challenge.cardId);
+                r += `Selected Card: Card #${chCard.id} (${chCard.name} - ${chCard.value})\n`;
+                r += `Reasoning: "${studentState.challenge.reasoning || '[No reasoning written]'}"\n`;
+            } else {
+                r += `Selected Card: [No challenge card selected]\n`;
+                r += `Reasoning: [None]\n`;
+            }
+
+            r += `\n==================================================\n`;
+            r += `END OF REPORT - GENERATED VIA CS DATA SORTING LAB\n`;
+            r += `==================================================`;
+
+            return r;
+        }
+
+        function openReportModal() {
+            updateLabState();
+            const reportText = buildSchoologyReportText();
+            const textArea = document.getElementById('report-text-area');
+            if (textArea) textArea.value = reportText;
+
+            const banner = document.getElementById('modal-status-banner');
+            if (banner) {
+                let correctCount = 0;
+                CARDS_DATA.forEach(card => {
+                    const state = studentState.cards[card.id];
+                    if (state.organization === card.correctOrg) correctCount += 1;
+                    if (state.dataType === card.correctType) correctCount += 1;
+                });
+                banner.innerHTML = `<strong>Lab Progress Status:</strong> Autograded score ${correctCount}/40 correct. Ensure all 3 explanations and challenge reasoning are completed before copying.`;
+            }
+
+            const modal = document.getElementById('report-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function copyReportToClipboard() {
+            const textArea = document.getElementById('report-text-area');
+            if (!textArea) return;
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('Report copied to clipboard!');
+                } else {
+                    showToast('Failed to copy. Please copy manually.');
+                }
+            } catch (err) {
+                showToast('Selection copied. Use Ctrl+C / Cmd+C');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (toast && toastMsg) {
+                toastMsg.textContent = message;
+                toast.classList.remove('translate-y-16', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-16', 'opacity-0');
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
