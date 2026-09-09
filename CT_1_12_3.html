@@ -346,13 +346,18 @@
                 <span id="report-score-pill" class="text-xs font-bold px-3 py-1 bg-cyan-100 text-cyan-800 rounded-full"></span>
             </div>
 
-            <textarea id="report-content" readonly class="w-full h-56 p-3 text-xs font-mono bg-slate-950 text-emerald-400 rounded-lg border border-slate-800 focus:outline-none select-all"></textarea>
+            <textarea id="report-content" readonly onclick="selectAllReportText()" class="w-full h-56 p-3 text-xs font-mono bg-slate-950 text-emerald-400 rounded-lg border border-slate-800 focus:outline-none select-all cursor-pointer" title="Click to highlight all text"></textarea>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                <button type="button" onclick="copyReportToClipboard()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
-                    <span>Copy Text to Clipboard</span>
-                </button>
-                <span id="copy-status" class="text-xs text-slate-500 font-medium"></span>
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="copyReportToClipboard()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                        <span>📋 Copy Text to Clipboard</span>
+                    </button>
+                    <button type="button" onclick="selectAllReportText()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                        <span>🔍 Highlight / Select All</span>
+                    </button>
+                </div>
+                <span id="copy-status" class="text-xs font-medium"></span>
             </div>
         </section>
 
@@ -549,25 +554,61 @@ STUDENT EXIT REFLECTION:
 
             reportModal.classList.remove('hidden');
             reportModal.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto select for convenience
+            selectAllReportText();
         }
 
-        function copyReportToClipboard() {
+        async function copyReportToClipboard() {
             const reportTextarea = document.getElementById('report-content');
+            const copyStatus = document.getElementById('copy-status');
+            
+            // Ensure full selection
+            reportTextarea.focus();
             reportTextarea.select();
             reportTextarea.setSelectionRange(0, 99999);
 
-            try {
-                // Try modern clipboard API or fallback to execCommand
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(reportTextarea.value);
-                } else {
-                    document.execCommand('copy');
+            let copied = false;
+
+            // Attempt standard Clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(reportTextarea.value);
+                    copied = true;
+                } catch (e) {
+                    copied = false;
                 }
-                document.getElementById('copy-status').innerText = '✓ Report copied to clipboard! Paste directly into Schoology.';
-                document.getElementById('copy-status').className = 'text-xs text-emerald-600 font-bold';
-            } catch (err) {
-                document.getElementById('copy-status').innerText = 'Select the text box above and press Ctrl+C / Cmd+C to copy.';
-                document.getElementById('copy-status').className = 'text-xs text-amber-600 font-bold';
+            }
+
+            // Fallback to execCommand if Clipboard API is restricted by Schoology iframe
+            if (!copied) {
+                try {
+                    copied = document.execCommand('copy');
+                } catch (e) {
+                    copied = false;
+                }
+            }
+
+            if (copied) {
+                copyStatus.innerText = '✓ Report copied to clipboard! Paste directly into Schoology.';
+                copyStatus.className = 'text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200';
+            } else {
+                // Friendly notice for strict Schoology iframe permissions
+                copyStatus.innerText = '⚠️ Schoology iframe blocked auto-copy. Text is highlighted — press Ctrl+C (or Cmd+C) to copy!';
+                copyStatus.className = 'text-xs text-amber-800 font-bold bg-amber-50 px-2.5 py-1.5 rounded border border-amber-300';
+            }
+        }
+
+        function selectAllReportText() {
+            const reportTextarea = document.getElementById('report-content');
+            const copyStatus = document.getElementById('copy-status');
+            reportTextarea.focus();
+            reportTextarea.select();
+            reportTextarea.setSelectionRange(0, 99999);
+            
+            if (!copyStatus.innerText || copyStatus.innerText.includes('highlighted')) {
+                copyStatus.innerText = 'Text selected! Press Ctrl+C (or Cmd+C) to copy.';
+                copyStatus.className = 'text-xs text-cyan-800 font-bold bg-cyan-50 px-2.5 py-1 rounded border border-cyan-200';
             }
         }
     </script>
