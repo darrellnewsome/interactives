@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 7 Day 4: Flowcharts & Pseudocode Interactive Activity</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .diamond-shape {
+            width: 110px;
+            height: 110px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .diamond-content {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen antialiased selection:bg-indigo-500 selection:text-white pb-24">
+
+    <!-- Top Sticky Header & Progress Bar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-diagram-project"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Unit 7 • Day 4</span>
+                    <h1 class="text-lg font-extrabold text-slate-900 leading-tight">Flowcharts & Pseudocode</h1>
+                </div>
+            </div>
+
+            <!-- Header Quick Actions -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block">
+                    <div class="text-xs text-slate-500">Activity Completion</div>
+                    <div class="text-sm font-bold text-indigo-600" id="progress-text">0% Complete</div>
+                </div>
+                <button onclick="openSummaryModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg shadow-sm hover:shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Generate Report</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="w-full bg-slate-200 h-1.5">
+            <div id="main-progress-bar" class="bg-indigo-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-10">
+
+        <!-- Learning Targets Banner Card -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="p-4 rounded-xl bg-indigo-50/70 border border-indigo-100">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bullseye text-indigo-600"></i> Learning Targets
+                </h3>
+                <ul class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs sm:text-sm text-indigo-950">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-xs"></i>
+                        <span>Create basic flowchart symbols & paths.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-xs"></i>
+                        <span>Write structured, clear pseudocode.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-indigo-500 mt-1 text-xs"></i>
+                        <span>Test & debug algorithm steps with feedback.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- PART 1: Guided Notes: Flowcharts -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 1</span>
+                    <h2 class="text-xl font-bold text-slate-900">Guided Notes: Flowcharts</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">Symbol Reference</span>
+            </div>
+
+            <p class="text-sm text-slate-600">
+                A flowchart is a visual way to show the steps and paths in an algorithm. Match or review each standard symbol shape with its meaning and function.
+            </p>
+
+            <!-- Flowchart Symbols Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse border border-slate-200 rounded-lg overflow-hidden text-sm">
+                    <thead class="bg-slate-100 text-slate-700 uppercase text-xs font-bold">
+                        <tr>
+                            <th class="p-3 border border-slate-200">Symbol / Shape</th>
+                            <th class="p-3 border border-slate-200">Meaning</th>
+                            <th class="p-3 border border-slate-200">What it tells us</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3 border border-slate-200 font-semibold flex items-center gap-2">
+                                <span class="w-12 h-6 rounded-full border-2 border-indigo-500 bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-700">Oval</span>
+                            </td>
+                            <td class="p-3 border border-slate-200 text-slate-800 font-medium">Start / End</td>
+                            <td class="p-3 border border-slate-200 text-slate-600">Where the algorithm begins or finishes.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3 border border-slate-200 font-semibold flex items-center gap-2">
+                                <span class="w-12 h-6 rounded border-2 border-indigo-500 bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-700">Rect</span>
+                            </td>
+                            <td class="p-3 border border-slate-200 text-slate-800 font-medium">Process / Action</td>
+                            <td class="p-3 border border-slate-200 text-slate-600">A step or action to complete.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3 border border-slate-200 font-semibold flex items-center gap-2">
+                                <span class="w-8 h-8 rotate-45 border-2 border-indigo-500 bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-700">
+                                    <span class="-rotate-45">Diam</span>
+                                </span>
+                            </td>
+                            <td class="p-3 border border-slate-200 text-slate-800 font-medium">Decision</td>
+                            <td class="p-3 border border-slate-200 text-slate-600">A question that creates different paths.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3 border border-slate-200 font-semibold flex items-center gap-2">
+                                <span class="text-indigo-600 text-lg"><i class="fa-solid fa-arrow-down"></i></span>
+                                <span>Arrow</span>
+                            </td>
+                            <td class="p-3 border border-slate-200 text-slate-800 font-medium">Direction / Sequence</td>
+                            <td class="p-3 border border-slate-200 text-slate-600">Which step comes next.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Quick Check Questions -->
+            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
+                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> Quick Check
+                </h3>
+
+                <div class="space-y-3 text-sm">
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">1. Which shape usually represents a decision?</label>
+                        <select id="p2-q1" onchange="updateProgress()" class="w-full sm:w-64 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
+                            <option value="">-- Select Shape --</option>
+                            <option value="Oval">Oval</option>
+                            <option value="Rectangle">Rectangle</option>
+                            <option value="Diamond">Diamond</option>
+                            <option value="Arrow">Arrow</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">2. Which symbol shows direction or sequence?</label>
+                        <select id="p2-q2" onchange="updateProgress()" class="w-full sm:w-64 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
+                            <option value="">-- Select Symbol --</option>
+                            <option value="Oval">Oval</option>
+                            <option value="Rectangle">Rectangle</option>
+                            <option value="Diamond">Diamond</option>
+                            <option value="Arrow">Arrow</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-medium text-slate-700 mb-1">3. Why might a flowchart have more than one path?</label>
+                        <textarea id="p2-q3" rows="2" oninput="updateProgress()" placeholder="Explain why multiple paths exist..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button onclick="checkPart2()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs rounded-lg shadow-sm transition">
+                        Check Quick Check Answers
+                    </button>
+                    <span id="p2-feedback" class="text-xs font-semibold"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2: Guided Flowchart Practice -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 2</span>
+                    <h2 class="text-xl font-bold text-slate-900">Guided Flowchart Practice</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">Interactive Diagram</span>
+            </div>
+
+            <p class="text-sm text-slate-600">
+                <strong>Scenario:</strong> Getting ready for school. Fill in the missing actions for the YES and NO decision paths.
+            </p>
+
+            <!-- Visual Flowchart Builder Component -->
+            <div class="p-6 bg-slate-900 text-white rounded-2xl shadow-inner flex flex-col items-center space-y-4">
+                <!-- START -->
+                <div class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-full text-sm shadow-md border-2 border-indigo-400 uppercase tracking-widest">
+                    START
+                </div>
+                <i class="fa-solid fa-arrow-down text-slate-400"></i>
+
+                <!-- Action 1 -->
+                <div class="px-6 py-3 bg-slate-800 text-slate-200 font-medium rounded-lg text-sm border border-slate-700 w-64 text-center">
+                    Get dressed
+                </div>
+                <i class="fa-solid fa-arrow-down text-slate-400"></i>
+
+                <!-- Action 2 -->
+                <div class="px-6 py-3 bg-slate-800 text-slate-200 font-medium rounded-lg text-sm border border-slate-700 w-64 text-center">
+                    Eat breakfast
+                </div>
+                <i class="fa-solid fa-arrow-down text-slate-400"></i>
+
+                <!-- Decision Diamond -->
+                <div class="relative my-2">
+                    <div class="w-48 h-24 bg-amber-600/90 text-white text-xs font-bold rounded-xl flex items-center justify-center p-3 text-center border-2 border-amber-400 shadow-lg">
+                        Do I have my backpack?
+                    </div>
+                </div>
+
+                <!-- Branching Paths -->
+                <div class="w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                    <!-- YES PATH -->
+                    <div class="bg-emerald-950/60 p-4 rounded-xl border border-emerald-500/40 space-y-2 flex flex-col items-center">
+                        <span class="px-2 py-0.5 bg-emerald-500 text-slate-950 font-extrabold text-xs rounded uppercase">YES Path</span>
+                        <i class="fa-solid fa-arrow-down text-emerald-400 my-1"></i>
+                        <input type="text" id="p3-yes-path" oninput="updateProgress()" placeholder="e.g. Leave for school" class="w-full px-3 py-2 bg-slate-800 text-white border border-emerald-500/50 rounded text-center text-xs outline-none focus:ring-2 focus:ring-emerald-400">
+                    </div>
+
+                    <!-- NO PATH -->
+                    <div class="bg-rose-950/60 p-4 rounded-xl border border-rose-500/40 space-y-2 flex flex-col items-center">
+                        <span class="px-2 py-0.5 bg-rose-500 text-white font-extrabold text-xs rounded uppercase">NO Path</span>
+                        <i class="fa-solid fa-arrow-down text-rose-400 my-1"></i>
+                        <input type="text" id="p3-no-path" oninput="updateProgress()" placeholder="e.g. Get backpack" class="w-full px-3 py-2 bg-slate-800 text-white border border-rose-500/50 rounded text-center text-xs outline-none focus:ring-2 focus:ring-rose-400">
+                    </div>
+                </div>
+
+                <i class="fa-solid fa-arrow-down text-slate-400 mt-2"></i>
+                <!-- END -->
+                <div class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-full text-sm shadow-md border-2 border-indigo-400 uppercase tracking-widest">
+                    END / ARRIVE AT SCHOOL
+                </div>
+            </div>
+
+            <!-- Follow up reflection -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-800 mb-2">
+                    What should happen after the NO path so the algorithm can still finish?
+                </label>
+                <textarea id="p3-reflection" rows="2" oninput="updateProgress()" placeholder="Explain how the algorithm recovers from the NO decision..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition"></textarea>
+            </div>
+        </section>
+
+        <!-- PART 3: Pseudocode -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 3</span>
+                    <h2 class="text-xl font-bold text-slate-900">Pseudocode</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-violet-50 text-violet-700">Logic & Syntax</span>
+            </div>
+
+            <!-- Example Pseudocode Block -->
+            <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-xs leading-relaxed border border-slate-800">
+                <div class="text-slate-400 uppercase text-[10px] font-bold mb-2 border-b border-slate-800 pb-1">Sample Pseudocode Structure</div>
+                <div class="text-indigo-400 font-bold">START</div>
+                <div class="pl-4">Wake up</div>
+                <div class="pl-4">Get dressed</div>
+                <div class="pl-4">Eat breakfast</div>
+                <div class="pl-4 text-amber-400 font-bold">IF <span class="text-white font-normal">backpack is ready</span></div>
+                <div class="pl-8 text-emerald-300">Leave for school</div>
+                <div class="pl-4 text-amber-400 font-bold">ELSE</div>
+                <div class="pl-8 text-rose-300">Get backpack</div>
+                <div class="pl-8 text-emerald-300">Leave for school</div>
+                <div class="text-indigo-400 font-bold">END</div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-800 text-base mb-1">Translate It!</h3>
+                <p class="text-sm text-slate-600 mb-4">
+                    Turn this everyday process into structured pseudocode: <strong class="text-indigo-600">Wash your hands before lunch.</strong> Include at least 5 to 6 steps.
+                </p>
+
+                <div class="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200" id="pseudocode-steps-container">
+                    <!-- Step 1 to 6 inputs -->
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4: Flowchart or Pseudocode? -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 4</span>
+                    <h2 class="text-xl font-bold text-slate-900">Flowchart or Pseudocode?</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">Classification</span>
+            </div>
+
+            <p class="text-sm text-slate-600">
+                Select <strong class="text-indigo-600">F</strong> for Flowchart, <strong class="text-indigo-600">P</strong> for Pseudocode, or <strong class="text-indigo-600">B</strong> for Both for each statement.
+            </p>
+
+            <div id="p5-questions-container" class="space-y-3">
+                <!-- Javascript populates questions -->
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <button onclick="checkPart5()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs rounded-lg shadow-sm transition">
+                    Check Part 5 Answers
+                </button>
+                <span id="p5-feedback" class="text-xs font-semibold"></span>
+            </div>
+        </section>
+
+        <!-- PART 5: Student Challenge: Create an Algorithm -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 5</span>
+                    <h2 class="text-xl font-bold text-slate-900">Student Challenge: Create an Algorithm</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800">Design Challenge</span>
+            </div>
+
+            <!-- Scenario & Format Selector -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">1. Choose ONE Scenario:</label>
+                    <select id="p6-scenario" onchange="updateProgress()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500">
+                        <option value="">-- Select Scenario --</option>
+                        <option value="Logging into a school computer">Logging into a school computer</option>
+                        <option value="Making a sandwich">Making a sandwich</option>
+                        <option value="Checking out a library book">Checking out a library book</option>
+                        <option value="Completing and submitting an assignment">Completing and submitting an assignment</option>
+                        <option value="Choosing what to wear based on the weather">Choosing what to wear based on the weather</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">2. Choose Format:</label>
+                    <div class="flex items-center gap-4 text-sm mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="p6-format" value="Flowchart" onchange="updateProgress()" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-medium text-slate-800">Flowchart</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="p6-format" value="Pseudocode" onchange="updateProgress()" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-medium text-slate-800">Pseudocode</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirements Checklist Banner -->
+            <div class="p-4 bg-indigo-50/80 rounded-xl border border-indigo-100">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">Requirements Checklist</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-indigo-900">
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-square-check text-indigo-600"></i> 6 or more logical steps</div>
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-square-check text-indigo-600"></i> Clear beginning and ending</div>
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-square-check text-indigo-600"></i> At least 1 decision OR explanation why not needed</div>
+                    <div class="flex items-center gap-2"><i class="fa-regular fa-square-check text-indigo-600"></i> Specific enough for a partner to follow</div>
+                </div>
+            </div>
+
+            <!-- Algorithm Text Builder -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-800 mb-2">
+                    Plan & Write Your Algorithm Steps Below:
+                </label>
+                <textarea id="p6-algorithm" rows="8" oninput="updateProgress()" placeholder="START&#10;Step 1: ...&#10;Step 2: ...&#10;IF ... THEN ...&#10;END" class="w-full px-4 py-3 font-mono text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none leading-relaxed transition"></textarea>
+            </div>
+        </section>
+
+        <!-- PART 6: Partner Test & Debug -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Part 6</span>
+                    <h2 class="text-xl font-bold text-slate-900">Partner Test & Debug</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-700">Peer Evaluation</span>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Partner Name</label>
+                <input type="text" id="p7-partner-name" oninput="updateProgress()" placeholder="Enter peer reviewer's name" class="w-full sm:w-80 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <p class="text-xs text-slate-500 italic">
+                Follow your partner's algorithm exactly step-by-step. Do not guess what they meant!
+            </p>
+
+            <!-- Peer Checklist Grid -->
+            <div id="p7-checklist-container" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <!-- Javascript will insert standard evaluation checks -->
+            </div>
+
+            <!-- Reflection & Revisions -->
+            <div class="grid grid-cols-1 gap-4 pt-2">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-800 mb-1">One step that worked especially well:</label>
+                    <textarea id="p7-worked-well" rows="2" oninput="updateProgress()" placeholder="What was clear or worked great?" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-800 mb-1">One step that was missing, confusing, or could be improved:</label>
+                    <textarea id="p7-needs-improvement" rows="2" oninput="updateProgress()" placeholder="What confused you or needs debugging?" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-800 mb-1">Revision I will make based on feedback:</label>
+                    <textarea id="p7-revision" rows="2" oninput="updateProgress()" placeholder="Describe your fixes or debugging updates..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 4 Key Ideas Card -->
+        <section class="bg-indigo-900 text-white rounded-2xl p-6 shadow-lg space-y-3">
+            <h3 class="text-base font-bold flex items-center gap-2 text-indigo-200">
+                <i class="fa-solid fa-lightbulb text-amber-300"></i> Day 4 Key Ideas
+            </h3>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-indigo-100">
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-angle-right text-indigo-400 mt-1"></i>
+                    <span><strong>Flowcharts</strong> use standard symbols and arrows to show an algorithm visually.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-angle-right text-indigo-400 mt-1"></i>
+                    <span><strong>Pseudocode</strong> uses simple, structured written language to show logic.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-angle-right text-indigo-400 mt-1"></i>
+                    <span>A <strong>decision</strong> (diamond / IF-ELSE) creates more than one possible path.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-angle-right text-indigo-400 mt-1"></i>
+                    <span><strong>Testing & debugging</strong> help catch errors and improve algorithm clarity.</span>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- Floating Bottom Action Bar for Summary Report -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 shadow-lg z-30">
+        <div class="max-w-5xl mx-auto flex items-center justify-between px-4">
+            <div class="text-xs text-slate-600">
+                <span id="bottom-status-progress" class="font-bold text-slate-800">0% Done</span>
+            </div>
+            <button onclick="openSummaryModal()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i> Review & Copy Summary Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Report Modal Container -->
+    <div id="summary-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-indigo-700 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-xl"></i>
+                    <h3 class="font-bold text-lg">Student Assignment Summary Report</h3>
+                </div>
+                <button onclick="closeSummaryModal()" class="text-indigo-200 hover:text-white text-lg px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Area -->
+            <div class="p-6 overflow-y-auto space-y-4 custom-scrollbar">
+                <p class="text-xs text-slate-500">
+                    Below is your completed summary report. Click <strong>Copy to Clipboard</strong> to submit your answers to your teacher or LMS.
+                </p>
+
+                <!-- Copy Feedback Toast inside Modal -->
+                <div id="copy-toast" class="hidden p-3 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> Report copied to clipboard successfully!
+                </div>
+
+                <!-- Report Text Output Display -->
+                <textarea id="summary-report-text" readonly class="w-full h-80 p-4 font-mono text-xs bg-slate-900 text-slate-100 rounded-xl border border-slate-800 focus:outline-none leading-relaxed select-all"></textarea>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div class="px-6 py-4 bg-slate-100 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs text-slate-500" id="modal-timestamp">Timestamp: --</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeSummaryModal()" class="px-4 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg transition">
+                        Close
+                    </button>
+                    <button onclick="copySummaryReport()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg shadow transition flex items-center gap-2">
+                        <i class="fa-regular fa-copy"></i> Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const part5Questions = [
+            { id: 1, text: "Uses arrows and shapes.", correct: "F" },
+            { id: 2, text: "Can show the steps in an algorithm.", correct: "B" },
+            { id: 3, text: "Uses simple written instructions.", correct: "P" },
+            { id: 4, text: "Can include decisions.", correct: "B" },
+            { id: 5, text: "Can be tested and revised.", correct: "B" }
+        ];
+
+        const part7ChecklistItems = [
+            "I could identify the beginning.",
+            "The steps were in a logical order.",
+            "The directions were clear enough to follow.",
+            "The decision/path made sense.",
+            "The algorithm had a clear ending."
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPart4();
+            renderPart5();
+            renderPart7();
+            updateProgress();
+        });
+
+        // Render Part 3 Pseudocode Inputs
+        function renderPart4() {
+            const container = document.getElementById('pseudocode-steps-container');
+            let html = '';
+            for (let i = 1; i <= 6; i++) {
+                html += `
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-500 w-12 text-right">Step ${i}.</span>
+                        <input type="text" id="p4-step-${i}" oninput="updateProgress()" placeholder="${i === 1 ? 'e.g. START / Walk to sink' : i === 6 ? 'e.g. Dry hands / END' : 'Enter algorithm step...'}" class="flex-1 px-3 py-1.5 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // Render Part 4 Classification
+        function renderPart5() {
+            const container = document.getElementById('p5-questions-container');
+            let html = '';
+            part5Questions.forEach(q => {
+                html += `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+                        <span class="text-xs sm:text-sm font-medium text-slate-800">${q.id}. ${q.text}</span>
+                        <div class="flex items-center gap-4 text-xs font-semibold">
+                            <label class="flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="p5-q-${q.id}" value="F" onchange="updateProgress()" class="text-indigo-600 focus:ring-indigo-500">
+                                <span>[F] Flowchart</span>
+                            </label>
+                            <label class="flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="p5-q-${q.id}" value="P" onchange="updateProgress()" class="text-indigo-600 focus:ring-indigo-500">
+                                <span>[P] Pseudocode</span>
+                            </label>
+                            <label class="flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="p5-q-${q.id}" value="B" onchange="updateProgress()" class="text-indigo-600 focus:ring-indigo-500">
+                                <span>[B] Both</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Render Part 6 Checklist
+        function renderPart7() {
+            const container = document.getElementById('p7-checklist-container');
+            let html = '';
+            part7ChecklistItems.forEach((item, idx) => {
+                html += `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200 gap-2">
+                        <span class="text-xs font-medium text-slate-700">${item}</span>
+                        <div class="flex items-center gap-4 text-xs">
+                            <label class="flex items-center gap-1 cursor-pointer font-bold text-emerald-700">
+                                <input type="radio" name="p7-check-${idx}" value="Yes" onchange="updateProgress()" class="text-emerald-600 focus:ring-emerald-500">
+                                <span>Yes</span>
+                            </label>
+                            <label class="flex items-center gap-1 cursor-pointer font-bold text-amber-700">
+                                <input type="radio" name="p7-check-${idx}" value="Not yet" onchange="updateProgress()" class="text-amber-600 focus:ring-amber-500">
+                                <span>Not yet</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Check Part 1 Guided Notes Quick Check
+        function checkPart2() {
+            const q1 = document.getElementById('p2-q1').value;
+            const q2 = document.getElementById('p2-q2').value;
+            const feedback = document.getElementById('p2-feedback');
+
+            let isQ1Right = q1 === 'Diamond';
+            let isQ2Right = q2 === 'Arrow';
+
+            if (isQ1Right && isQ2Right) {
+                feedback.className = "text-xs font-bold text-emerald-600";
+                feedback.innerHTML = "<i class='fa-solid fa-check'></i> Quick Check 1 & 2 are correct!";
+            } else {
+                feedback.className = "text-xs font-bold text-rose-600";
+                feedback.innerHTML = "<i class='fa-solid fa-xmark'></i> Remember: Diamond = Decision, Arrow = Sequence/Direction.";
+            }
+        }
+
+        // Check Part 4 Classification Answers
+        function checkPart5() {
+            let score = 0;
+            part5Questions.forEach(q => {
+                const selected = document.querySelector(`input[name="p5-q-${q.id}"]:checked`);
+                if (selected && selected.value === q.correct) {
+                    score++;
+                }
+            });
+
+            const feedback = document.getElementById('p5-feedback');
+            if (score === part5Questions.length) {
+                feedback.className = "text-xs font-bold text-emerald-600";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Excellent! All ${score}/${part5Questions.length} correct!`;
+            } else {
+                feedback.className = "text-xs font-bold text-amber-600";
+                feedback.innerHTML = `You got ${score}/${part5Questions.length} correct. Review Flowchart vs Pseudocode concepts!`;
+            }
+        }
+
+        function updateProgress() {
+            let filledFields = 0;
+            let totalFields = 6; // 6 main parts remaining
+
+            // Part 1 complete check (Guided Notes)
+            if (document.getElementById('p2-q1').value && document.getElementById('p2-q2').value && document.getElementById('p2-q3').value.trim()) filledFields++;
+
+            // Part 2 complete check (Guided Flowchart Practice)
+            if (document.getElementById('p3-yes-path').value.trim() && document.getElementById('p3-no-path').value.trim() && document.getElementById('p3-reflection').value.trim()) filledFields++;
+
+            // Part 3 complete check (Pseudocode)
+            let p4Count = 0;
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById(`p4-step-${i}`).value.trim()) p4Count++;
+            }
+            if (p4Count >= 4) filledFields++;
+
+            // Part 4 complete check (Flowchart or Pseudocode?)
+            let p5Answered = 0;
+            part5Questions.forEach(q => {
+                if (document.querySelector(`input[name="p5-q-${q.id}"]:checked`)) p5Answered++;
+            });
+            if (p5Answered === part5Questions.length) filledFields++;
+
+            // Part 5 complete check (Student Challenge)
+            const p6Scenario = document.getElementById('p6-scenario').value;
+            const p6Format = document.querySelector('input[name="p6-format"]:checked');
+            const p6Alg = document.getElementById('p6-algorithm').value.trim();
+            if (p6Scenario && p6Format && p6Alg.length > 20) filledFields++;
+
+            // Part 6 complete check (Partner Debug)
+            const p7Name = document.getElementById('p7-partner-name').value.trim();
+            const p7Rev = document.getElementById('p7-revision').value.trim();
+            if (p7Name && p7Rev) filledFields++;
+
+            const percentage = Math.round((filledFields / totalFields) * 100);
+            document.getElementById('main-progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').textContent = `${percentage}% Complete`;
+            document.getElementById('bottom-status-progress').textContent = `${percentage}% Done`;
+        }
+
+        function generateReportText() {
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-US', {
+                dateStyle: 'full',
+                timeStyle: 'medium'
+            });
+
+            // Part 1 Answers
+            const p2q1 = document.getElementById('p2-q1').value || "N/A";
+            const p2q2 = document.getElementById('p2-q2').value || "N/A";
+            const p2q3 = document.getElementById('p2-q3').value.trim() || "N/A";
+
+            // Part 2 Answers
+            const p3Yes = document.getElementById('p3-yes-path').value.trim() || "N/A";
+            const p3No = document.getElementById('p3-no-path').value.trim() || "N/A";
+            const p3Reflect = document.getElementById('p3-reflection').value.trim() || "N/A";
+
+            // Part 3 Answers
+            let p4Steps = [];
+            for (let i = 1; i <= 6; i++) {
+                const val = document.getElementById(`p4-step-${i}`).value.trim();
+                if (val) p4Steps.push(`   ${i}. ${val}`);
+            }
+            const p4Text = p4Steps.length ? p4Steps.join('\n') : "   (No steps provided)";
+
+            // Part 4 Answers
+            let p5Text = part5Questions.map(q => {
+                const sel = document.querySelector(`input[name="p5-q-${q.id}"]:checked`);
+                return `   - ${q.text} Answer: ${sel ? sel.value : "Unanswered"}`;
+            }).join('\n');
+
+            // Part 5 Answers
+            const p6Scenario = document.getElementById('p6-scenario').value || "Not selected";
+            const p6FormatObj = document.querySelector('input[name="p6-format"]:checked');
+            const p6Format = p6FormatObj ? p6FormatObj.value : "Not selected";
+            const p6Alg = document.getElementById('p6-algorithm').value.trim() || "No algorithm submitted.";
+
+            // Part 6 Answers
+            const p7Name = document.getElementById('p7-partner-name').value.trim() || "N/A";
+            let p7Checks = part7ChecklistItems.map((item, idx) => {
+                const sel = document.querySelector(`input[name="p7-check-${idx}"]:checked`);
+                return `   - ${item}: ${sel ? sel.value : "Unchecked"}`;
+            }).join('\n');
+            const p7Well = document.getElementById('p7-worked-well').value.trim() || "N/A";
+            const p7Imp = document.getElementById('p7-needs-improvement').value.trim() || "N/A";
+            const p7Rev = document.getElementById('p7-revision').value.trim() || "N/A";
+
+            const report = `=======================================================
+UNIT 7 • DAY 4: FLOWCHARTS & PSEUDOCODE SUMMARY REPORT
+File Name: CAK_7_4_4FlowPseudo.html
+=======================================================
+Timestamp    : ${timestamp}
+=======================================================
+
+PART 1 • GUIDED NOTES & QUICK CHECK
+1. Shape for Decision: ${p2q1}
+2. Symbol for Direction: ${p2q2}
+3. Why multiple paths exist: "${p2q3}"
+
+-------------------------------------------------------
+PART 2 • GUIDED FLOWCHART PRACTICE
+- Scenario: Getting ready for school
+- YES Path Action : "${p3Yes}"
+- NO Path Action  : "${p3No}"
+- Recovery Logic  : "${p3Reflect}"
+
+-------------------------------------------------------
+PART 3 • PSEUDOCODE TRANSLATION
+Handwashing Algorithm Steps:
+${p4Text}
+
+-------------------------------------------------------
+PART 4 • FLOWCHART OR PSEUDOCODE?
+${p5Text}
+
+-------------------------------------------------------
+PART 5 • CREATE AN ALGORITHM
+Selected Scenario: ${p6Scenario}
+Chosen Format    : ${p6Format}
+
+Algorithm Content:
+${p6Alg}
+
+-------------------------------------------------------
+PART 6 • PARTNER TEST & DEBUG
+Partner Evaluator Name: ${p7Name}
+Checklist:
+${p7Checks}
+
+Worked Well       : "${p7Well}"
+Needs Improvement : "${p7Imp}"
+Revision Made     : "${p7Rev}"
+
+=======================================================
+END OF REPORT
+=======================================================`;
+
+            return { report, timestamp };
+        }
+
+        // Open Modal Handler
+        function openSummaryModal() {
+            const { report, timestamp } = generateReportText();
+            document.getElementById('summary-report-text').value = report;
+            document.getElementById('modal-timestamp').textContent = `Generated: ${timestamp}`;
+            document.getElementById('copy-toast').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('hidden');
+        }
+
+        // Close Modal Handler
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+        }
+
+        // Safe Clipboard Copy Handler
+        function copySummaryReport() {
+            const reportTextArea = document.getElementById('summary-report-text');
+            reportTextArea.select();
+            reportTextArea.setSelectionRange(0, 99999); // For mobile compatibility
+
+            try {
+                // Fallback execCommand for iFrame execution compliance
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyToast();
+                } else {
+                    // Try modern navigator API if fallback returns false
+                    navigator.clipboard.writeText(reportTextArea.value).then(() => {
+                        showCopyToast();
+                    }).catch(() => {
+                        alert("Text selected. Please press Ctrl+C or Cmd+C to copy manually.");
+                    });
+                }
+            } catch (err) {
+                alert("Text selected. Please press Ctrl+C or Cmd+C to copy manually.");
+            }
+        }
+
+        function showCopyToast() {
+            const toast = document.getElementById('copy-toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
