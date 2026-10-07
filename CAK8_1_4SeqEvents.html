@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coding Basics: Sequence & Events (CAK8_1SeqEvents)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            scratch: {
+              blue: '#4C97FF',
+              purple: '#9966FF',
+              orange: '#FFAB19',
+              yellow: '#FFBF00',
+              green: '#5CB85C',
+              dark: '#1E293B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .heading-font {
+      font-family: 'Fredoka', sans-serif;
+    }
+    .grid-cell {
+      transition: all 0.3s ease;
+    }
+    .robot-sprite {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes pulse-star {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .star-anim {
+      animation: pulse-star 1.5s infinite ease-in-out;
+    }
+    @keyframes jump-anim {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+    .jumping {
+      animation: jump-anim 0.5s ease-in-out;
+    }
+    @keyframes spin-anim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinning {
+      animation: spin-anim 0.6s linear;
+    }
+    /* Hide screen controls when printing */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; }
+      .print-border { border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-16">
+
+  <!-- Top Banner Header -->
+  <header class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+          <i class="fa-solid me-1 fa-code text-2xl text-yellow-300"></i>
+        </div>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-blue-200">Unit 8 • Day 1</span>
+          <h1 class="heading-font text-xl md:text-2xl font-bold leading-tight">Coding Basics: Sequence & Events</h1>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 no-print">
+        <div id="liveScoreBadge" class="bg-white/20 border border-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-star text-yellow-300"></i> Score: <span id="headerScoreVal">0.0</span>/10
+        </div>
+        <button onclick="resetAllProgress()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate-left"></i> Reset Form
+        </button>
+        <button onclick="generateAndCopyReport()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-1.5 rounded-lg text-sm shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-copy"></i> Copy Schoology Report
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 mt-6 space-y-8">
+
+    <!-- Learning Targets Card -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <!-- Learning Targets -->
+      <div class="bg-indigo-50/70 rounded-xl p-4 border border-indigo-100">
+        <h2 class="heading-font text-lg font-bold text-indigo-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-bullseye text-indigo-600"></i> Learning Targets
+        </h2>
+        <p class="text-xs text-indigo-700 mb-3">Check off each target as you complete the worksheet sections below!</p>
+        <div class="space-y-2">
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-indigo-100 shadow-sm hover:bg-indigo-50/50 transition">
+            <input type="checkbox" id="lt1" onchange="updateProgress()" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
+            <span class="text-sm font-medium text-slate-700">I can create a sequence of commands to accomplish a task.</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-indigo-100 shadow-sm hover:bg-indigo-50/50 transition">
+            <input type="checkbox" id="lt2" onchange="updateProgress()" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
+            <span class="text-sm font-medium text-slate-700">I can use events to control a program.</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-indigo-100 shadow-sm hover:bg-indigo-50/50 transition">
+            <input type="checkbox" id="lt3" onchange="updateProgress()" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
+            <span class="text-sm font-medium text-slate-700">I can predict what a simple program will do before I run it.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: Guided Notes - Vocabulary -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 1</span>
+          <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Guided Notes — Coding Basics</h2>
+        </div>
+        <span class="text-xs text-slate-500 hidden sm:inline"><i class="fa-regular fa-lightbulb text-yellow-500"></i> Hover or tap cards to review!</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Vocab Card 1 -->
+        <div class="bg-slate-50 hover:bg-blue-50/40 p-4 rounded-xl border border-slate-200 transition group cursor-pointer" onclick="playAudioTone(523)">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-blue-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-terminal"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg group-hover:text-blue-600 transition">Program</h3>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">A set of instructions a computer follows.</p>
+        </div>
+
+        <!-- Vocab Card 2 -->
+        <div class="bg-slate-50 hover:bg-blue-50/40 p-4 rounded-xl border border-slate-200 transition group cursor-pointer" onclick="playAudioTone(587)">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-purple-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-list-check"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg group-hover:text-purple-600 transition">Command</h3>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">One instruction in a program.</p>
+        </div>
+
+        <!-- Vocab Card 3 -->
+        <div class="bg-slate-50 hover:bg-blue-50/40 p-4 rounded-xl border border-slate-200 transition group cursor-pointer" onclick="playAudioTone(659)">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-amber-500 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-arrow-down-1-9"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg group-hover:text-amber-600 transition">Sequence</h3>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">Commands arranged in the order they should happen.</p>
+        </div>
+
+        <!-- Vocab Card 4 -->
+        <div class="bg-slate-50 hover:bg-blue-50/40 p-4 rounded-xl border border-slate-200 transition group cursor-pointer" onclick="playAudioTone(698)">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-emerald-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-bolt"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition">Event</h3>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">Something that starts or triggers an action in a program.</p>
+        </div>
+
+        <!-- Vocab Card 5 -->
+        <div class="bg-slate-50 hover:bg-blue-50/40 p-4 rounded-xl border border-slate-200 transition group cursor-pointer" onclick="playAudioTone(783)">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-rose-500 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-robot"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg group-hover:text-rose-600 transition">Sprite / Object</h3>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">A character or item that can be controlled in a program.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Sequence Challenge -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 2</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Sequence Challenge</h2>
+        <p class="text-slate-600 text-sm mt-1">A robot must get from <strong>START</strong> to the star <strong>★</strong>. Build the sequence of commands in order, then run your program!</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Interactive Grid Map (Left Side) -->
+        <div class="lg:col-span-6 bg-slate-900 rounded-2xl p-4 text-white shadow-inner flex flex-col items-center">
+          <div class="flex justify-between items-center w-full mb-3 px-2">
+            <span class="text-xs font-mono text-purple-300"><i class="fa-solid fa-map"></i> GRID WORLD MAP</span>
+            <span id="robotStatusBadge" class="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded font-mono">Ready: At (0,0)</span>
+          </div>
+
+          <!-- 3x4 Grid Representation -->
+          <div class="grid grid-cols-4 gap-2 w-full max-w-md aspect-[4/3] bg-slate-800 p-3 rounded-xl border border-slate-700 relative" id="gridContainer">
+            <!-- Row 0 -->
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex flex-col items-center justify-center p-1 relative border border-slate-600/50" data-row="0" data-col="0">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">START</span>
+            </div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50" data-row="0" data-col="1"><i class="fa-solid fa-arrow-right text-slate-400 text-sm"></i></div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50" data-row="0" data-col="2"><i class="fa-solid fa-arrow-right text-slate-400 text-sm"></i></div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50" data-row="0" data-col="3"><i class="fa-solid fa-arrow-down text-slate-400 text-sm"></i></div>
+
+            <!-- Row 1 -->
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50 text-slate-500 font-mono text-xs" data-row="1" data-col="0">□</div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50 text-slate-500 font-mono text-xs" data-row="1" data-col="1">□</div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50 text-slate-500 font-mono text-xs" data-row="1" data-col="2">□</div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50" data-row="1" data-col="3"><i class="fa-solid fa-arrow-down text-slate-400 text-sm"></i></div>
+
+            <!-- Row 2 -->
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50 text-slate-500 font-mono text-xs" data-row="2" data-col="0">□</div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50 text-slate-500 font-mono text-xs" data-row="2" data-col="1">□</div>
+            <div class="grid-cell bg-amber-500/20 border-2 border-amber-400 rounded-lg flex items-center justify-center relative overflow-hidden" data-row="2" data-col="2">
+              <i class="fa-solid fa-star text-amber-400 text-2xl star-anim"></i>
+            </div>
+            <div class="grid-cell bg-slate-700/80 rounded-lg flex items-center justify-center border border-slate-600/50" data-row="2" data-col="3"><i class="fa-solid fa-arrow-left text-slate-400 text-sm"></i></div>
+
+            <!-- Animated Robot Avatar Overlay -->
+            <div id="robotAvatar" class="robot-sprite absolute w-[22%] h-[28%] bg-blue-500 rounded-xl border-2 border-white shadow-lg flex items-center justify-center text-white text-xl z-20 top-[4%] left-[4%]">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-4 w-full no-print">
+            <button onclick="runRobotSequence()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-xl shadow text-sm transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-play"></i> Run Program
+            </button>
+            <button onclick="resetRobotPosition()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-rotate"></i> Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Block Builder & Command Slots (Right Side) -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-cube text-purple-600"></i> Sequence Commands (1 to 6)
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">Select the correct command for each step to guide the robot to the star.</p>
+
+            <div class="space-y-2">
+              <!-- Command Step Inputs -->
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">1.</span>
+                <select id="seqCmd1" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">2.</span>
+                <select id="seqCmd2" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">3.</span>
+                <select id="seqCmd3" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">4.</span>
+                <select id="seqCmd4" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">5.</span>
+                <select id="seqCmd5" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="w-6 font-mono text-xs font-bold text-slate-500">6.</span>
+                <select id="seqCmd6" onchange="saveData()" class="cmd-select flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-purple-700 focus:ring-2 focus:ring-purple-500">
+                  <option value="MOVE LEFT">MOVE LEFT</option>
+                  <option value="MOVE RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE DOWN">MOVE DOWN</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prediction Question Box -->
+          <div class="bg-purple-50/80 p-4 rounded-xl border border-purple-200">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block font-bold text-purple-900 text-sm">
+                <i class="fa-solid fa-circle-question text-purple-600"></i> Predict:
+              </label>
+              <button onclick="testSkipCommand4()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white font-medium px-2.5 py-1 rounded transition no-print">
+                <i class="fa-solid fa-flask"></i> Test Skip Cmd #4
+              </button>
+            </div>
+            <p class="text-xs text-purple-800 mb-2">Where will the robot end if command #4 is removed?</p>
+            <textarea id="predictAnswer" oninput="saveData()" rows="2" placeholder="Write your prediction here... (e.g., The robot will end at row 1, column 2 instead of reaching the star)" class="w-full bg-white border border-purple-200 rounded-lg p-2 text-sm text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Events - What Starts the Action? -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 3</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Events — What Starts the Action?</h2>
+        <p class="text-slate-600 text-sm mt-1">Match each event trigger to its corresponding action. Select the correct action number (1–4) for each event trigger!</p>
+      </div>
+
+      <!-- Action Reference Box -->
+      <div class="bg-slate-800 text-white p-4 rounded-xl mb-6 shadow-sm">
+        <h3 class="text-xs font-bold uppercase text-emerald-400 mb-2"><i class="fa-solid fa-bolt"></i> Action Reference List:</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+          <div class="bg-slate-700/80 p-2.5 rounded-lg border border-slate-600 flex items-center gap-2">
+            <span class="bg-emerald-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">1</span>
+            <span>The character jumps.</span>
+          </div>
+          <div class="bg-slate-700/80 p-2.5 rounded-lg border border-slate-600 flex items-center gap-2">
+            <span class="bg-emerald-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">2</span>
+            <span>The game begins.</span>
+          </div>
+          <div class="bg-slate-700/80 p-2.5 rounded-lg border border-slate-600 flex items-center gap-2">
+            <span class="bg-emerald-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">3</span>
+            <span>The character says “Hello!”</span>
+          </div>
+          <div class="bg-slate-700/80 p-2.5 rounded-lg border border-slate-600 flex items-center gap-2">
+            <span class="bg-emerald-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">4</span>
+            <span>The score increases by 1.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Matching Table -->
+      <div class="space-y-3">
+        <!-- Event Row A -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-700 text-sm">A.</span>
+            <span class="bg-amber-100 text-amber-900 font-semibold px-3 py-1 rounded-lg text-sm flex items-center gap-2">
+              <i class="fa-solid fa-flag text-green-600"></i> When the green flag / start button is clicked
+            </span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-xs text-slate-500 font-medium">Matches Action:</span>
+            <select id="eventMatchA" onchange="checkEventMatches(); saveData();" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- Choose Action --</option>
+              <option value="1">1. The character jumps.</option>
+              <option value="2">2. The game begins.</option>
+              <option value="3">3. The character says “Hello!”</option>
+              <option value="4">4. The score increases by 1.</option>
+            </select>
+            <span id="eventFeedbackA" class="text-base"></span>
+          </div>
+        </div>
+
+        <!-- Event Row B -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-700 text-sm">B.</span>
+            <span class="bg-amber-100 text-amber-900 font-semibold px-3 py-1 rounded-lg text-sm flex items-center gap-2">
+              <i class="fa-regular fa-keyboard text-purple-600"></i> When the space key is pressed
+            </span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-xs text-slate-500 font-medium">Matches Action:</span>
+            <select id="eventMatchB" onchange="checkEventMatches(); saveData();" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- Choose Action --</option>
+              <option value="1">1. The character jumps.</option>
+              <option value="2">2. The game begins.</option>
+              <option value="3">3. The character says “Hello!”</option>
+              <option value="4">4. The score increases by 1.</option>
+            </select>
+            <span id="eventFeedbackB" class="text-base"></span>
+          </div>
+        </div>
+
+        <!-- Event Row C -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-700 text-sm">C.</span>
+            <span class="bg-amber-100 text-amber-900 font-semibold px-3 py-1 rounded-lg text-sm flex items-center gap-2">
+              <i class="fa-solid fa-hand-pointer text-blue-600"></i> When a sprite is clicked
+            </span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-xs text-slate-500 font-medium">Matches Action:</span>
+            <select id="eventMatchC" onchange="checkEventMatches(); saveData();" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- Choose Action --</option>
+              <option value="1">1. The character jumps.</option>
+              <option value="2">2. The game begins.</option>
+              <option value="3">3. The character says “Hello!”</option>
+              <option value="4">4. The score increases by 1.</option>
+            </select>
+            <span id="eventFeedbackC" class="text-base"></span>
+          </div>
+        </div>
+
+        <!-- Event Row D -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-slate-700 text-sm">D.</span>
+            <span class="bg-amber-100 text-amber-900 font-semibold px-3 py-1 rounded-lg text-sm flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-rose-600"></i> When two objects touch
+            </span>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <span class="text-xs text-slate-500 font-medium">Matches Action:</span>
+            <select id="eventMatchD" onchange="checkEventMatches(); saveData();" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- Choose Action --</option>
+              <option value="1">1. The character jumps.</option>
+              <option value="2">2. The game begins.</option>
+              <option value="3">3. The character says “Hello!”</option>
+              <option value="4">4. The score increases by 1.</option>
+            </select>
+            <span id="eventFeedbackD" class="text-base"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Build-a-Program Planning Page & Interactive Playground -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 4</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Build-a-Program Planning & Playground</h2>
+        <p class="text-slate-600 text-sm mt-1">Plan a mini interactive program, then test it live right in the built-in mini playground!</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Program Planning Form (Left Column) -->
+        <div class="lg:col-span-6 space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">My Program Idea:</label>
+            <input type="text" id="progIdea" oninput="saveData()" placeholder="e.g., A jumping wizard that greets the user" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Trigger Event (What starts it?):</label>
+              <select id="progEvent" onchange="updatePlaygroundEvent(); saveData();" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-orange-700 focus:ring-2 focus:ring-orange-500">
+                <option value="CLICK">When Green Flag / Start Clicked</option>
+                <option value="SPACE">When Space Key Pressed</option>
+                <option value="SPRITE_CLICK">When Sprite Clicked</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Controlled Sprite / Object:</label>
+              <select id="progSprite" onchange="updatePlaygroundSprite(); saveData();" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-orange-700 focus:ring-2 focus:ring-orange-500">
+                <option value="cat">🐱 Coding Cat</option>
+                <option value="robot">🤖 Robot</option>
+                <option value="wizard">🧙 Wizard</option>
+                <option value="star">⭐ Magic Star</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Sequence of Commands for Custom Program -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Write Sequence of Commands (In Order):</label>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2"><span class="w-4 text-xs font-bold text-slate-400">1.</span><input type="text" id="pCmd1" oninput="saveData()" value="Move 30px right" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800"></div>
+              <div class="flex items-center gap-2"><span class="w-4 text-xs font-bold text-slate-400">2.</span><input type="text" id="pCmd2" oninput="saveData()" value="Jump up high" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800"></div>
+              <div class="flex items-center gap-2"><span class="w-4 text-xs font-bold text-slate-400">3.</span><input type="text" id="pCmd3" oninput="saveData()" value="Say 'Hello World!'" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800"></div>
+              <div class="flex items-center gap-2"><span class="w-4 text-xs font-bold text-slate-400">4.</span><input type="text" id="pCmd4" oninput="saveData()" value="Spin around 360°" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800"></div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Before running it, predict what will happen:</label>
+            <textarea id="pPredict" oninput="saveData()" rows="2" placeholder="I predict that when I trigger the event, the sprite will..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">After running it, what actually happened?</label>
+            <textarea id="pActual" oninput="saveData()" rows="2" placeholder="Record what actually happened during execution..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Interactive Program Playground (Right Column) -->
+        <div class="lg:col-span-6 bg-slate-900 rounded-2xl p-5 text-white flex flex-col justify-between shadow-md">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-mono text-orange-400"><i class="fa-solid fa-gamepad"></i> MINI PROGRAM STAGE</span>
+              <span id="triggerHintBadge" class="text-xs bg-orange-500/20 text-orange-300 border border-orange-500/30 px-2.5 py-1 rounded-full font-medium">Event: Click Start Button</span>
+            </div>
+
+            <!-- Stage Screen -->
+            <div id="playgroundStage" class="bg-slate-800 border-2 border-slate-700 rounded-xl h-56 relative overflow-hidden flex flex-col items-center justify-center p-4">
+              
+              <!-- Speech Bubble Overlay -->
+              <div id="spriteSpeechBubble" class="hidden absolute top-4 bg-white text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg border border-slate-300 after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2 after:border-x-6 after:border-x-transparent after:border-t-6 after:border-t-white">
+                Hello World!
+              </div>
+
+              <!-- Animated Custom Sprite -->
+              <div id="customSprite" onclick="handleSpriteClick()" class="cursor-pointer text-6xl transition-all duration-300 transform">
+                🐱
+              </div>
+
+              <!-- Instruction Prompt on Stage -->
+              <div class="absolute bottom-2 text-[11px] text-slate-400 text-center font-mono">
+                <span id="stageTriggerHelp">Press "▶ Green Flag / Start" below to trigger!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Playground Controls -->
+          <div class="mt-4 space-y-2 no-print">
+            <button onclick="triggerPlaygroundSequence()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-flag text-yellow-300"></i> ▶ Green Flag / Start
+            </button>
+            <div class="flex gap-2">
+              <button onclick="triggerSpaceKeyAction()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-xs font-semibold py-2 rounded-lg transition">
+                <i class="fa-regular fa-keyboard"></i> Press Space
+              </button>
+              <button onclick="resetPlaygroundSprite()" class="bg-slate-800 hover:bg-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition text-slate-400">
+                ↺ Reset Stage
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 5: Debug & Revise -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 5</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Debug & Revise</h2>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block font-bold text-slate-800 text-sm mb-2">Did your program do what you expected?</label>
+          <div class="flex items-center gap-6">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="debugExpected" value="Yes" onchange="saveData()" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm font-semibold text-slate-700">☐ Yes</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="debugExpected" value="Not yet" onchange="saveData()" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm font-semibold text-slate-700">☐ Not yet</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-800 text-sm mb-1">One change I made (or would make) to improve the sequence:</label>
+          <textarea id="debugChangeNotes" oninput="saveData()" rows="3" placeholder="Describe how you fixed bugs or reordered steps to improve execution..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: Quick Practice — Sequence or Event? -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Section 6</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Quick Practice — Sequence or Event?</h2>
+        <p class="text-slate-600 text-sm mt-1">Identify whether each item is a <strong>Sequence (S)</strong> or an <strong>Event (E)</strong>.</p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Item 1 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">1. “When the up arrow is pressed”</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setQuickPractice(1, 'E')" id="qp1_E" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">E (Event)</button>
+            <button onclick="setQuickPractice(1, 'S')" id="qp1_S" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">S (Sequence)</button>
+            <span id="qp1_feedback" class="text-sm font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">2. “Move 10 steps, turn right, then say Hello”</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setQuickPractice(2, 'E')" id="qp2_E" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">E (Event)</button>
+            <button onclick="setQuickPractice(2, 'S')" id="qp2_S" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">S (Sequence)</button>
+            <span id="qp2_feedback" class="text-sm font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">3. “When the sprite is clicked”</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setQuickPractice(3, 'E')" id="qp3_E" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">E (Event)</button>
+            <button onclick="setQuickPractice(3, 'S')" id="qp3_S" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">S (Sequence)</button>
+            <span id="qp3_feedback" class="text-sm font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">4. “Play sound, wait 1 second, change costume”</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setQuickPractice(4, 'E')" id="qp4_E" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">E (Event)</button>
+            <button onclick="setQuickPractice(4, 'S')" id="qp4_S" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">S (Sequence)</button>
+            <span id="qp4_feedback" class="text-sm font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">5. “When the program starts”</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setQuickPractice(5, 'E')" id="qp5_E" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">E (Event)</button>
+            <button onclick="setQuickPractice(5, 'S')" id="qp5_S" class="qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">S (Sequence)</button>
+            <span id="qp5_feedback" class="text-sm font-bold ml-1"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Takeaway Banner Footer -->
+    <section class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 text-center shadow-lg border border-indigo-900">
+      <div class="max-w-2xl mx-auto space-y-2">
+        <span class="bg-yellow-400 text-slate-900 font-bold text-xs uppercase px-3 py-1 rounded-full"><i class="fa-solid fa-key"></i> Day 1 Key Takeaway</span>
+        <p class="heading-font text-lg md:text-xl font-medium text-slate-100 pt-1">
+          "Programs follow commands in sequence, and events tell a program when to begin an action."
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 7: Submit Work & Schoology Clipboard Report -->
+    <section class="bg-white rounded-2xl shadow-sm border-2 border-indigo-500/30 p-6 print-border text-center">
+      <div class="max-w-xl mx-auto space-y-4">
+        <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
+          <i class="fa-solid fa-graduation-cap"></i> Schoology Submission
+        </div>
+        <h2 class="heading-font text-2xl font-bold text-slate-800">Ready to Turn In Your Work?</h2>
+        <p class="text-slate-600 text-sm">
+          Click below to generate and copy your worksheet summary report graded out of 10 points. Then paste (<kbd class="bg-slate-100 border border-slate-300 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+V</kbd> or <kbd class="bg-slate-100 border border-slate-300 px-1.5 py-0.5 rounded text-xs font-mono">Cmd+V</kbd>) into your Schoology assignment submission box!
+        </p>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold uppercase text-slate-500">Current Grade Score:</span>
+            <span class="text-sm font-extrabold text-indigo-600"><span id="sectionScoreVal">0.0</span> / 10 Points</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden mb-2">
+            <div id="scoreProgressBar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <p id="scoreMessage" class="text-xs text-slate-500 italic">Complete all sections above to reach 10/10!</p>
+        </div>
+
+        <button onclick="generateAndCopyReport()" class="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mx-auto">
+          <i class="fa-solid fa-clipboard-check text-lg"></i> Copy Schoology Report to Clipboard
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-3 border border-slate-700">
+    <div class="bg-emerald-500 text-white p-2 rounded-lg text-sm"><i class="fa-solid fa-check"></i></div>
+    <div>
+      <h4 class="font-bold text-sm" id="toastTitle">Report Copied!</h4>
+      <p class="text-xs text-slate-300" id="toastBody">Paste directly into Schoology.</p>
+    </div>
+  </div>
+
+  <!-- Manual Copy Fallback Modal -->
+  <div id="reportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="heading-font font-bold text-lg text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-file-lines text-indigo-600"></i> Schoology Assignment Report
+        </h3>
+        <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">&times;</button>
+      </div>
+      <p class="text-xs text-slate-600">Your report has been generated. If auto-copy did not work on your browser, select and copy the text below:</p>
+      <textarea id="reportTextArea" readonly class="w-full h-64 bg-slate-50 border border-slate-300 rounded-xl p-3 font-mono text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="closeReportModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs font-semibold">Close</button>
+        <button onclick="copyManualText()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-copy"></i> Copy Text
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // Audio Synthesizer via Web Audio API
+    let audioCtx = null;
+    function playAudioTone(freq, type = 'sine', duration = 0.15) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) { console.log('Audio disabled'); }
+    }
+
+    // SECTION 2: Robot Grid Logic
+    // Grid mapping 3x4: rows 0..2, cols 0..3
+    let robotState = { row: 0, col: 0, isRunning: false };
+
+    // Update Robot Position Visuals
+    function updateRobotVisuals(r, c) {
+      robotState.row = r;
+      robotState.col = c;
+      const robotEl = document.getElementById('robotAvatar');
+      // Left% = c * 25% + offset, Top% = r * 33.33% + offset
+      const topPct = (r * 33.33) + 4;
+      const leftPct = (c * 25) + 2;
+      robotEl.style.top = topPct + '%';
+      robotEl.style.left = leftPct + '%';
+
+      const badge = document.getElementById('robotStatusBadge');
+      if (r === 2 && c === 2) {
+        badge.textContent = "SUCCESS! Reached Star ★ (2,2)";
+        badge.className = "text-xs bg-amber-500/30 text-amber-300 font-bold px-2 py-1 rounded border border-amber-400 font-mono";
+      } else {
+        badge.textContent = `At Grid (${r},${c})`;
+        badge.className = "text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded font-mono";
+      }
+    }
+
+    function resetRobotPosition() {
+      updateRobotVisuals(0, 0);
+      playAudioTone(400);
+    }
+
+    async function runRobotSequence(customCmds = null) {
+      if (robotState.isRunning) return;
+      robotState.isRunning = true;
+
+      // Get user commands from selects unless custom set provided
+      const cmds = customCmds || [
+        document.getElementById('seqCmd1').value,
+        document.getElementById('seqCmd2').value,
+        document.getElementById('seqCmd3').value,
+        document.getElementById('seqCmd4').value,
+        document.getElementById('seqCmd5').value,
+        document.getElementById('seqCmd6').value
+      ];
+
+      updateRobotVisuals(0, 0);
+      let r = 0, c = 0;
+
+      for (let i = 0; i < cmds.length; i++) {
+        await new Promise(res => setTimeout(res, 500));
+        const cmd = cmds[i];
+
+        if (cmd === 'MOVE RIGHT' && c < 3) c++;
+        else if (cmd === 'MOVE LEFT' && c > 0) c--;
+        else if (cmd === 'MOVE DOWN' && r < 2) r++;
+
+        playAudioTone(500 + (i * 80), 'triangle');
+        updateRobotVisuals(r, c);
+      }
+
+      if (r === 2 && c === 2) {
+        playAudioTone(880, 'sine', 0.4);
+        setTimeout(() => playAudioTone(1046, 'sine', 0.5), 200);
+      } else {
+        playAudioTone(220, 'sawtooth', 0.3);
+      }
+
+      robotState.isRunning = false;
+    }
+
+    // Interactive Test Skip Command #4
+    function testSkipCommand4() {
+      const fullCmds = [
+        document.getElementById('seqCmd1').value,
+        document.getElementById('seqCmd2').value,
+        document.getElementById('seqCmd3').value,
+        // Command #4 skipped!
+        document.getElementById('seqCmd5').value,
+        document.getElementById('seqCmd6').value
+      ];
+      runRobotSequence(fullCmds);
+    }
+
+    // SECTION 3: Event Matching Logic
+    const correctEventMatches = { A: '2', B: '1', C: '3', D: '4' };
+
+    function checkEventMatches() {
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const val = document.getElementById(`eventMatch${letter}`).value;
+        const feedbackEl = document.getElementById(`eventFeedback${letter}`);
+        if (!val) {
+          feedbackEl.textContent = '';
+        } else if (val === correctEventMatches[letter]) {
+          feedbackEl.textContent = '✅ Correct!';
+          feedbackEl.className = 'text-xs font-bold text-emerald-600';
+        } else {
+          feedbackEl.textContent = '❌ Try again';
+          feedbackEl.className = 'text-xs font-bold text-rose-500';
+        }
+      });
+    }
+
+    // SECTION 4: Playground Interactive Stage
+    const spriteIcons = {
+      cat: '🐱',
+      robot: '🤖',
+      wizard: '🧙',
+      star: '⭐'
+    };
+
+    function updatePlaygroundSprite() {
+      const key = document.getElementById('progSprite').value;
+      document.getElementById('customSprite').textContent = spriteIcons[key] || '🐱';
+    }
+
+    function updatePlaygroundEvent() {
+      const evt = document.getElementById('progEvent').value;
+      const hint = document.getElementById('triggerHintBadge');
+      const help = document.getElementById('stageTriggerHelp');
+      
+      if (evt === 'CLICK') {
+        hint.textContent = 'Event: Click Green Flag';
+        help.textContent = 'Press "▶ Green Flag / Start" below to trigger!';
+      } else if (evt === 'SPACE') {
+        hint.textContent = 'Event: Space Key Press';
+        help.textContent = 'Press Space key on keyboard or click "Press Space" button!';
+      } else if (evt === 'SPRITE_CLICK') {
+        hint.textContent = 'Event: Click Sprite Directly';
+        help.textContent = 'Click the sprite on stage directly to trigger!';
+      }
+    }
+
+    async function triggerPlaygroundSequence() {
+      const sprite = document.getElementById('customSprite');
+      const bubble = document.getElementById('spriteSpeechBubble');
+      
+      resetPlaygroundSprite();
+      await new Promise(r => setTimeout(r, 100));
+
+      // Sequence animation sequence
+      playAudioTone(600);
+      sprite.style.transform = 'translateX(40px)';
+      
+      await new Promise(r => setTimeout(r, 400));
+      playAudioTone(800);
+      sprite.classList.add('jumping');
+
+      await new Promise(r => setTimeout(r, 400));
+      bubble.classList.remove('hidden');
+      playAudioTone(700);
+
+      await new Promise(r => setTimeout(r, 600));
+      sprite.classList.remove('jumping');
+      sprite.classList.add('spinning');
+      playAudioTone(900);
+
+      await new Promise(r => setTimeout(r, 600));
+      sprite.classList.remove('spinning');
+    }
+
+    function handleSpriteClick() {
+      const evt = document.getElementById('progEvent').value;
+      if (evt === 'SPRITE_CLICK') {
+        triggerPlaygroundSequence();
+      } else {
+        playAudioTone(500);
+        const sprite = document.getElementById('customSprite');
+        sprite.classList.add('jumping');
+        setTimeout(() => sprite.classList.remove('jumping'), 500);
+      }
+    }
+
+    function triggerSpaceKeyAction() {
+      triggerPlaygroundSequence();
+    }
+
+    function resetPlaygroundSprite() {
+      const sprite = document.getElementById('customSprite');
+      const bubble = document.getElementById('spriteSpeechBubble');
+      sprite.style.transform = 'none';
+      sprite.classList.remove('jumping', 'spinning');
+      bubble.classList.add('hidden');
+    }
+
+    // Keyboard Space key handler
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        const evt = document.getElementById('progEvent').value;
+        if (evt === 'SPACE') {
+          triggerPlaygroundSequence();
+        }
+      }
+    });
+
+    // SECTION 6: Quick Practice Answers
+    const qpAnswers = { 1: 'E', 2: 'S', 3: 'E', 4: 'S', 5: 'E' };
+    const qpState = {};
+
+    function setQuickPractice(itemNum, choice) {
+      qpState[itemNum] = choice;
+      const btnE = document.getElementById(`qp${itemNum}_E`);
+      const btnS = document.getElementById(`qp${itemNum}_S`);
+      const fb = document.getElementById(`qp${itemNum}_feedback`);
+
+      btnE.className = "qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
+      btnS.className = "qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
+
+      if (choice === 'E') {
+        btnE.className = "qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-blue-600 text-white border-blue-600 shadow-sm";
+      } else {
+        btnS.className = "qp-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-purple-600 text-white border-purple-600 shadow-sm";
+      }
+
+      if (choice === qpAnswers[itemNum]) {
+        fb.textContent = "✅ Correct!";
+        fb.className = "text-xs font-bold text-emerald-600 ml-1";
+        playAudioTone(750);
+      } else {
+        fb.textContent = "❌ Incorrect";
+        fb.className = "text-xs font-bold text-rose-500 ml-1";
+        playAudioTone(250);
+      }
+      saveData();
+    }
+
+    function updateProgress() {
+      saveData();
+    }
+
+    function calculateGrade() {
+      // 1. Sequence Challenge (3 pts)
+      const correctRobotCmdsList = ['MOVE RIGHT', 'MOVE RIGHT', 'MOVE RIGHT', 'MOVE DOWN', 'MOVE DOWN', 'MOVE LEFT'];
+      let correctRobotCmds = 0;
+      for (let i = 1; i <= 6; i++) {
+        const val = document.getElementById(`seqCmd${i}`)?.value;
+        if (val === correctRobotCmdsList[i - 1]) correctRobotCmds++;
+      }
+      const cmdScore = (correctRobotCmds / 6) * 2.0;
+      const predictTxt = document.getElementById('predictAnswer')?.value.trim() || '';
+      const predictScore = predictTxt.length >= 5 ? 1.0 : (predictTxt.length > 0 ? 0.5 : 0);
+      const sec2 = cmdScore + predictScore;
+
+      // 2. Events Matching (2 pts)
+      let correctEvents = 0;
+      if (document.getElementById('eventMatchA')?.value === '2') correctEvents++;
+      if (document.getElementById('eventMatchB')?.value === '1') correctEvents++;
+      if (document.getElementById('eventMatchC')?.value === '3') correctEvents++;
+      if (document.getElementById('eventMatchD')?.value === '4') correctEvents++;
+      const sec3 = (correctEvents / 4) * 2.0;
+
+      // 3. Build-a-Program Planning (2 pts)
+      const idea = document.getElementById('progIdea')?.value.trim() || '';
+      const pPredict = document.getElementById('pPredict')?.value.trim() || '';
+      const pActual = document.getElementById('pActual')?.value.trim() || '';
+      const pCmd1 = document.getElementById('pCmd1')?.value.trim() || '';
+      const pCmd2 = document.getElementById('pCmd2')?.value.trim() || '';
+      
+      let sec4 = 0;
+      if (idea.length >= 3) sec4 += 0.5;
+      if (pCmd1.length >= 2 && pCmd2.length >= 2) sec4 += 0.5;
+      if (pPredict.length >= 5) sec4 += 0.5;
+      if (pActual.length >= 5) sec4 += 0.5;
+
+      // 4. Debug & Revise (1 pt)
+      const debugRadio = document.querySelector('input[name="debugExpected"]:checked');
+      const debugNotes = document.getElementById('debugChangeNotes')?.value.trim() || '';
+      let sec5 = 0;
+      if (debugRadio) sec5 += 0.3;
+      if (debugNotes.length >= 5) sec5 += 0.7;
+
+      // 5. Quick Practice (2 pts)
+      let correctQP = 0;
+      Object.keys(qpAnswers).forEach(k => {
+        if (qpState[k] === qpAnswers[k]) correctQP++;
+      });
+      const sec6 = (correctQP / 5) * 2.0;
+
+      const total = Math.min(10.0, Math.round((sec2 + sec3 + sec4 + sec5 + sec6) * 10) / 10);
+
+      return { total, sec2, sec3, sec4, sec5, sec6, correctRobotCmds, correctEvents, correctQP };
+    }
+
+    function updateGradeDisplay() {
+      const scores = calculateGrade();
+      const formattedTotal = scores.total.toFixed(1);
+      
+      const headerScore = document.getElementById('headerScoreVal');
+      const sectionScore = document.getElementById('sectionScoreVal');
+      const progressBar = document.getElementById('scoreProgressBar');
+      const scoreMsg = document.getElementById('scoreMessage');
+
+      if (headerScore) headerScore.textContent = formattedTotal;
+      if (sectionScore) sectionScore.textContent = formattedTotal;
+      if (progressBar) progressBar.style.width = `${(scores.total / 10) * 100}%`;
+
+      if (scoreMsg) {
+        if (scores.total >= 9.5) {
+          scoreMsg.textContent = "🌟 Perfect Score achieved! Ready to copy & paste into Schoology.";
+          scoreMsg.className = "text-xs font-bold text-emerald-600";
+        } else if (scores.total >= 6.0) {
+          scoreMsg.textContent = "Great progress! Complete all remaining questions for a 10/10.";
+          scoreMsg.className = "text-xs font-semibold text-indigo-600";
+        } else {
+          scoreMsg.textContent = "Keep working through the sections above to increase your score!";
+          scoreMsg.className = "text-xs text-slate-500 italic";
+        }
+      }
+    }
+
+    function generateReportText(scores) {
+      const timestamp = new Date().toLocaleString();
+      
+      const lt1 = document.getElementById('lt1').checked ? '[X]' : '[ ]';
+      const lt2 = document.getElementById('lt2').checked ? '[X]' : '[ ]';
+      const lt3 = document.getElementById('lt3').checked ? '[X]' : '[ ]';
+
+      const seqCmds = [
+        document.getElementById('seqCmd1').value,
+        document.getElementById('seqCmd2').value,
+        document.getElementById('seqCmd3').value,
+        document.getElementById('seqCmd4').value,
+        document.getElementById('seqCmd5').value,
+        document.getElementById('seqCmd6').value
+      ];
+
+      return [
+        `==================================================`,
+        `STUDENT WORKSHEET REPORT: CODING BASICS`,
+        `Unit 8 • Day 1: Sequence & Events`,
+        `TOTAL GRADE: ${scores.total.toFixed(1)} / 10.0 Points (${Math.round((scores.total/10)*100)}%)`,
+        `Generated: ${timestamp}`,
+        `==================================================`,
+        ``,
+        `--- LEARNING TARGETS SELF-CHECK ---`,
+        `${lt1} Target 1: Create sequence of commands`,
+        `${lt2} Target 2: Use events to control a program`,
+        `${lt3} Target 3: Predict simple program behavior`,
+        ``,
+        `--- SECTION 2: SEQUENCE CHALLENGE (Score: ${scores.sec2.toFixed(1)}/3.0) ---`,
+        `Robot Commands Sequence:`,
+        `  1. ${seqCmds[0]} | 2. ${seqCmds[1]} | 3. ${seqCmds[2]}`,
+        `  4. ${seqCmds[3]} | 5. ${seqCmds[4]} | 6. ${seqCmds[5]}`,
+        `Robot Path Correctness: ${scores.correctRobotCmds}/6 steps correct`,
+        `Prediction Answer: "${document.getElementById('predictAnswer').value || '(No answer provided)'}"`,
+        ``,
+        `--- SECTION 3: EVENTS MATCHING (Score: ${scores.sec3.toFixed(1)}/2.0) ---`,
+        `Event A (Green flag): Option ${document.getElementById('eventMatchA').value || 'None'} ${document.getElementById('eventMatchA').value === '2' ? '✅' : '❌'}`,
+        `Event B (Space key): Option ${document.getElementById('eventMatchB').value || 'None'} ${document.getElementById('eventMatchB').value === '1' ? '✅' : '❌'}`,
+        `Event C (Sprite click): Option ${document.getElementById('eventMatchC').value || 'None'} ${document.getElementById('eventMatchC').value === '3' ? '✅' : '❌'}`,
+        `Event D (Touch): Option ${document.getElementById('eventMatchD').value || 'None'} ${document.getElementById('eventMatchD').value === '4' ? '✅' : '❌'}`,
+        ``,
+        `--- SECTION 4: BUILD-A-PROGRAM PLANNING (Score: ${scores.sec4.toFixed(1)}/2.0) ---`,
+        `Program Idea: ${document.getElementById('progIdea').value || '(Not specified)'}`,
+        `Trigger Event: ${document.getElementById('progEvent').value} | Sprite: ${document.getElementById('progSprite').value}`,
+        `Commands: 1. ${document.getElementById('pCmd1').value} | 2. ${document.getElementById('pCmd2').value} | 3. ${document.getElementById('pCmd3').value} | 4. ${document.getElementById('pCmd4').value}`,
+        `Prediction: "${document.getElementById('pPredict').value || '(None)'}"`,
+        `Actual Result: "${document.getElementById('pActual').value || '(None)'}"`,
+        ``,
+        `--- SECTION 5: DEBUG & REVISE (Score: ${scores.sec5.toFixed(1)}/1.0) ---`,
+        `Met Expectations: ${document.querySelector('input[name="debugExpected"]:checked')?.value || 'Not selected'}`,
+        `Revision Notes: "${document.getElementById('debugChangeNotes').value || '(None)'}"`,
+        ``,
+        `--- SECTION 6: QUICK PRACTICE (Score: ${scores.sec6.toFixed(1)}/2.0) ---`,
+        `Correct Answers: ${scores.correctQP}/5`,
+        `  1. Up Arrow Press -> ${qpState[1] || '-'} (${qpState[1] === 'E' ? '✅' : '❌'})`,
+        `  2. Move & Turn -> ${qpState[2] || '-'} (${qpState[2] === 'S' ? '✅' : '❌'})`,
+        `  3. Sprite Clicked -> ${qpState[3] || '-'} (${qpState[3] === 'E' ? '✅' : '❌'})`,
+        `  4. Play Sound & Wait -> ${qpState[4] || '-'} (${qpState[4] === 'S' ? '✅' : '❌'})`,
+        `  5. Program Starts -> ${qpState[5] || '-'} (${qpState[5] === 'E' ? '✅' : '❌'})`,
+        `==================================================`
+      ].join('\n');
+    }
+
+    function generateAndCopyReport() {
+      const scores = calculateGrade();
+      const text = generateReportText(scores);
+      
+      document.getElementById('reportTextArea').value = text;
+
+      let copied = false;
+      try {
+        const tempElement = document.createElement('textarea');
+        tempElement.value = text;
+        tempElement.style.position = 'fixed';
+        tempElement.style.left = '-9999px';
+        document.body.appendChild(tempElement);
+        tempElement.select();
+        copied = document.execCommand('copy');
+        document.body.removeChild(tempElement);
+      } catch (e) {
+        copied = false;
+      }
+
+      showToast(`Report Copied! (${scores.total.toFixed(1)}/10)`, "Paste directly into your Schoology assignment.");
+
+      if (!copied) {
+        document.getElementById('reportModal').classList.remove('hidden');
+        document.getElementById('reportTextArea').select();
+      }
+    }
+
+    function copyManualText() {
+      const txtArea = document.getElementById('reportTextArea');
+      txtArea.select();
+      try {
+        document.execCommand('copy');
+        showToast("Text Copied!", "Copied report text to clipboard.");
+      } catch (e) {
+        alert("Please press Ctrl+C / Cmd+C to copy the text.");
+      }
+    }
+
+    function closeReportModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function showToast(title, body) {
+      const toast = document.getElementById('copyToast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastBody').textContent = body;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      playAudioTone(800, 'sine', 0.2);
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    function saveData() {
+      updateGradeDisplay();
+      const data = {
+        lt1: document.getElementById('lt1').checked,
+        lt2: document.getElementById('lt2').checked,
+        lt3: document.getElementById('lt3').checked,
+        seqCmd1: document.getElementById('seqCmd1').value,
+        seqCmd2: document.getElementById('seqCmd2').value,
+        seqCmd3: document.getElementById('seqCmd3').value,
+        seqCmd4: document.getElementById('seqCmd4').value,
+        seqCmd5: document.getElementById('seqCmd5').value,
+        seqCmd6: document.getElementById('seqCmd6').value,
+        predictAnswer: document.getElementById('predictAnswer').value,
+        eventMatchA: document.getElementById('eventMatchA').value,
+        eventMatchB: document.getElementById('eventMatchB').value,
+        eventMatchC: document.getElementById('eventMatchC').value,
+        eventMatchD: document.getElementById('eventMatchD').value,
+        progIdea: document.getElementById('progIdea').value,
+        progEvent: document.getElementById('progEvent').value,
+        progSprite: document.getElementById('progSprite').value,
+        pCmd1: document.getElementById('pCmd1').value,
+        pCmd2: document.getElementById('pCmd2').value,
+        pCmd3: document.getElementById('pCmd3').value,
+        pCmd4: document.getElementById('pCmd4').value,
+        pPredict: document.getElementById('pPredict').value,
+        pActual: document.getElementById('pActual').value,
+        debugExpected: document.querySelector('input[name="debugExpected"]:checked')?.value || '',
+        debugChangeNotes: document.getElementById('debugChangeNotes').value,
+        qpState: qpState
+      };
+      localStorage.setItem('CAK8_1SeqEvents_data', JSON.stringify(data));
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem('CAK8_1SeqEvents_data');
+      if (!raw) {
+        updateGradeDisplay();
+        return;
+      }
+      try {
+        const d = JSON.parse(raw);
+        if (d.lt1) document.getElementById('lt1').checked = d.lt1;
+        if (d.lt2) document.getElementById('lt2').checked = d.lt2;
+        if (d.lt3) document.getElementById('lt3').checked = d.lt3;
+
+        if (d.seqCmd1) document.getElementById('seqCmd1').value = d.seqCmd1;
+        if (d.seqCmd2) document.getElementById('seqCmd2').value = d.seqCmd2;
+        if (d.seqCmd3) document.getElementById('seqCmd3').value = d.seqCmd3;
+        if (d.seqCmd4) document.getElementById('seqCmd4').value = d.seqCmd4;
+        if (d.seqCmd5) document.getElementById('seqCmd5').value = d.seqCmd5;
+        if (d.seqCmd6) document.getElementById('seqCmd6').value = d.seqCmd6;
+        if (d.predictAnswer) document.getElementById('predictAnswer').value = d.predictAnswer;
+
+        if (d.eventMatchA) document.getElementById('eventMatchA').value = d.eventMatchA;
+        if (d.eventMatchB) document.getElementById('eventMatchB').value = d.eventMatchB;
+        if (d.eventMatchC) document.getElementById('eventMatchC').value = d.eventMatchC;
+        if (d.eventMatchD) document.getElementById('eventMatchD').value = d.eventMatchD;
+        checkEventMatches();
+
+        if (d.progIdea) document.getElementById('progIdea').value = d.progIdea;
+        if (d.progEvent) document.getElementById('progEvent').value = d.progEvent;
+        if (d.progSprite) document.getElementById('progSprite').value = d.progSprite;
+        updatePlaygroundSprite();
+        updatePlaygroundEvent();
+
+        if (d.pCmd1) document.getElementById('pCmd1').value = d.pCmd1;
+        if (d.pCmd2) document.getElementById('pCmd2').value = d.pCmd2;
+        if (d.pCmd3) document.getElementById('pCmd3').value = d.pCmd3;
+        if (d.pCmd4) document.getElementById('pCmd4').value = d.pCmd4;
+        if (d.pPredict) document.getElementById('pPredict').value = d.pPredict;
+        if (d.pActual) document.getElementById('pActual').value = d.pActual;
+
+        if (d.debugExpected) {
+          const radio = document.querySelector(`input[name="debugExpected"][value="${d.debugExpected}"]`);
+          if (radio) radio.checked = true;
+        }
+        if (d.debugChangeNotes) document.getElementById('debugChangeNotes').value = d.debugChangeNotes;
+
+        if (d.qpState) {
+          Object.keys(d.qpState).forEach(k => setQuickPractice(k, d.qpState[k]));
+        }
+        updateGradeDisplay();
+      } catch (e) { console.log('Error restoring saved data'); }
+    }
+
+    function resetAllProgress() {
+      if (confirm('Are you sure you want to reset all answers and inputs on this worksheet?')) {
+        localStorage.removeItem('CAK8_1SeqEvents_data');
+        location.reload();
+      }
+    }
+
+    // Window Load Initialization
+    window.onload = function() {
+      loadData();
+    };
+  </script>
+</body>
+</html>
