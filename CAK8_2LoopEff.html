@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loops & Efficient Programs (CAK8_1LoopEff)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            scratch: {
+              blue: '#4C97FF',
+              purple: '#9966FF',
+              orange: '#FFAB19',
+              yellow: '#FFBF00',
+              green: '#5CB85C',
+              dark: '#1E293B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .heading-font {
+      font-family: 'Fredoka', sans-serif;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-loop {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+    @keyframes clap-anim {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3) rotate(-10deg); }
+    }
+    .clapping {
+      animation: clap-anim 0.3s ease-in-out;
+    }
+    @keyframes stomp-anim {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(12px) scaleY(0.85); }
+    }
+    .stomping {
+      animation: stomp-anim 0.3s ease-in-out;
+    }
+    /* Hide screen controls when printing */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; }
+      .print-border { border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-16">
+
+  <header class="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+          <i class="fa-solid fa-rotate text-2xl text-yellow-300"></i>
+        </div>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-purple-200">Unit 8 • Day 2</span>
+          <h1 class="heading-font text-xl md:text-2xl font-bold leading-tight">Loops & Efficient Programs</h1>
+        </div>
+      </div>
+
+      <!-- Action Header Buttons -->
+      <div class="flex items-center gap-2 no-print">
+        <div id="liveScoreBadge" class="bg-white/20 border border-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-star text-yellow-300"></i> Score: <span id="headerScoreVal">0.0</span>/10
+        </div>
+        <button onclick="resetAllProgress()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate-left"></i> Reset Form
+        </button>
+        <button onclick="generateAndCopyReport()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-1.5 rounded-lg text-sm shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-copy"></i> Copy Schoology Report
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 mt-6 space-y-8">
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="bg-purple-50/70 rounded-xl p-4 border border-purple-100">
+        <h2 class="heading-font text-lg font-bold text-purple-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-bullseye text-purple-600"></i> Learning Targets
+        </h2>
+        <p class="text-xs text-purple-700 mb-3">Check off each target as you complete the worksheet sections below!</p>
+        <div class="space-y-2">
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-purple-100 shadow-sm hover:bg-purple-50/50 transition">
+            <input type="checkbox" id="lt1" onchange="updateProgress()" class="w-5 h-5 rounded text-purple-600 focus:ring-purple-500">
+            <span class="text-sm font-medium text-slate-700"><strong>Recognize:</strong> I can spot repeated commands.</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-purple-100 shadow-sm hover:bg-purple-50/50 transition">
+            <input type="checkbox" id="lt2" onchange="updateProgress()" class="w-5 h-5 rounded text-purple-600 focus:ring-purple-500">
+            <span class="text-sm font-medium text-slate-700"><strong>Use:</strong> I can use a loop to repeat instructions efficiently.</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer bg-white p-2.5 rounded-lg border border-purple-100 shadow-sm hover:bg-purple-50/50 transition">
+            <input type="checkbox" id="lt3" onchange="updateProgress()" class="w-5 h-5 rounded text-purple-600 focus:ring-purple-500">
+            <span class="text-sm font-medium text-slate-700"><strong>Debug:</strong> I can test a loop and correct errors.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 2</span>
+          <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Guided Notes — Vocabulary</h2>
+        </div>
+        <span class="text-xs text-slate-500 hidden sm:inline"><i class="fa-regular fa-keyboard text-purple-500"></i> Fill in the blanks below!</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Vocab 1: Loop -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="bg-purple-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-repeat"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg">Loop</h3>
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed">
+            A programming structure that 
+            <select id="gn_loop" onchange="checkGuidedNotes(); saveData();" class="inline-block bg-white border border-slate-300 rounded px-2 py-1 text-sm font-bold text-purple-700 focus:ring-2 focus:ring-purple-500">
+              <option value="">-- choose --</option>
+              <option value="repeats">repeats</option>
+              <option value="deletes">deletes</option>
+              <option value="ignores">ignores</option>
+            </select>
+            instructions.
+            <span id="gn_loop_fb" class="text-xs font-bold ml-1"></span>
+          </p>
+        </div>
+
+        <!-- Vocab 2: Iteration -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="bg-indigo-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-arrows-spin"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg">Iteration</h3>
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed">
+            One trip through a 
+            <select id="gn_iter" onchange="checkGuidedNotes(); saveData();" class="inline-block bg-white border border-slate-300 rounded px-2 py-1 text-sm font-bold text-indigo-700 focus:ring-2 focus:ring-indigo-500">
+              <option value="">-- choose --</option>
+              <option value="loop">loop</option>
+              <option value="keyboard">keyboard</option>
+              <option value="variable">variable</option>
+            </select>.
+            <span id="gn_iter_fb" class="text-xs font-bold ml-1"></span>
+          </p>
+        </div>
+
+        <!-- Vocab 3: Counted Loop -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="bg-blue-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-list-ol"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg">Counted Loop</h3>
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed">
+            Repeats a set number of 
+            <select id="gn_count" onchange="checkGuidedNotes(); saveData();" class="inline-block bg-white border border-slate-300 rounded px-2 py-1 text-sm font-bold text-blue-700 focus:ring-2 focus:ring-blue-500">
+              <option value="">-- choose --</option>
+              <option value="times">times</option>
+              <option value="colors">colors</option>
+              <option value="pixels">pixels</option>
+            </select>.
+            <span id="gn_count_fb" class="text-xs font-bold ml-1"></span>
+          </p>
+        </div>
+
+        <!-- Vocab 4: Efficiency -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-600 text-white p-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-bolt"></i></span>
+            <h3 class="heading-font font-bold text-slate-800 text-lg">Efficiency</h3>
+          </div>
+          <p class="text-sm text-slate-700 leading-relaxed">
+            Solving the same problem with less unnecessary 
+            <select id="gn_eff" onchange="checkGuidedNotes(); saveData();" class="inline-block bg-white border border-slate-300 rounded px-2 py-1 text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- choose --</option>
+              <option value="code">code / work</option>
+              <option value="power">power</option>
+              <option value="hardware">hardware</option>
+            </select>.
+            <span id="gn_eff_fb" class="text-xs font-bold ml-1"></span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 3</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Same Result, Smarter Code</h2>
+        <p class="text-slate-600 text-sm mt-1">A loop can replace repeated commands without changing what the program does. Test both versions live below!</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Code Comparison Columns (Left Side) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Repeated Code Block -->
+            <div class="bg-slate-900 text-white rounded-xl p-4 border border-slate-700 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
+                  <span class="text-xs font-mono font-bold text-rose-400"><i class="fa-solid fa-bars-staggered"></i> Repeated Code</span>
+                  <span class="text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded font-mono">8 Lines</span>
+                </div>
+                <div class="font-mono text-xs space-y-1 text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                  <p class="text-emerald-400">MOVE 50</p>
+                  <p class="text-amber-400">TURN 90°</p>
+                  <p class="text-emerald-400">MOVE 50</p>
+                  <p class="text-amber-400">TURN 90°</p>
+                  <p class="text-emerald-400">MOVE 50</p>
+                  <p class="text-amber-400">TURN 90°</p>
+                  <p class="text-emerald-400">MOVE 50</p>
+                  <p class="text-amber-400">TURN 90°</p>
+                </div>
+              </div>
+              <button onclick="drawSquareAnimation('explicit')" class="mt-3 w-full bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 text-xs font-bold py-2 rounded-lg transition flex items-center justify-center gap-1.5 no-print">
+                <i class="fa-solid fa-play"></i> Run 8-Line Code
+              </button>
+            </div>
+
+            <!-- Loop Refactored Block -->
+            <div class="bg-indigo-950 text-white rounded-xl p-4 border border-indigo-700/80 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-center mb-2 pb-2 border-b border-indigo-800">
+                  <span class="text-xs font-mono font-bold text-indigo-300"><i class="fa-solid fa-rotate"></i> Loop Version</span>
+                  <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">2 Lines</span>
+                </div>
+                <div class="font-mono text-xs bg-slate-950 p-2.5 rounded-lg border border-indigo-900 space-y-1">
+                  <div class="flex items-center gap-1 text-indigo-300 font-bold">
+                    <span>REPEAT</span>
+                    <input type="number" id="part3RepeatInput" oninput="saveData()" value="4" min="1" max="10" class="w-10 bg-indigo-900/80 border border-indigo-500 rounded text-center text-white font-bold py-0.5 focus:ring-1 focus:ring-indigo-300">
+                    <span>TIMES</span>
+                  </div>
+                  <div class="pl-4 border-l-2 border-indigo-500 space-y-1">
+                    <p class="text-emerald-400">MOVE 50</p>
+                    <p class="text-amber-400">TURN 90°</p>
+                  </div>
+                </div>
+              </div>
+              <button onclick="drawSquareAnimation('loop')" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow no-print">
+                <i class="fa-solid fa-play"></i> Run Loop Version
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Questions & Text Fill-In -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                Both versions should draw the same: 
+                <select id="p3ShapeSelect" onchange="saveData()" class="bg-white border border-slate-300 rounded px-2.5 py-1 text-sm font-bold text-indigo-700 focus:ring-2 focus:ring-indigo-500">
+                  <option value="">-- Select Shape --</option>
+                  <option value="square">SQUARE</option>
+                  <option value="triangle">TRIANGLE</option>
+                  <option value="circle">CIRCLE</option>
+                </select>
+              </label>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Why is the loop version easier to read or change?</label>
+              <textarea id="p3Explain" oninput="saveData()" rows="2" placeholder="e.g., It takes fewer lines of code, so if we want to change the move distance from 50 to 100, we only change it in one place..." class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-xs text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Turtle Visualizer (Right Side) -->
+        <div class="lg:col-span-5 bg-slate-900 rounded-2xl p-4 text-white shadow-inner flex flex-col items-center">
+          <div class="flex justify-between items-center w-full mb-3 px-1">
+            <span class="text-xs font-mono text-indigo-300"><i class="fa-solid fa-pen-ruler"></i> STAGE CANVAS</span>
+            <span id="canvasStatusBadge" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-mono">Status: Ready</span>
+          </div>
+
+          <!-- Canvas Element -->
+          <div class="relative w-full aspect-square max-w-[280px] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
+            <canvas id="squareCanvas" width="260" height="260" class="w-full h-full"></canvas>
+          </div>
+
+          <div class="flex justify-between items-center w-full mt-3 px-2 no-print text-xs">
+            <span class="text-slate-400" id="iterationCounterText">Iterations: 0 / 4</span>
+            <button onclick="resetSquareCanvas()" class="text-slate-400 hover:text-white transition underline flex items-center gap-1">
+              <i class="fa-solid fa-eraser"></i> Clear Canvas
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 4</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Loop or Not?</h2>
+        <p class="text-slate-600 text-sm mt-1">Classify each situation! Select <strong>LOOP</strong> if repetition would help, or <strong>NO LOOP</strong> if commands happen only once.</p>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Item 1 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">1. A character waves 6 times.</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setLoopOrNot(1, 'LOOP')" id="lon1_LOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">LOOP</button>
+            <button onclick="setLoopOrNot(1, 'NO LOOP')" id="lon1_NOLOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">NO LOOP</button>
+            <span id="lon1_fb" class="text-xs font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">2. A program says “Hello” once, then stops.</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setLoopOrNot(2, 'LOOP')" id="lon2_LOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">LOOP</button>
+            <button onclick="setLoopOrNot(2, 'NO LOOP')" id="lon2_NOLOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">NO LOOP</button>
+            <span id="lon2_fb" class="text-xs font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">3. A sprite takes 10 identical steps across the screen.</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setLoopOrNot(3, 'LOOP')" id="lon3_LOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">LOOP</button>
+            <button onclick="setLoopOrNot(3, 'NO LOOP')" id="lon3_NOLOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">NO LOOP</button>
+            <span id="lon3_fb" class="text-xs font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">4. A program opens, shows a title, and ends.</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setLoopOrNot(4, 'LOOP')" id="lon4_LOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">LOOP</button>
+            <button onclick="setLoopOrNot(4, 'NO LOOP')" id="lon4_NOLOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">NO LOOP</button>
+            <span id="lon4_fb" class="text-xs font-bold ml-1"></span>
+          </div>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200 gap-3">
+          <span class="text-sm font-medium text-slate-800">5. A drum beat repeats 8 times.</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="setLoopOrNot(5, 'LOOP')" id="lon5_LOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">LOOP</button>
+            <button onclick="setLoopOrNot(5, 'NO LOOP')" id="lon5_NOLOOP" class="lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100">NO LOOP</button>
+            <span id="lon5_fb" class="text-xs font-bold ml-1"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 5</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Human Loop Challenge</h2>
+        <p class="text-slate-600 text-sm mt-1">Analyze the program: <code class="bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded text-xs">REPEAT 4 TIMES → Clap once → Stomp once → Turn 90° right</code>. Test it with our live interactive avatar!</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        
+        <!-- Interactive Avatar Stage (Left Column) -->
+        <div class="lg:col-span-5 bg-slate-900 text-white rounded-2xl p-4 flex flex-col items-center justify-between shadow-inner">
+          <div class="flex justify-between items-center w-full mb-2">
+            <span class="text-xs font-mono text-emerald-400"><i class="fa-solid fa-person-walking"></i> SIMULATOR</span>
+            <span id="humanLoopBadge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">Iteration: 0 / 4</span>
+          </div>
+
+          <!-- Avatar Box -->
+          <div class="relative w-48 h-48 bg-slate-800 rounded-xl border border-slate-700 flex flex-col items-center justify-center my-2">
+            <div id="humanAvatar" class="text-6xl transition-transform duration-300 transform">
+              🧍
+            </div>
+            <div id="humanActionBubble" class="hidden absolute top-2 bg-yellow-300 text-slate-900 font-bold text-xs px-2.5 py-1 rounded-full shadow">
+              👏 Clap!
+            </div>
+            <div class="absolute bottom-2 text-[10px] font-mono text-slate-400">
+              Facing: <span id="avatarFacingLabel" class="text-emerald-300 font-bold">FRONT (0°)</span>
+            </div>
+          </div>
+
+          <button onclick="runHumanLoopSimulation()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2 mt-2 no-print">
+            <i class="fa-solid fa-play"></i> Run Human Loop Simulation
+          </button>
+        </div>
+
+        <!-- Math & Input Questions (Right Column) -->
+        <div class="lg:col-span-7 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+          <h3 class="font-bold text-slate-800 text-sm mb-2"><i class="fa-solid fa-calculator text-emerald-600"></i> Calculate Results:</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">How many claps happen?</label>
+              <input type="number" id="p5Claps" oninput="saveData()" placeholder="0" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">How many stomps happen?</label>
+              <input type="number" id="p5Stomps" oninput="saveData()" placeholder="0" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">How many turns happen?</label>
+              <input type="number" id="p5Turns" oninput="saveData()" placeholder="0" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Where are you facing at the end?</label>
+            <select id="p5Facing" onchange="saveData()" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
+              <option value="">-- Choose Facing Direction --</option>
+              <option value="Same direction / Front">Same direction / Facing forward (360° total turn)</option>
+              <option value="Facing Left">Facing Left (90° total turn)</option>
+              <option value="Facing Backward">Facing Backward (180° total turn)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 6</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Refactor The Code</h2>
+        <p class="text-slate-600 text-sm mt-1"><em>Refactor</em> means rewrite code so it is clearer or more efficient without changing the result.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Original Unrefactored Code (Left) -->
+        <div class="lg:col-span-5 bg-slate-900 text-white rounded-2xl p-4 border border-slate-800 shadow-sm">
+          <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
+            <span class="text-xs font-mono font-bold text-rose-400"><i class="fa-solid fa-code"></i> Original Unrefactored Code</span>
+            <span class="text-[10px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded font-mono">8 Commands</span>
+          </div>
+          <div class="font-mono text-xs space-y-1.5 bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <div class="text-yellow-400 font-bold">SAY “GO!”</div>
+            <div class="text-emerald-400 pl-2">MOVE 20</div>
+            <div class="text-emerald-400 pl-2">MOVE 20</div>
+            <div class="text-emerald-400 pl-2">MOVE 20</div>
+            <div class="text-emerald-400 pl-2">MOVE 20</div>
+            <div class="text-purple-400 pl-2">PLAY SOUND</div>
+            <div class="text-purple-400 pl-2">PLAY SOUND</div>
+            <div class="text-purple-400 pl-2">PLAY SOUND</div>
+          </div>
+        </div>
+
+        <!-- Refactoring Questions & Interactive Block Builder (Right) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">A. Which commands repeat?</label>
+              <input type="text" id="p6RepeatCmds" oninput="saveData()" placeholder="e.g., MOVE 20 repeats 4 times and PLAY SOUND repeats 3 times" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-2">B. Rewrite the program using loops (keep one-time commands outside):</label>
+
+              <!-- Interactive Scratch-like Block Builder -->
+              <div class="bg-slate-900 rounded-xl p-3 space-y-2 border border-slate-800 text-xs font-mono">
+                <!-- One-Time Command Outer -->
+                <div class="bg-yellow-500 text-slate-900 font-bold p-2 rounded-lg flex items-center gap-2">
+                  <span>OUTSIDE LOOP:</span>
+                  <input type="text" id="refactorCmd1" oninput="saveData()" value="SAY “GO!”" class="bg-yellow-400 border border-yellow-600 rounded px-2 py-0.5 text-slate-900 font-bold flex-1">
+                </div>
+
+                <!-- Loop Block 1 -->
+                <div class="bg-purple-700/80 p-2 rounded-lg space-y-1 text-white">
+                  <div class="flex items-center gap-1 font-bold">
+                    <span>REPEAT</span>
+                    <input type="number" id="refactorLoop1Count" oninput="saveData()" value="4" class="w-10 bg-purple-900 border border-purple-400 text-center rounded text-white font-bold py-0.5">
+                    <span>TIMES</span>
+                  </div>
+                  <div class="pl-4 border-l-2 border-purple-400">
+                    <input type="text" id="refactorLoop1Cmd" oninput="saveData()" value="MOVE 20" class="bg-purple-900 border border-purple-500 rounded px-2 py-0.5 text-emerald-300 font-bold w-full">
+                  </div>
+                </div>
+
+                <!-- Loop Block 2 -->
+                <div class="bg-purple-700/80 p-2 rounded-lg space-y-1 text-white">
+                  <div class="flex items-center gap-1 font-bold">
+                    <span>REPEAT</span>
+                    <input type="number" id="refactorLoop2Count" oninput="saveData()" value="3" class="w-10 bg-purple-900 border border-purple-400 text-center rounded text-white font-bold py-0.5">
+                    <span>TIMES</span>
+                  </div>
+                  <div class="pl-4 border-l-2 border-purple-400">
+                    <input type="text" id="refactorLoop2Cmd" oninput="saveData()" value="PLAY SOUND" class="bg-purple-900 border border-purple-500 rounded px-2 py-0.5 text-purple-200 font-bold w-full">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 7</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Loop Debugging Station</h2>
+        <p class="text-slate-600 text-sm mt-1">Read each bug below. Identify what is wrong and write your fix to correct the program!</p>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Bug 1 -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+            <span class="font-bold text-rose-600 text-sm"><i class="fa-solid fa-bug"></i> Bug #1: <code class="bg-rose-100 text-rose-900 px-2 py-0.5 rounded font-mono">REPEAT 8 TIMES [CLAP]</code></span>
+            <span class="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded border">Goal: Clap 4 times</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">What is wrong?</label>
+              <input type="text" id="bug1Wrong" oninput="saveData()" placeholder="e.g., The loop repeats 8 times instead of 4..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">My Fix:</label>
+              <input type="text" id="bug1Fix" oninput="saveData()" placeholder="e.g., Change REPEAT 8 TIMES to REPEAT 4 TIMES" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bug 2 -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+            <span class="font-bold text-rose-600 text-sm"><i class="fa-solid fa-bug"></i> Bug #2: <code class="bg-rose-100 text-rose-900 px-2 py-0.5 rounded font-mono">MOVE 20 is outside the loop</code></span>
+            <span class="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded border">Goal: Move + Turn should repeat together</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">What is wrong?</label>
+              <input type="text" id="bug2Wrong" oninput="saveData()" placeholder="e.g., MOVE 20 is not inside the loop body..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">My Fix:</label>
+              <input type="text" id="bug2Fix" oninput="saveData()" placeholder="e.g., Move the MOVE 20 command inside the repeat loop block" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bug 3 -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+            <span class="font-bold text-rose-600 text-sm"><i class="fa-solid fa-bug"></i> Bug #3: <code class="bg-rose-100 text-rose-900 px-2 py-0.5 rounded font-mono">Inside loop: TURN, then MOVE</code></span>
+            <span class="text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded border">Goal: Move first, then turn</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">What is wrong?</label>
+              <input type="text" id="bug3Wrong" oninput="saveData()" placeholder="e.g., The commands are in the wrong order..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">My Fix:</label>
+              <input type="text" id="bug3Fix" oninput="saveData()" placeholder="e.g., Swap the order so MOVE 20 comes before TURN 90°" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-rose-500 focus:outline-none">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 print-border">
+      <div class="mb-4">
+        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-full uppercase">Part 8</span>
+        <h2 class="heading-font text-2xl font-bold text-slate-800 mt-1">Coding Challenge & Test • Debug • Revise</h2>
+        <p class="text-slate-600 text-sm mt-1">Plan a repeating animation program, then test it live on the stage!</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Planning Column (Left) -->
+        <div class="lg:col-span-6 space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">1. Event (What starts your program?):</label>
+            <input type="text" id="p8Event" oninput="saveData()" value="When Green Flag / Start Clicked" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">2. Action (What 2–3 commands create the action?):</label>
+            <input type="text" id="p8Action" oninput="saveData()" value="Jump up, spin around, say 'Looping!'" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">3. Loop (What should repeat? How many times?):</label>
+            <div class="flex gap-2">
+              <input type="text" id="p8LoopBody" oninput="saveData()" value="Jump + Spin" class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800">
+              <div class="flex items-center gap-1 bg-slate-100 border border-slate-300 px-2 rounded-lg">
+                <span class="text-xs font-bold text-slate-500">Repeat:</span>
+                <input type="number" id="p8LoopCount" oninput="saveData(); updatePlaygroundLoopCount();" value="5" min="1" max="10" class="w-12 bg-white border border-slate-300 rounded text-center text-xs font-bold text-purple-700 py-1">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">4. Prediction (What do you think will happen?):</label>
+            <textarea id="p8Predict" oninput="saveData()" rows="2" placeholder="I predict that the sprite will repeat the jump and spin 5 times continuously..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">5. Test result (What actually happened?):</label>
+            <textarea id="p8Actual" oninput="saveData()" rows="2" placeholder="The sprite performed the loop successfully 5 times without stopping!" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Stage Playground Column (Right) -->
+        <div class="lg:col-span-6 bg-slate-900 rounded-2xl p-5 text-white flex flex-col justify-between shadow-md">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-mono text-purple-400"><i class="fa-solid fa-gamepad"></i> LOOP ANIMATION STAGE</span>
+              <span id="p8StageLoopBadge" class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-1 rounded-full font-mono">Loop: 5 Iterations</span>
+            </div>
+
+            <!-- Stage Display -->
+            <div id="p8Stage" class="bg-slate-800 border-2 border-slate-700 rounded-xl h-56 relative overflow-hidden flex flex-col items-center justify-center p-4">
+              
+              <!-- Speech Bubble Overlay -->
+              <div id="p8SpeechBubble" class="hidden absolute top-4 bg-white text-slate-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg border border-slate-300">
+                Looping! 🔄
+              </div>
+
+              <!-- Animated Custom Sprite -->
+              <div id="p8Sprite" class="text-6xl transition-all duration-300 transform">
+                🤖
+              </div>
+
+              <!-- Loop Iteration Visual Meter -->
+              <div class="absolute bottom-3 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-700 text-xs font-mono text-purple-300">
+                Count: <span id="p8CurrentIterVal" class="text-yellow-300 font-bold">0</span> / <span id="p8MaxIterVal">5</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Playground Controls -->
+          <div class="mt-4 space-y-2 no-print">
+            <button onclick="runP8LoopAnimation()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-play text-yellow-300"></i> Run Repeating Animation Loop
+            </button>
+            <button onclick="resetP8Stage()" class="w-full bg-slate-800 hover:bg-slate-700 text-xs font-semibold py-2 rounded-lg transition text-slate-400">
+              ↺ Reset Stage
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Test • Debug • Revise Checklist -->
+      <div class="mt-6 pt-6 border-t border-slate-200 space-y-4">
+        <h3 class="heading-font font-bold text-slate-800 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-check text-indigo-600"></i> Test • Debug • Revise Checklist
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Check 1 -->
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <span class="text-xs font-bold text-slate-700">My program starts with an event:</span>
+            <div class="flex gap-4 text-xs font-semibold">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkEvent" value="Yes" onchange="saveData()" class="text-purple-600"> Yes</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkEvent" value="Not Yet" onchange="saveData()" class="text-purple-600"> Not Yet</label>
+            </div>
+          </div>
+
+          <!-- Check 2 -->
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <span class="text-xs font-bold text-slate-700">My loop repeats intended action:</span>
+            <div class="flex gap-4 text-xs font-semibold">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkAction" value="Yes" onchange="saveData()" class="text-purple-600"> Yes</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkAction" value="Not Yet" onchange="saveData()" class="text-purple-600"> Not Yet</label>
+            </div>
+          </div>
+
+          <!-- Check 3 -->
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+            <span class="text-xs font-bold text-slate-700">Repeat count gives desired result:</span>
+            <div class="flex gap-4 text-xs font-semibold">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkCount" value="Yes" onchange="saveData()" class="text-purple-600"> Yes</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="checkCount" value="Not Yet" onchange="saveData()" class="text-purple-600"> Not Yet</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">One change I made after testing:</label>
+            <textarea id="p8ChangeMade" oninput="saveData()" rows="2" placeholder="e.g., I changed the repeat count from 10 to 5 so it didn't spin off the screen..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Why did that change improve the program?</label>
+            <textarea id="p8WhyImproved" oninput="saveData()" rows="2" placeholder="e.g., It made the animation run faster and finish at the right position..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs text-slate-800 focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-2xl p-6 text-center shadow-lg border border-purple-900">
+      <div class="max-w-2xl mx-auto space-y-2">
+        <span class="bg-yellow-400 text-slate-900 font-bold text-xs uppercase px-3 py-1 rounded-full"><i class="fa-solid fa-key"></i> Day 2 Key Takeaway</span>
+        <p class="heading-font text-lg md:text-xl font-medium text-slate-100 pt-1">
+          "When commands repeat, a loop can make a program shorter, clearer, and easier to test."
+        </p>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-sm border-2 border-purple-500/30 p-6 print-border text-center">
+      <div class="max-w-xl mx-auto space-y-4">
+        <div class="inline-flex items-center gap-2 bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
+          <i class="fa-solid fa-graduation-cap"></i> Schoology Submission
+        </div>
+        <h2 class="heading-font text-2xl font-bold text-slate-800">Ready to Turn In Your Work?</h2>
+        <p class="text-slate-600 text-sm">
+          Click below to generate and copy your worksheet summary report graded out of 10 points. Then paste (<kbd class="bg-slate-100 border border-slate-300 px-1.5 py-0.5 rounded text-xs font-mono">Ctrl+V</kbd> or <kbd class="bg-slate-100 border border-slate-300 px-1.5 py-0.5 rounded text-xs font-mono">Cmd+V</kbd>) into your Schoology assignment submission box!
+        </p>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold uppercase text-slate-500">Current Grade Score:</span>
+            <span class="text-sm font-extrabold text-purple-600"><span id="sectionScoreVal">0.0</span> / 10 Points</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden mb-2">
+            <div id="scoreProgressBar" class="bg-purple-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <p id="scoreMessage" class="text-xs text-slate-500 italic">Complete all sections above to reach 10/10!</p>
+        </div>
+
+        <button onclick="generateAndCopyReport()" class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mx-auto">
+          <i class="fa-solid fa-clipboard-check text-lg"></i> Copy Schoology Report to Clipboard
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl z-50 transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-3 border border-slate-700">
+    <div class="bg-emerald-500 text-white p-2 rounded-lg text-sm"><i class="fa-solid fa-check"></i></div>
+    <div>
+      <h4 class="font-bold text-sm" id="toastTitle">Report Copied!</h4>
+      <p class="text-xs text-slate-300" id="toastBody">Paste directly into Schoology.</p>
+    </div>
+  </div>
+
+  <div id="reportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="heading-font font-bold text-lg text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-file-lines text-purple-600"></i> Schoology Assignment Report
+        </h3>
+        <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">&times;</button>
+      </div>
+      <p class="text-xs text-slate-600">Your report has been generated. Select and copy the text below:</p>
+      <textarea id="reportTextArea" readonly class="w-full h-64 bg-slate-50 border border-slate-300 rounded-xl p-3 font-mono text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="closeReportModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-xs font-semibold">Close</button>
+        <button onclick="copyManualText()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-copy"></i> Copy Text
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Audio Synthesizer via Web Audio API
+    let audioCtx = null;
+    function playAudioTone(freq, type = 'sine', duration = 0.15) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) { console.log('Audio disabled'); }
+    }
+
+    const guidedAnswers = {
+      gn_loop: 'repeats',
+      gn_iter: 'loop',
+      gn_count: 'times',
+      gn_eff: 'code'
+    };
+
+    function checkGuidedNotes() {
+      Object.keys(guidedAnswers).forEach(key => {
+        const val = document.getElementById(key).value;
+        const fb = document.getElementById(`${key}_fb`);
+        if (!val) {
+          fb.textContent = '';
+        } else if (val === guidedAnswers[key]) {
+          fb.textContent = '✅';
+          fb.className = 'text-xs font-bold text-emerald-600 ml-1';
+        } else {
+          fb.textContent = '❌';
+          fb.className = 'text-xs font-bold text-rose-500 ml-1';
+        }
+      });
+    }
+
+    let canvasAnimRunning = false;
+
+    function resetSquareCanvas() {
+      const canvas = document.getElementById('squareCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw grid lines
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 20) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 20) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+
+      document.getElementById('canvasStatusBadge').textContent = "Status: Clear";
+      document.getElementById('iterationCounterText').textContent = "Iterations: 0 / 4";
+    }
+
+    async function drawSquareAnimation(mode) {
+      if (canvasAnimRunning) return;
+      canvasAnimRunning = true;
+      resetSquareCanvas();
+
+      const canvas = document.getElementById('squareCanvas');
+      const ctx = canvas.getContext('2d');
+      const badge = document.getElementById('canvasStatusBadge');
+      const counter = document.getElementById('iterationCounterText');
+
+      badge.textContent = mode === 'loop' ? "Running Loop..." : "Running Explicit Code...";
+      
+      let x = 60, y = 60;
+      let dir = 0; // 0: Right, 1: Down, 2: Left, 3: Up
+      const side = 140;
+
+      ctx.strokeStyle = mode === 'loop' ? '#818cf8' : '#f43f5e';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+
+      const totalSteps = mode === 'loop' ? parseInt(document.getElementById('part3RepeatInput').value || 4) : 4;
+
+      for (let i = 0; i < totalSteps; i++) {
+        counter.textContent = `Iterations: ${i + 1} / ${totalSteps}`;
+        playAudioTone(400 + (i * 100));
+
+        let targetX = x;
+        let targetY = y;
+        if (dir === 0) targetX += side;
+        else if (dir === 1) targetY += side;
+        else if (dir === 2) targetX -= side;
+        else if (dir === 3) targetY -= side;
+
+        // Animate line draw
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(targetX, targetY);
+        ctx.stroke();
+
+        x = targetX;
+        y = targetY;
+        dir = (dir + 1) % 4;
+
+        await new Promise(r => setTimeout(r, 450));
+      }
+
+      playAudioTone(880, 'sine', 0.3);
+      badge.textContent = "Done! Square Complete";
+      canvasAnimRunning = false;
+    }
+
+    const lonAnswers = { 1: 'LOOP', 2: 'NO LOOP', 3: 'LOOP', 4: 'NO LOOP', 5: 'LOOP' };
+    const lonState = {};
+
+    function setLoopOrNot(num, choice) {
+      lonState[num] = choice;
+      const btnL = document.getElementById(`lon${num}_LOOP`);
+      const btnNL = document.getElementById(`lon${num}_NOLOOP`);
+      const fb = document.getElementById(`lon${num}_fb`);
+
+      btnL.className = "lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
+      btnNL.className = "lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
+
+      if (choice === 'LOOP') {
+        btnL.className = "lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-purple-600 text-white border-purple-600 shadow-sm";
+      } else {
+        btnNL.className = "lon-btn px-4 py-1.5 rounded-lg border font-bold text-xs transition bg-blue-600 text-white border-blue-600 shadow-sm";
+      }
+
+      if (choice === lonAnswers[num]) {
+        fb.textContent = "✅ Correct!";
+        fb.className = "text-xs font-bold text-emerald-600 ml-1";
+        playAudioTone(700);
+      } else {
+        fb.textContent = "❌ Try again";
+        fb.className = "text-xs font-bold text-rose-500 ml-1";
+        playAudioTone(250);
+      }
+      saveData();
+    }
+
+    async function runHumanLoopSimulation() {
+      const avatar = document.getElementById('humanAvatar');
+      const bubble = document.getElementById('humanActionBubble');
+      const badge = document.getElementById('humanLoopBadge');
+      const label = document.getElementById('avatarFacingLabel');
+
+      let currentRotation = 0;
+      const directions = ["FRONT (0°)", "RIGHT (90°)", "BACKWARD (180°)", "LEFT (270°)", "FRONT (360°)"];
+
+      for (let i = 1; i <= 4; i++) {
+        badge.textContent = `Iteration: ${i} / 4`;
+        
+        // 1. Clap
+        bubble.textContent = "👏 Clap!";
+        bubble.classList.remove('hidden');
+        avatar.classList.add('clapping');
+        playAudioTone(600, 'triangle');
+        await new Promise(r => setTimeout(r, 400));
+        avatar.classList.remove('clapping');
+
+        // 2. Stomp
+        bubble.textContent = "🦶 Stomp!";
+        avatar.classList.add('stomping');
+        playAudioTone(200, 'sawtooth');
+        await new Promise(r => setTimeout(r, 400));
+        avatar.classList.remove('stomping');
+
+        // 3. Turn 90 deg right
+        currentRotation += 90;
+        avatar.style.transform = `rotate(${currentRotation}deg)`;
+        bubble.textContent = "🔄 Turn 90° Right";
+        playAudioTone(800);
+        label.textContent = directions[i];
+        await new Promise(r => setTimeout(r, 600));
+
+        bubble.classList.add('hidden');
+      }
+
+      badge.textContent = "Finished 4 Iterations!";
+      playAudioTone(1000, 'sine', 0.4);
+    }
+
+    function updatePlaygroundLoopCount() {
+      const val = document.getElementById('p8LoopCount').value || 5;
+      document.getElementById('p8MaxIterVal').textContent = val;
+      document.getElementById('p8StageLoopBadge').textContent = `Loop: ${val} Iterations`;
+    }
+
+    async function runP8LoopAnimation() {
+      const sprite = document.getElementById('p8Sprite');
+      const bubble = document.getElementById('p8SpeechBubble');
+      const counter = document.getElementById('p8CurrentIterVal');
+      const maxIter = parseInt(document.getElementById('p8LoopCount').value || 5);
+
+      resetP8Stage();
+      await new Promise(r => setTimeout(r, 100));
+
+      for (let i = 1; i <= maxIter; i++) {
+        counter.textContent = i;
+        playAudioTone(500 + (i * 60));
+
+        // Animation actions
+        sprite.style.transform = 'translateY(-25px)';
+        await new Promise(r => setTimeout(r, 200));
+
+        bubble.classList.remove('hidden');
+        sprite.style.transform = 'translateY(0px) rotate(360deg)';
+        await new Promise(r => setTimeout(r, 350));
+
+        sprite.style.transform = 'none';
+        bubble.classList.add('hidden');
+        await new Promise(r => setTimeout(r, 150));
+      }
+
+      playAudioTone(950, 'sine', 0.3);
+    }
+
+    function resetP8Stage() {
+      const sprite = document.getElementById('p8Sprite');
+      const bubble = document.getElementById('p8SpeechBubble');
+      document.getElementById('p8CurrentIterVal').textContent = "0";
+      sprite.style.transform = 'none';
+      bubble.classList.add('hidden');
+    }
+
+    function calculateGrade() {
+      // 1. Guided Notes (1.5 pts)
+      let gnCorrect = 0;
+      Object.keys(guidedAnswers).forEach(k => {
+        if (document.getElementById(k)?.value === guidedAnswers[k]) gnCorrect++;
+      });
+      const sec2 = (gnCorrect / 4) * 1.5;
+
+      // 2. Same Result, Smarter Code (1.5 pts)
+      const rInput = document.getElementById('part3RepeatInput')?.value;
+      const shapeSel = document.getElementById('p3ShapeSelect')?.value;
+      const explainTxt = document.getElementById('p3Explain')?.value.trim() || '';
+
+      let sec3 = 0;
+      if (rInput === '4') sec3 += 0.5;
+      if (shapeSel === 'square') sec3 += 0.5;
+      if (explainTxt.length >= 5) sec3 += 0.5;
+
+      // 3. Loop or Not? (1.5 pts)
+      let lonCorrect = 0;
+      Object.keys(lonAnswers).forEach(k => {
+        if (lonState[k] === lonAnswers[k]) lonCorrect++;
+      });
+      const sec4 = (lonCorrect / 5) * 1.5;
+
+      // 4. Human Loop Challenge (1.5 pts)
+      const claps = document.getElementById('p5Claps')?.value;
+      const stomps = document.getElementById('p5Stomps')?.value;
+      const turns = document.getElementById('p5Turns')?.value;
+      const facing = document.getElementById('p5Facing')?.value;
+
+      let sec5 = 0;
+      if (claps === '4') sec5 += 0.375;
+      if (stomps === '4') sec5 += 0.375;
+      if (turns === '4') sec5 += 0.375;
+      if (facing === 'Same direction / Front') sec5 += 0.375;
+
+      // 5. Refactor Code (1.5 pts)
+      const repeatCmds = document.getElementById('p6RepeatCmds')?.value.trim() || '';
+      const rCmd1 = document.getElementById('refactorCmd1')?.value.trim() || '';
+      const rL1Count = document.getElementById('refactorLoop1Count')?.value;
+      const rL2Count = document.getElementById('refactorLoop2Count')?.value;
+
+      let sec6 = 0;
+      if (repeatCmds.length >= 3) sec6 += 0.5;
+      if (rCmd1.length >= 3 && rL1Count === '4' && rL2Count === '3') sec6 += 1.0;
+
+      // 6. Loop Debugging Station (1.0 pt)
+      const b1 = document.getElementById('bug1Fix')?.value.trim() || '';
+      const b2 = document.getElementById('bug2Fix')?.value.trim() || '';
+      const b3 = document.getElementById('bug3Fix')?.value.trim() || '';
+      let sec7 = 0;
+      if (b1.length >= 3) sec7 += 0.33;
+      if (b2.length >= 3) sec7 += 0.33;
+      if (b3.length >= 3) sec7 += 0.34;
+
+      // 7. Coding Challenge & Reflection (1.5 pts)
+      const p8P = document.getElementById('p8Predict')?.value.trim() || '';
+      const p8A = document.getElementById('p8Actual')?.value.trim() || '';
+      const chkE = document.querySelector('input[name="checkEvent"]:checked');
+      const chkA = document.querySelector('input[name="checkAction"]:checked');
+      const chkC = document.querySelector('input[name="checkCount"]:checked');
+      const changeNote = document.getElementById('p8ChangeMade')?.value.trim() || '';
+
+      let sec8 = 0;
+      if (p8P.length >= 4 && p8A.length >= 4) sec8 += 0.5;
+      if (chkE && chkA && chkC) sec8 += 0.5;
+      if (changeNote.length >= 4) sec8 += 0.5;
+
+      const total = Math.min(10.0, Math.round((sec2 + sec3 + sec4 + sec5 + sec6 + sec7 + sec8) * 10) / 10);
+
+      return { total, sec2, sec3, sec4, sec5, sec6, sec7, sec8, gnCorrect, lonCorrect };
+    }
+
+    function updateGradeDisplay() {
+      const scores = calculateGrade();
+      const formattedTotal = scores.total.toFixed(1);
+      
+      const headerScore = document.getElementById('headerScoreVal');
+      const sectionScore = document.getElementById('sectionScoreVal');
+      const progressBar = document.getElementById('scoreProgressBar');
+      const scoreMsg = document.getElementById('scoreMessage');
+
+      if (headerScore) headerScore.textContent = formattedTotal;
+      if (sectionScore) sectionScore.textContent = formattedTotal;
+      if (progressBar) progressBar.style.width = `${(scores.total / 10) * 100}%`;
+
+      if (scoreMsg) {
+        if (scores.total >= 9.5) {
+          scoreMsg.textContent = "🌟 Perfect Score achieved! Ready to copy & paste into Schoology.";
+          scoreMsg.className = "text-xs font-bold text-emerald-600";
+        } else if (scores.total >= 6.0) {
+          scoreMsg.textContent = "Great progress! Complete all remaining questions for a 10/10.";
+          scoreMsg.className = "text-xs font-semibold text-purple-600";
+        } else {
+          scoreMsg.textContent = "Keep working through the sections above to increase your score!";
+          scoreMsg.className = "text-xs text-slate-500 italic";
+        }
+      }
+    }
+
+    function generateReportText(scores) {
+      const timestamp = new Date().toLocaleString();
+      
+      const lt1 = document.getElementById('lt1').checked ? '[X]' : '[ ]';
+      const lt2 = document.getElementById('lt2').checked ? '[X]' : '[ ]';
+      const lt3 = document.getElementById('lt3').checked ? '[X]' : '[ ]';
+
+      return [
+        `==================================================`,
+        `STUDENT WORKSHEET REPORT: LOOPS & EFFICIENT PROGRAMS`,
+        `Unit 8 • Day 2: Loops & Efficient Programs`,
+        `TOTAL GRADE: ${scores.total.toFixed(1)} / 10.0 Points (${Math.round((scores.total/10)*100)}%)`,
+        `Generated: ${timestamp}`,
+        `==================================================`,
+        ``,
+        `--- LEARNING TARGETS SELF-CHECK ---`,
+        `${lt1} Target 1: Spot repeated commands (Recognize)`,
+        `${lt2} Target 2: Use loop to repeat instructions (Use)`,
+        `${lt3} Target 3: Test loop and correct errors (Debug)`,
+        ``,
+        `--- PART 2: GUIDED NOTES (Score: ${scores.sec2.toFixed(1)}/1.5) ---`,
+        `Loop: Repeats instructions (${document.getElementById('gn_loop').value || 'None'})`,
+        `Iteration: One trip through a loop (${document.getElementById('gn_iter').value || 'None'})`,
+        `Counted loop: Repeats set number of times (${document.getElementById('gn_count').value || 'None'})`,
+        `Efficiency: Less unnecessary code (${document.getElementById('gn_eff').value || 'None'})`,
+        ``,
+        `--- PART 3: SAME RESULT, SMARTER CODE (Score: ${scores.sec3.toFixed(1)}/1.5) ---`,
+        `Loop Repeat Count: REPEAT ${document.getElementById('part3RepeatInput').value || '4'} TIMES`,
+        `Shape Answer: ${document.getElementById('p3ShapeSelect').value || 'None'}`,
+        `Why loop is easier: "${document.getElementById('p3Explain').value || '(None)'}"`,
+        ``,
+        `--- PART 4: LOOP OR NOT? (Score: ${scores.sec4.toFixed(1)}/1.5) ---`,
+        `Correct Classifications: ${scores.lonCorrect}/5`,
+        `  1. Waves 6 times -> ${lonState[1] || '-'} (${lonState[1] === 'LOOP' ? '✅' : '❌'})`,
+        `  2. Says Hello once -> ${lonState[2] || '-'} (${lonState[2] === 'NO LOOP' ? '✅' : '❌'})`,
+        `  3. 10 identical steps -> ${lonState[3] || '-'} (${lonState[3] === 'LOOP' ? '✅' : '❌'})`,
+        `  4. Shows title and ends -> ${lonState[4] || '-'} (${lonState[4] === 'NO LOOP' ? '✅' : '❌'})`,
+        `  5. Drum beat repeats 8 times -> ${lonState[5] || '-'} (${lonState[5] === 'LOOP' ? '✅' : '❌'})`,
+        ``,
+        `--- PART 5: HUMAN LOOP CHALLENGE (Score: ${scores.sec5.toFixed(1)}/1.5) ---`,
+        `Claps: ${document.getElementById('p5Claps').value || '0'} (Expected: 4)`,
+        `Stomps: ${document.getElementById('p5Stomps').value || '0'} (Expected: 4)`,
+        `Turns: ${document.getElementById('p5Turns').value || '0'} (Expected: 4)`,
+        `Facing End: ${document.getElementById('p5Facing').value || 'None'}`,
+        ``,
+        `--- PART 6: REFACTOR THE CODE (Score: ${scores.sec6.toFixed(1)}/1.5) ---`,
+        `Repeating Commands: "${document.getElementById('p6RepeatCmds').value || '(None)'}"`,
+        `Refactored Structure: ${document.getElementById('refactorCmd1').value} | REPEAT ${document.getElementById('refactorLoop1Count').value} [${document.getElementById('refactorLoop1Cmd').value}] | REPEAT ${document.getElementById('refactorLoop2Count').value} [${document.getElementById('refactorLoop2Cmd').value}]`,
+        ``,
+        `--- PART 7: LOOP DEBUGGING STATION (Score: ${scores.sec7.toFixed(1)}/1.0) ---`,
+        `Bug 1 Fix: "${document.getElementById('bug1Fix').value || '(None)'}"`,
+        `Bug 2 Fix: "${document.getElementById('bug2Fix').value || '(None)'}"`,
+        `Bug 3 Fix: "${document.getElementById('bug3Fix').value || '(None)'}"`,
+        ``,
+        `--- PART 8: CODING CHALLENGE & REVISION (Score: ${scores.sec8.toFixed(1)}/1.5) ---`,
+        `Event: ${document.getElementById('p8Event').value}`,
+        `Action: ${document.getElementById('p8Action').value}`,
+        `Loop: Repeat ${document.getElementById('p8LoopCount').value} TIMES [${document.getElementById('p8LoopBody').value}]`,
+        `Prediction: "${document.getElementById('p8Predict').value || '(None)'}"`,
+        `Actual Result: "${document.getElementById('p8Actual').value || '(None)'}"`,
+        `Checklist: Event (${document.querySelector('input[name="checkEvent"]:checked')?.value || '-'}), Action (${document.querySelector('input[name="checkAction"]:checked')?.value || '-'}), Repeat Count (${document.querySelector('input[name="checkCount"]:checked')?.value || '-'})`,
+        `Change Made: "${document.getElementById('p8ChangeMade').value || '(None)'}"`,
+        `Why Improved: "${document.getElementById('p8WhyImproved').value || '(None)'}"`,
+        `==================================================`
+      ].join('\n');
+    }
+
+    function generateAndCopyReport() {
+      const scores = calculateGrade();
+      const text = generateReportText(scores);
+      
+      document.getElementById('reportTextArea').value = text;
+
+      let copied = false;
+      try {
+        const tempElement = document.createElement('textarea');
+        tempElement.value = text;
+        tempElement.style.position = 'fixed';
+        tempElement.style.left = '-9999px';
+        document.body.appendChild(tempElement);
+        tempElement.select();
+        copied = document.execCommand('copy');
+        document.body.removeChild(tempElement);
+      } catch (e) {
+        copied = false;
+      }
+
+      showToast(`Report Copied! (${scores.total.toFixed(1)}/10)`, "Paste directly into your Schoology assignment.");
+
+      if (!copied) {
+        document.getElementById('reportModal').classList.remove('hidden');
+        document.getElementById('reportTextArea').select();
+      }
+    }
+
+    function copyManualText() {
+      const txtArea = document.getElementById('reportTextArea');
+      txtArea.select();
+      try {
+        document.execCommand('copy');
+        showToast("Text Copied!", "Copied report text to clipboard.");
+      } catch (e) {
+        alert("Please press Ctrl+C / Cmd+C to copy the text.");
+      }
+    }
+
+    function closeReportModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function showToast(title, body) {
+      const toast = document.getElementById('copyToast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastBody').textContent = body;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      playAudioTone(800, 'sine', 0.2);
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    function updateProgress() {
+      saveData();
+    }
+
+    function saveData() {
+      updateGradeDisplay();
+      const data = {
+        lt1: document.getElementById('lt1').checked,
+        lt2: document.getElementById('lt2').checked,
+        lt3: document.getElementById('lt3').checked,
+        gn_loop: document.getElementById('gn_loop').value,
+        gn_iter: document.getElementById('gn_iter').value,
+        gn_count: document.getElementById('gn_count').value,
+        gn_eff: document.getElementById('gn_eff').value,
+        part3RepeatInput: document.getElementById('part3RepeatInput').value,
+        p3ShapeSelect: document.getElementById('p3ShapeSelect').value,
+        p3Explain: document.getElementById('p3Explain').value,
+        lonState: lonState,
+        p5Claps: document.getElementById('p5Claps').value,
+        p5Stomps: document.getElementById('p5Stomps').value,
+        p5Turns: document.getElementById('p5Turns').value,
+        p5Facing: document.getElementById('p5Facing').value,
+        p6RepeatCmds: document.getElementById('p6RepeatCmds').value,
+        refactorCmd1: document.getElementById('refactorCmd1').value,
+        refactorLoop1Count: document.getElementById('refactorLoop1Count').value,
+        refactorLoop1Cmd: document.getElementById('refactorLoop1Cmd').value,
+        refactorLoop2Count: document.getElementById('refactorLoop2Count').value,
+        refactorLoop2Cmd: document.getElementById('refactorLoop2Cmd').value,
+        bug1Wrong: document.getElementById('bug1Wrong').value,
+        bug1Fix: document.getElementById('bug1Fix').value,
+        bug2Wrong: document.getElementById('bug2Wrong').value,
+        bug2Fix: document.getElementById('bug2Fix').value,
+        bug3Wrong: document.getElementById('bug3Wrong').value,
+        bug3Fix: document.getElementById('bug3Fix').value,
+        p8Event: document.getElementById('p8Event').value,
+        p8Action: document.getElementById('p8Action').value,
+        p8LoopBody: document.getElementById('p8LoopBody').value,
+        p8LoopCount: document.getElementById('p8LoopCount').value,
+        p8Predict: document.getElementById('p8Predict').value,
+        p8Actual: document.getElementById('p8Actual').value,
+        checkEvent: document.querySelector('input[name="checkEvent"]:checked')?.value || '',
+        checkAction: document.querySelector('input[name="checkAction"]:checked')?.value || '',
+        checkCount: document.querySelector('input[name="checkCount"]:checked')?.value || '',
+        p8ChangeMade: document.getElementById('p8ChangeMade').value,
+        p8WhyImproved: document.getElementById('p8WhyImproved').value
+      };
+      localStorage.setItem('CAK8_1LoopEff_data', JSON.stringify(data));
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem('CAK8_1LoopEff_data');
+      if (!raw) {
+        updateGradeDisplay();
+        resetSquareCanvas();
+        return;
+      }
+      try {
+        const d = JSON.parse(raw);
+        if (d.lt1) document.getElementById('lt1').checked = d.lt1;
+        if (d.lt2) document.getElementById('lt2').checked = d.lt2;
+        if (d.lt3) document.getElementById('lt3').checked = d.lt3;
+
+        if (d.gn_loop) document.getElementById('gn_loop').value = d.gn_loop;
+        if (d.gn_iter) document.getElementById('gn_iter').value = d.gn_iter;
+        if (d.gn_count) document.getElementById('gn_count').value = d.gn_count;
+        if (d.gn_eff) document.getElementById('gn_eff').value = d.gn_eff;
+        checkGuidedNotes();
+
+        if (d.part3RepeatInput) document.getElementById('part3RepeatInput').value = d.part3RepeatInput;
+        if (d.p3ShapeSelect) document.getElementById('p3ShapeSelect').value = d.p3ShapeSelect;
+        if (d.p3Explain) document.getElementById('p3Explain').value = d.p3Explain;
+
+        if (d.lonState) {
+          Object.keys(d.lonState).forEach(k => setLoopOrNot(k, d.lonState[k]));
+        }
+
+        if (d.p5Claps) document.getElementById('p5Claps').value = d.p5Claps;
+        if (d.p5Stomps) document.getElementById('p5Stomps').value = d.p5Stomps;
+        if (d.p5Turns) document.getElementById('p5Turns').value = d.p5Turns;
+        if (d.p5Facing) document.getElementById('p5Facing').value = d.p5Facing;
+
+        if (d.p6RepeatCmds) document.getElementById('p6RepeatCmds').value = d.p6RepeatCmds;
+        if (d.refactorCmd1) document.getElementById('refactorCmd1').value = d.refactorCmd1;
+        if (d.refactorLoop1Count) document.getElementById('refactorLoop1Count').value = d.refactorLoop1Count;
+        if (d.refactorLoop1Cmd) document.getElementById('refactorLoop1Cmd').value = d.refactorLoop1Cmd;
+        if (d.refactorLoop2Count) document.getElementById('refactorLoop2Count').value = d.refactorLoop2Count;
+        if (d.refactorLoop2Cmd) document.getElementById('refactorLoop2Cmd').value = d.refactorLoop2Cmd;
+
+        if (d.bug1Wrong) document.getElementById('bug1Wrong').value = d.bug1Wrong;
+        if (d.bug1Fix) document.getElementById('bug1Fix').value = d.bug1Fix;
+        if (d.bug2Wrong) document.getElementById('bug2Wrong').value = d.bug2Wrong;
+        if (d.bug2Fix) document.getElementById('bug2Fix').value = d.bug2Fix;
+        if (d.bug3Wrong) document.getElementById('bug3Wrong').value = d.bug3Wrong;
+        if (d.bug3Fix) document.getElementById('bug3Fix').value = d.bug3Fix;
+
+        if (d.p8Event) document.getElementById('p8Event').value = d.p8Event;
+        if (d.p8Action) document.getElementById('p8Action').value = d.p8Action;
+        if (d.p8LoopBody) document.getElementById('p8LoopBody').value = d.p8LoopBody;
+        if (d.p8LoopCount) document.getElementById('p8LoopCount').value = d.p8LoopCount;
+        if (d.p8Predict) document.getElementById('p8Predict').value = d.p8Predict;
+        if (d.p8Actual) document.getElementById('p8Actual').value = d.p8Actual;
+
+        if (d.checkEvent) {
+          const r = document.querySelector(`input[name="checkEvent"][value="${d.checkEvent}"]`);
+          if (r) r.checked = true;
+        }
+        if (d.checkAction) {
+          const r = document.querySelector(`input[name="checkAction"][value="${d.checkAction}"]`);
+          if (r) r.checked = true;
+        }
+        if (d.checkCount) {
+          const r = document.querySelector(`input[name="checkCount"][value="${d.checkCount}"]`);
+          if (r) r.checked = true;
+        }
+
+        if (d.p8ChangeMade) document.getElementById('p8ChangeMade').value = d.p8ChangeMade;
+        if (d.p8WhyImproved) document.getElementById('p8WhyImproved').value = d.p8WhyImproved;
+
+        updatePlaygroundLoopCount();
+        updateGradeDisplay();
+      } catch (e) { console.log('Error restoring data'); }
+    }
+
+    function resetAllProgress() {
+      if (confirm('Are you sure you want to reset all answers on this worksheet?')) {
+        localStorage.removeItem('CAK8_1LoopEff_data');
+        location.reload();
+      }
+    }
+
+    // Window Load Initialization
+    window.onload = function() {
+      loadData();
+      resetSquareCanvas();
+    };
+  </script>
+</body>
+</html>
