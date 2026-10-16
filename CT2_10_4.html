@@ -1,939 +1,939 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CT2_10_4: Integrated Binary & Logic Challenge</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & JetBrains Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            brand: {
-              50: '#f0fdf4',
-              100: '#dcfce7',
-              500: '#22c55e',
-              600: '#16a34a',
-              700: '#15803d',
-              900: '#14532d',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    /* Custom scrollbar and smooth transitions */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    .gate-svg { filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.08)); }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CT2_10_4: Integrated Binary & Logic Challenge</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar and smooth transitions */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .gate-svg { filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.08)); }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
-  <!-- Top Navigation & Student Header -->
-  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="bg-emerald-500 text-slate-900 p-2 rounded-lg font-bold text-xl tracking-wider">
-          CT2
-        </div>
-        <div>
-          <h1 class="text-lg font-bold leading-tight">Digital Equipment Locker System</h1>
-          <p class="text-xs text-slate-400">Day 30: Integrated Binary + Logic Challenge</p>
-        </div>
-      </div>
-     
-      <!-- Score & Grade Badge -->
-      <div class="flex items-center space-x-4 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">
-        <div class="text-right">
-          <div class="text-xs text-slate-400 uppercase font-semibold">Total Grade</div>
-          <div class="text-xl font-extrabold text-emerald-400" id="total-score-display">0.0 / 10.0</div>
-        </div>
-        <div class="h-8 w-px bg-slate-700"></div>
-        <button onclick="scrollToSection('report-section')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-all shadow-sm">
-          Generate Report
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow space-y-8">
-
-    <!-- Student Details Bar -->
-    <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Student Name <span class="text-red-500">*</span></label>
-          <input type="text" id="student-name" oninput="updateScoreAndReport()" placeholder="Enter full name" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 font-medium">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Class / Period <span class="text-red-500">*</span></label>
-          <input type="text" id="student-class" oninput="updateScoreAndReport()" placeholder="e.g., Period 3 - CS" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 font-medium">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Date</label>
-          <input type="text" id="assignment-date" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 font-medium cursor-not-allowed">
-        </div>
-      </div>
-    </section>
-
-    <!-- Logic Gate Visual Reference Sheet (IEEE Standard Shapes) -->
-    <section class="bg-slate-900 text-white p-6 rounded-2xl shadow-md border border-slate-800">
-      <h2 class="text-base font-bold text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        IEEE Logic Gate Reference Library
-      </h2>
-      <p class="text-xs text-slate-300 mb-6">Review the standard schematic shapes for logic gates before building and testing the system.</p>
-     
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- AND Gate Reference -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
-          <span class="text-sm font-bold text-slate-200 mb-2">AND Gate (All MUST be TRUE)</span>
-          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
-            <!-- Inputs -->
-            <line x1="10" y1="25" x2="50" y2="25" stroke="#94a3b8" stroke-width="3"/>
-            <line x1="10" y1="65" x2="50" y2="65" stroke="#94a3b8" stroke-width="3"/>
-            <text x="5" y="29" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
-            <text x="5" y="69" fill="#94a3b8" font-size="11" font-weight="bold">B</text>
-            <!-- Body -->
-            <path d="M 50,10 L 90,10 A 35,35 0 0,1 90,80 L 50,80 Z" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
-            <!-- Output -->
-            <line x1="125" y1="45" x2="170" y2="45" stroke="#10b981" stroke-width="3"/>
-            <text x="130" y="38" fill="#10b981" font-size="11" font-weight="bold">A AND B</text>
-          </svg>
-          <p class="text-xs text-slate-400 text-center mt-2">Flat input side, rounded curved output side.</p>
-        </div>
-
-        <!-- OR Gate Reference -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
-          <span class="text-sm font-bold text-slate-200 mb-2">OR Gate (ANY can be TRUE)</span>
-          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
-            <!-- Inputs -->
-            <line x1="10" y1="25" x2="55" y2="25" stroke="#94a3b8" stroke-width="3"/>
-            <line x1="10" y1="65" x2="55" y2="65" stroke="#94a3b8" stroke-width="3"/>
-            <text x="5" y="29" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
-            <text x="5" y="69" fill="#94a3b8" font-size="11" font-weight="bold">B</text>
-            <!-- Body -->
-            <path d="M 50,10 Q 70,45 50,80 Q 95,80 125,45 Q 95,10 50,10 Z" fill="#1e293b" stroke="#3b82f6" stroke-width="3"/>
-            <!-- Output -->
-            <line x1="125" y1="45" x2="170" y2="45" stroke="#3b82f6" stroke-width="3"/>
-            <text x="130" y="38" fill="#3b82f6" font-size="11" font-weight="bold">A OR B</text>
-          </svg>
-          <p class="text-xs text-slate-400 text-center mt-2">Curved input side, pointed output tip.</p>
-        </div>
-
-        <!-- NOT Gate Reference -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
-          <span class="text-sm font-bold text-slate-200 mb-2">NOT Gate (Inverter)</span>
-          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
-            <!-- Input -->
-            <line x1="10" y1="45" x2="50" y2="45" stroke="#94a3b8" stroke-width="3"/>
-            <text x="5" y="49" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
-            <!-- Triangle Body -->
-            <polygon points="50,15 110,45 50,75" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
-            <!-- Inversion Bubble -->
-            <circle cx="116" cy="45" r="6" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
-            <!-- Output -->
-            <line x1="122" y1="45" x2="170" y2="45" stroke="#f59e0b" stroke-width="3"/>
-            <text x="130" y="38" fill="#f59e0b" font-size="11" font-weight="bold">NOT A</text>
-          </svg>
-          <p class="text-xs text-slate-400 text-center mt-2">Triangle shape with an inversion bubble.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PHASE 1: Represent the Locker Code -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-      <div class="border-b border-slate-200 pb-4">
-        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 1 (2.0 Pts)</span>
-        <h2 class="text-xl font-bold text-slate-900 mt-2">Represent the Locker Code</h2>
-        <p class="text-sm text-slate-600 mt-1">Convert decimal and 4-bit binary values using place values (8 • 4 • 2 • 1).</p>
-      </div>
-
-      <!-- Binary Conversion Inputs -->
-      <div class="space-y-4">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Decimal to Binary Conversions</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Item 1 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-700">Convert Decimal 5 to 4-bit Binary</span>
-              <span id="p1-status-1" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <input type="text" id="p1-q1" placeholder="e.g. 0000" maxlength="4" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono uppercase tracking-widest text-center focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <div id="p1-fb-1" class="text-xs hidden"></div>
-          </div>
-
-          <!-- Item 2 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-700">Convert Decimal 10 to 4-bit Binary</span>
-              <span id="p1-status-2" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <input type="text" id="p1-q2" placeholder="e.g. 0000" maxlength="4" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono uppercase tracking-widest text-center focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <div id="p1-fb-2" class="text-xs hidden"></div>
-          </div>
-
-          <!-- Item 3 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-700">Convert Binary 1101 to Decimal</span>
-              <span id="p1-status-3" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <input type="number" id="p1-q3" placeholder="Enter decimal" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono text-center focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <div id="p1-fb-3" class="text-xs hidden"></div>
-          </div>
-
-          <!-- Item 4 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-slate-700">Convert Binary 0110 to Decimal</span>
-              <span id="p1-status-4" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <input type="number" id="p1-q4" placeholder="Enter decimal" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono text-center focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <div id="p1-fb-4" class="text-xs hidden"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Abstraction Short Answer -->
-      <div class="space-y-3 pt-2">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. Abstraction Reflection</h3>
-        <p class="text-xs text-slate-600">Why is representing the code match as a single Boolean condition (<code class="bg-slate-100 px-1 font-mono text-emerald-700">code_matches = TRUE/FALSE</code>) a useful abstraction?</p>
-        <select id="p1-abstraction" onchange="checkPhase1()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500">
-          <option value="">-- Choose the best explanation --</option>
-          <option value="incorrect1">It completely avoids having to store any binary numbers in memory.</option>
-          <option value="correct">It hides low-level bit comparator hardware details so we can focus on overall system access logic.</option>
-          <option value="incorrect2">It allows the locker to unlock even if the binary numbers do not match.</option>
-        </select>
-        <div id="p1-fb-abstract" class="text-xs hidden"></div>
-      </div>
-    </section>
-
-    <!-- PHASE 2: Model the Access Rule -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-      <div class="border-b border-slate-200 pb-4">
-        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 2 (2.0 Pts)</span>
-        <h2 class="text-xl font-bold text-slate-900 mt-2">Model the Access Rule</h2>
-        <p class="text-sm text-slate-600 mt-1">
-          System Rule: Unlock only when <code class="bg-slate-100 px-1 font-mono text-slate-800">account_active (A)</code> <b>AND</b> <code class="bg-slate-100 px-1 font-mono text-slate-800">equipment_available (E)</code> <b>AND</b> <code class="bg-slate-100 px-1 font-mono text-slate-800">code_matches (C)</code>.
-        </p>
-      </div>
-
-      <!-- Interactive Decision Table -->
-      <div class="space-y-3">
-        <div class="flex justify-between items-center">
-          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Complete the Access Decision Table</h3>
-          <span class="text-xs text-slate-500">Select T (True) or F (False) for each outcome case</span>
-        </div>
-
-        <div class="overflow-x-auto border border-slate-200 rounded-xl">
-          <table class="w-full text-sm text-center font-mono">
-            <thead class="bg-slate-100 text-slate-700 text-xs uppercase">
-              <tr>
-                <th class="p-2 border-b">Case</th>
-                <th class="p-2 border-b bg-slate-200">A (Active)</th>
-                <th class="p-2 border-b bg-slate-200">E (Equip)</th>
-                <th class="p-2 border-b bg-slate-200">C (Code)</th>
-                <th class="p-2 border-b">A AND E</th>
-                <th class="p-2 border-b bg-emerald-50 text-emerald-800">Final UNLOCK (A AND E AND C)</th>
-                <th class="p-2 border-b">Locker Action</th>
-              </tr>
-            </thead>
-            <tbody id="decision-table-body" class="divide-y divide-slate-200">
-              <!-- JS Populates Rows -->
-            </tbody>
-          </table>
-        </div>
-        <div id="p2-table-feedback" class="text-xs p-3 rounded-lg hidden"></div>
-      </div>
-    </section>
-      <!-- PHASE 3: Test Cases & Diagnosis -->
-      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-        <div class="border-b border-slate-200 pb-4">
-          <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 3 (2.0 Pts)</span>
-          <h2 class="text-xl font-bold text-slate-900 mt-2">Test Cases & System Diagnosis</h2>
-          <p class="text-sm text-slate-600 mt-1">Evaluate test cases and diagnose system flaws.</p>
-        </div>
-
-        <!-- Test Cases Table -->
-        <div class="space-y-4">
-          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Test Case Predictions</h3>
-          <div class="grid grid-cols-1 gap-3">
-            <!-- Case 1 -->
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
-              <div class="text-sm">
-                <span class="font-bold text-slate-800">Case 1:</span> Correct Code Entered |
-                <span class="text-slate-600 font-mono">A=T, E=T, C=T</span>
-              </div>
-              <select id="tc-1" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
-                <option value="">-- Result --</option>
-                <option value="UNLOCK">UNLOCK</option>
-                <option value="STAY LOCKED">STAY LOCKED</option>
-              </select>
-            </div>
-
-            <!-- Case 2 -->
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
-              <div class="text-sm">
-                <span class="font-bold text-slate-800">Case 2:</span> Incorrect Code Entered |
-                <span class="text-slate-600 font-mono">A=T, E=T, C=F</span>
-              </div>
-              <select id="tc-2" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
-                <option value="">-- Result --</option>
-                <option value="UNLOCK">UNLOCK</option>
-                <option value="STAY LOCKED">STAY LOCKED</option>
-              </select>
-            </div>
-
-            <!-- Case 3 -->
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
-              <div class="text-sm">
-                <span class="font-bold text-slate-800">Case 3:</span> Equipment Unavailable |
-                <span class="text-slate-600 font-mono">A=T, E=F, C=T</span>
-              </div>
-              <select id="tc-3" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
-                <option value="">-- Result --</option>
-                <option value="UNLOCK">UNLOCK</option>
-                <option value="STAY LOCKED">STAY LOCKED</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Problem Diagnosis -->
-      <div class="space-y-4 pt-2">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. System Flaw Diagnosis</h3>
-       
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <p class="text-xs text-slate-700 font-medium">1. Requirement states AND, but designer writes <code class="bg-slate-200 px-1 font-mono">A OR E OR C</code>.</p>
-            <select id="diag-1" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Type --</option>
-              <option value="logic">Logic Error</option>
-              <option value="rep">Representation Error</option>
-              <option value="gap">Design Gap</option>
-            </select>
-          </div>
-
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <p class="text-xs text-slate-700 font-medium">2. The rule is correct, but table marks T,T,F as UNLOCK.</p>
-            <select id="diag-2" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Type --</option>
-              <option value="logic">Logic Error</option>
-              <option value="rep">Representation Error</option>
-              <option value="gap">Design Gap</option>
-            </select>
-          </div>
-
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <p class="text-xs text-slate-700 font-medium">3. System has no rule for 3 repeated wrong code attempts.</p>
-            <select id="diag-3" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Type --</option>
-              <option value="logic">Logic Error</option>
-              <option value="rep">Representation Error</option>
-              <option value="gap">Design Gap</option>
-            </select>
-          </div>
-        </div>
-        <div id="p3-feedback" class="text-xs p-3 rounded-lg hidden"></div>
-      </div>
-    </section>
-
-    <!-- PHASE 4: Logic Gate Plan & Interactive Circuit Simulator -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-      <div class="border-b border-slate-200 pb-4">
-        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 4 (2.0 Pts)</span>
-        <h2 class="text-xl font-bold text-slate-900 mt-2">Logic Gate Circuit Plan & Interactive Simulator</h2>
-        <p class="text-sm text-slate-600 mt-1">Trace signal inputs dynamically through two cascaded AND gates using the interactive circuit diagram.</p>
-      </div>
-
-      <!-- Interactive Gate Simulator Canvas -->
-      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-white space-y-4">
-        <div class="flex flex-wrap justify-between items-center gap-2">
-          <span class="text-xs uppercase font-bold text-emerald-400 tracking-wider">Live Circuit Simulator: UNLOCK = (A AND E) AND C</span>
-          <span class="text-xs text-slate-400">Toggle switches to test logic flow</span>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
-          <!-- Switches Column -->
-          <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
-            <h4 class="text-xs font-bold text-slate-300 uppercase">Input Signals</h4>
-           
-            <!-- Switch A -->
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">A (Active):</span>
-              <button id="btn-sw-a" onclick="toggleSwitch('a')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-emerald-600 text-white">TRUE (1)</button>
-            </div>
-
-            <!-- Switch E -->
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">E (Equipment):</span>
-              <button id="btn-sw-e" onclick="toggleSwitch('e')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-emerald-600 text-white">TRUE (1)</button>
-            </div>
-
-            <!-- Switch C -->
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-200">C (Code Match):</span>
-              <button id="btn-sw-c" onclick="toggleSwitch('c')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-red-600 text-white">FALSE (0)</button>
-            </div>
-          </div>
-
-          <!-- Dynamic SVG Circuit Diagram -->
-          <div class="lg:col-span-2 flex justify-center py-2">
-            <svg class="w-full h-48 gate-svg max-w-md" viewBox="0 0 340 160">
-              <!-- Wire A -->
-              <line x1="20" y1="30" x2="100" y2="30" id="wire-a" stroke="#10b981" stroke-width="4"/>
-              <text x="5" y="34" fill="#cbd5e1" font-size="12" font-weight="bold">A</text>
-
-              <!-- Wire E -->
-              <line x1="20" y1="70" x2="100" y2="70" id="wire-e" stroke="#10b981" stroke-width="4"/>
-              <text x="5" y="74" fill="#cbd5e1" font-size="12" font-weight="bold">E</text>
-
-              <!-- Gate 1 (AND) -->
-              <path d="M 100,15 L 130,15 A 30,30 0 0,1 130,85 L 100,85 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
-              <text x="110" y="54" fill="#38bdf8" font-size="11" font-weight="bold">AND 1</text>
-
-              <!-- Wire Gate1 Output -->
-              <line x1="160" y1="50" x2="220" y2="50" id="wire-g1" stroke="#10b981" stroke-width="4"/>
-              <text x="165" y="42" id="label-g1" fill="#10b981" font-size="10" font-family="monospace">G1: TRUE</text>
-
-              <!-- Wire C -->
-              <line x1="20" y1="120" x2="220" y2="120" id="wire-c" stroke="#ef4444" stroke-width="4"/>
-              <text x="5" y="124" fill="#cbd5e1" font-size="12" font-weight="bold">C</text>
-
-              <!-- Gate 2 (AND) -->
-              <path d="M 220,35 L 250,35 A 30,30 0 0,1 250,135 L 220,135 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
-              <text x="228" y="90" fill="#38bdf8" font-size="11" font-weight="bold">AND 2</text>
-
-              <!-- Final Output Wire -->
-              <line x1="280" y1="85" x2="330" y2="85" id="wire-out" stroke="#ef4444" stroke-width="4"/>
-            </svg>
-          </div>
-
-          <!-- Status Box -->
-          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center space-y-2">
-            <span class="text-xs font-bold text-slate-400 uppercase">System Status</span>
-            <div id="sim-status-badge" class="py-2 px-3 rounded-lg font-extrabold text-sm bg-red-950 text-red-400 border border-red-800">
-              LOCKED (0)
-            </div>
-            <p id="sim-explanation" class="text-xs text-slate-400">Gate 1 outputs TRUE, but Gate 2 requires C = TRUE to unlock.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Gate Plan Tracing Worksheet Question -->
-      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Tracing Verification Prompt</h3>
-        <p class="text-xs text-slate-600">When inputs are set to <span class="font-bold text-slate-800">A = TRUE, E = TRUE, C = FALSE</span>:</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">What is Gate 1 Output (A AND E)?</label>
-            <select id="p4-g1-ans" onchange="checkPhase4()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Choose --</option>
-              <option value="TRUE">TRUE (1)</option>
-              <option value="FALSE">FALSE (0)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">What is Gate 2 Final Output?</label>
-            <select id="p4-g2-ans" onchange="checkPhase4()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Choose --</option>
-              <option value="TRUE">TRUE (1) -> UNLOCK</option>
-              <option value="FALSE">FALSE (0) -> STAY LOCKED</option>
-            </select>
-          </div>
-        </div>
-        <div id="p4-feedback" class="text-xs p-2 rounded hidden"></div>
-      </div>
-    </section>
-
-    <!-- PHASE 5: Revision & Certification Exit Ticket -->
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-      <div class="border-b border-slate-200 pb-4">
-        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 5 (2.0 Pts)</span>
-        <h2 class="text-xl font-bold text-slate-900 mt-2">System Revision & Certification Exit Ticket</h2>
-        <p class="text-sm text-slate-600 mt-1">Design an override mechanism and complete certification questions.</p>
-      </div>
-
-      <!-- Override Gate Revision -->
-      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Design Revision: Staff Override</h3>
-        <p class="text-xs text-slate-600">
-          New Requirement: A staff member can unlock the locker with an override switch (<code class="bg-slate-200 px-1 font-mono">S</code>) even if student conditions fail.
-          <br>
-          Revised Rule: <code class="bg-slate-200 px-1 font-mono font-bold">UNLOCK = (student_access) [ GATE ] (staff_override)</code>
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Which additional gate is needed?</label>
-            <select id="p5-override-gate" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Logic Gate --</option>
-              <option value="AND">AND Gate</option>
-              <option value="OR">OR Gate</option>
-              <option value="NOT">NOT Gate</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Reasoning:</label>
-            <select id="p5-override-reason" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Choose Reasoning --</option>
-              <option value="correct">The locker should unlock if EITHER normal student access IS true OR staff override IS true.</option>
-              <option value="incorrect">Both student access and staff override must be true at the same time.</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Certification Multiple Choice Questions -->
-      <div class="space-y-4 pt-2">
-        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. Certification Check Questions</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Cert Q1 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <p class="text-xs font-bold text-slate-800">1. Which 4-bit binary string represents Decimal 13?</p>
-            <select id="cert-q1" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Answer --</option>
-              <option value="1010">A. 1010</option>
-              <option value="1101">B. 1101</option>
-              <option value="1110">C. 1110</option>
-              <option value="1001">D. 1001</option>
-            </select>
-          </div>
-
-          <!-- Cert Q2 -->
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-            <p class="text-xs font-bold text-slate-800">2. Why compare Boolean expressions, decision tables, and gate circuits?</p>
-            <select id="cert-q2" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
-              <option value="">-- Select Answer --</option>
-              <option value="correct">A. To verify that all representations describe the exact same system behavior</option>
-              <option value="incorrect1">B. To eliminate the need for software testing</option>
-              <option value="incorrect2">C. To increase binary storage speed</option>
-            </select>
-          </div>
-        </div>
-        <div id="p5-feedback" class="text-xs p-3 rounded-lg hidden"></div>
-      </div>
-    </section>
-
-    <!-- Schoology Summary Report Section -->
-    <section id="report-section" class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border border-slate-800 space-y-6">
-      <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-emerald-400">Schoology Assessment Report</h2>
-          <p class="text-xs text-slate-400">Generate your final score summary to copy and submit into Schoology.</p>
-        </div>
-        <button onclick="copyReportToClipboard()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg flex items-center gap-2 text-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-          Copy Report to Clipboard
-        </button>
-      </div>
-
-      <!-- Printable/Copyable Report Card -->
-      <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 font-mono text-xs space-y-4 text-slate-300 overflow-x-auto">
-        <textarea id="report-text-area" readonly rows="12" class="w-full bg-transparent border-0 text-emerald-300 font-mono focus:outline-none resize-none leading-relaxed text-xs"></textarea>
-      </div>
-      <div id="copy-status-msg" class="text-xs font-semibold text-emerald-400 hidden text-center">
-        ✓ Report successfully copied to clipboard! You can now paste it directly into Schoology.
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="bg-slate-900 text-slate-500 text-center text-xs py-4 border-t border-slate-800 mt-12">
-    Computational Thinking Unit 2 • Day 30 Integrated Challenge • Hosted on GitHub Pages
-  </footer>
-
-  <script>
-    // Simulator Switch States
-    let stateSW = { a: true, e: true, c: false };
-
-    // Set auto date
-    document.addEventListener("DOMContentLoaded", () => {
-      const today = new Date();
-      document.getElementById("assignment-date").value = today.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric'
-      });
-
-      renderDecisionTable();
-      updateSimulator();
-      updateScoreAndReport();
-    });
-
-    const decisionCases = [
-      { a: true,  e: true,  c: true  },
-      { a: true,  e: true,  c: false },
-      { a: true,  e: false, c: true  },
-      { a: true,  e: false, c: false },
-      { a: false, e: true,  c: true  },
-      { a: false, e: true,  c: false },
-      { a: false, e: false, c: true  },
-      { a: false, e: false, c: false }
-    ];
-
-    function renderDecisionTable() {
-      const tbody = document.getElementById("decision-table-body");
-      tbody.innerHTML = "";
-
-      decisionCases.forEach((c, idx) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50";
-
-        const aeVal = c.a && c.e;
-
-        tr.innerHTML = `
-          <td class="p-2 border-b text-slate-500 font-semibold">${idx + 1}</td>
-          <td class="p-2 border-b ${c.a ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.a ? 'T' : 'F'}</td>
-          <td class="p-2 border-b ${c.e ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.e ? 'T' : 'F'}</td>
-          <td class="p-2 border-b ${c.c ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.c ? 'T' : 'F'}</td>
-          <td class="p-2 border-b font-bold ${aeVal ? 'text-emerald-600' : 'text-slate-400'}">${aeVal ? 'T' : 'F'}</td>
-          <td class="p-2 border-b bg-emerald-50/50">
-            <select id="dt-unlock-${idx}" onchange="checkPhase2()" class="px-2 py-1 text-xs border rounded bg-white font-bold text-center">
-              <option value="">?</option>
-              <option value="T">T</option>
-              <option value="F">F</option>
-            </select>
-          </td>
-          <td class="p-2 border-b text-xs">
-            <span id="dt-action-${idx}" class="text-slate-400 font-semibold">--</span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function getPhase1Score() {
-      const q1 = document.getElementById("p1-q1").value.trim();
-      const q2 = document.getElementById("p1-q2").value.trim();
-      const q3 = document.getElementById("p1-q3").value.trim();
-      const q4 = document.getElementById("p1-q4").value.trim();
-      const abs = document.getElementById("p1-abstraction").value;
-
-      let score = 0;
-
-      // Q1 (5 -> 0101)
-      if (q1 === "0101") {
-        score += 0.4;
-        setFieldStatus("p1-status-1", "p1-fb-1", true, "Correct!");
-      } else if (q1 !== "") {
-        setFieldStatus("p1-status-1", "p1-fb-1", false, "Incorrect. Place values: 8·4·2·1.");
-      } else {
-        resetFieldStatus("p1-status-1", "p1-fb-1");
-      }
-
-      // Q2 (10 -> 1010)
-      if (q2 === "1010") {
-        score += 0.4;
-        setFieldStatus("p1-status-2", "p1-fb-2", true, "Correct!");
-      } else if (q2 !== "") {
-        setFieldStatus("p1-status-2", "p1-fb-2", false, "Incorrect. Place values: 8·4·2·1.");
-      } else {
-        resetFieldStatus("p1-status-2", "p1-fb-2");
-      }
-
-      // Q3 (1101 -> 13)
-      if (q3 === "13") {
-        score += 0.4;
-        setFieldStatus("p1-status-3", "p1-fb-3", true, "Correct!");
-      } else if (q3 !== "") {
-        setFieldStatus("p1-status-3", "p1-fb-3", false, "Incorrect. Calculate 8 + 4 + 0 + 1.");
-      } else {
-        resetFieldStatus("p1-status-3", "p1-fb-3");
-      }
-
-      // Q4 (0110 -> 6)
-      if (q4 === "6") {
-        score += 0.4;
-        setFieldStatus("p1-status-4", "p1-fb-4", true, "Correct!");
-      } else if (q4 !== "") {
-        setFieldStatus("p1-status-4", "p1-fb-4", false, "Incorrect. Calculate 0 + 4 + 2 + 0.");
-      } else {
-        resetFieldStatus("p1-status-4", "p1-fb-4");
-      }
-
-      // Abstraction Check
-      const fbAbs = document.getElementById("p1-fb-abstract");
-      if (abs === "correct") {
-        score += 0.4;
-        fbAbs.className = "text-xs text-emerald-600 font-semibold mt-1 block";
-        fbAbs.innerText = "✓ Correct! Abstraction allows us to group bit-by-bit comparisons into one logical condition.";
-      } else if (abs !== "") {
-        fbAbs.className = "text-xs text-red-600 font-semibold mt-1 block";
-        fbAbs.innerText = "✗ Incorrect. Abstraction hides hardware-level details so high-level logic can be designed.";
-      } else {
-        fbAbs.className = "hidden";
-      }
-
-      return score;
-    }
-
-    function checkPhase1() {
-      getPhase1Score();
-      updateScoreAndReport();
-    }
-
-    function resetFieldStatus(statusId, fbId) {
-      const statusEl = document.getElementById(statusId);
-      const fbEl = document.getElementById(fbId);
-      statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600";
-      statusEl.innerText = "Pending";
-      fbEl.className = "hidden";
-    }
-
-    function setFieldStatus(statusId, fbId, isCorrect, msg) {
-      const statusEl = document.getElementById(statusId);
-      const fbEl = document.getElementById(fbId);
-
-      if (isCorrect) {
-        statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-700";
-        statusEl.innerText = "Correct";
-        fbEl.className = "text-xs text-emerald-600 font-medium mt-1 block";
-        fbEl.innerText = "✓ " + msg;
-      } else {
-        statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-red-100 text-red-700";
-        statusEl.innerText = "Try Again";
-        fbEl.className = "text-xs text-red-600 font-medium mt-1 block";
-        fbEl.innerText = "✗ " + msg;
-      }
-    }
-
-    function getPhase2Score() {
-      let correctCount = 0;
-
-      decisionCases.forEach((c, idx) => {
-        const val = document.getElementById(`dt-unlock-${idx}`).value;
-        const actionEl = document.getElementById(`dt-action-${idx}`);
-        const expected = (c.a && c.e && c.c) ? "T" : "F";
-
-        if (val === expected) {
-          correctCount++;
-          actionEl.innerText = expected === "T" ? "UNLOCK" : "STAY LOCKED";
-          actionEl.className = expected === "T" ? "text-emerald-600 font-extrabold" : "text-slate-500 font-medium";
-        } else if (val !== "") {
-          actionEl.innerText = "Incorrect";
-          actionEl.className = "text-red-500 font-bold";
-        } else {
-          actionEl.innerText = "--";
-          actionEl.className = "text-slate-400 font-semibold";
-        }
-      });
-
-      const fb = document.getElementById("p2-table-feedback");
-      const score = (correctCount / 8) * 2.0;
-
-      if (correctCount === 8) {
-        fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
-        fb.innerText = "✓ Perfect! Only 1 out of 8 possible input cases satisfies the triple-AND condition to unlock.";
-      } else if (correctCount > 0) {
-        fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
-        fb.innerText = `Table progress: ${correctCount}/8 rows correct. Remember: A AND E AND C requires ALL three inputs to be T!`;
-      } else {
-        fb.className = "hidden";
-      }
-
-      return score;
-    }
-
-    function checkPhase2() {
-      getPhase2Score();
-      updateScoreAndReport();
-    }
-
-    function getPhase3Score() {
-      let score = 0;
-
-      const tc1 = document.getElementById("tc-1").value;
-      const tc2 = document.getElementById("tc-2").value;
-      const tc3 = document.getElementById("tc-3").value;
-
-      if (tc1 === "UNLOCK") score += 0.33;
-      if (tc2 === "STAY LOCKED") score += 0.33;
-      if (tc3 === "STAY LOCKED") score += 0.34;
-
-      const d1 = document.getElementById("diag-1").value;
-      const d2 = document.getElementById("diag-2").value;
-      const d3 = document.getElementById("diag-3").value;
-
-      if (d1 === "logic") score += 0.33;
-      if (d2 === "rep") score += 0.33;
-      if (d3 === "gap") score += 0.34;
-
-      const fb = document.getElementById("p3-feedback");
-      if (tc1 && tc2 && tc3 && d1 && d2 && d3) {
-        if (score >= 1.9) {
-          fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
-          fb.innerText = "✓ Excellent diagnosis! You accurately differentiated logic errors, representation mistakes, and design gaps.";
-        } else {
-          fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
-          fb.innerText = "Review your diagnoses: 1 = Logic Error (wrong operator), 2 = Representation Error (table mismatch), 3 = Design Gap (missing specification).";
-        }
-      } else {
-        fb.className = "hidden";
-      }
-
-      return Math.min(2.0, score);
-    }
-
-    function checkPhase3() {
-      getPhase3Score();
-      updateScoreAndReport();
-    }
-
-    function toggleSwitch(sw) {
-      stateSW[sw] = !stateSW[sw];
-     
-      const btn = document.getElementById(`btn-sw-${sw}`);
-      btn.innerText = stateSW[sw] ? "TRUE (1)" : "FALSE (0)";
-      btn.className = `px-3 py-1 rounded text-xs font-bold transition-all ${stateSW[sw] ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`;
-
-      updateSimulator();
-    }
-
-    function updateSimulator() {
-      const wireA = document.getElementById("wire-a");
-      const wireE = document.getElementById("wire-e");
-      const wireC = document.getElementById("wire-c");
-      const wireG1 = document.getElementById("wire-g1");
-      const wireOut = document.getElementById("wire-out");
-      const labelG1 = document.getElementById("label-g1");
-
-      const g1Output = stateSW.a && stateSW.e;
-      const finalOutput = g1Output && stateSW.c;
-
-      // Color wires based on signal (Green = True, Red = False)
-      wireA.setAttribute("stroke", stateSW.a ? "#10b981" : "#ef4444");
-      wireE.setAttribute("stroke", stateSW.e ? "#10b981" : "#ef4444");
-      wireC.setAttribute("stroke", stateSW.c ? "#10b981" : "#ef4444");
-
-      wireG1.setAttribute("stroke", g1Output ? "#10b981" : "#ef4444");
-      labelG1.textContent = `G1: ${g1Output ? 'TRUE' : 'FALSE'}`;
-      labelG1.setAttribute("fill", g1Output ? "#10b981" : "#ef4444");
-
-      wireOut.setAttribute("stroke", finalOutput ? "#10b981" : "#ef4444");
-
-      // Badge Update
-      const badge = document.getElementById("sim-status-badge");
-      const explanation = document.getElementById("sim-explanation");
-
-      if (finalOutput) {
-        badge.className = "py-2 px-3 rounded-lg font-extrabold text-sm bg-emerald-950 text-emerald-400 border border-emerald-700 animate-pulse";
-        badge.innerText = "UNLOCKED (1)";
-        explanation.innerText = "All 3 inputs are TRUE! Logic gates output HIGH signal.";
-      } else {
-        badge.className = "py-2 px-3 rounded-lg font-extrabold text-sm bg-red-950 text-red-400 border border-red-800";
-        badge.innerText = "LOCKED (0)";
-       
-        if (!g1Output) {
-          explanation.innerText = "Gate 1 output is FALSE because account or equipment is missing.";
-        } else {
-          explanation.innerText = "Gate 1 is TRUE, but Gate 2 requires Code Match (C = TRUE).";
-        }
-      }
-    }
-
-    function getPhase4Score() {
-      const g1Ans = document.getElementById("p4-g1-ans").value;
-      const g2Ans = document.getElementById("p4-g2-ans").value;
-      const fb = document.getElementById("p4-feedback");
-
-      let score = 0;
-      if (g1Ans === "TRUE") score += 1.0;
-      if (g2Ans === "FALSE") score += 1.0;
-
-      if (g1Ans && g2Ans) {
-        if (score === 2.0) {
-          fb.className = "text-xs p-2 rounded bg-emerald-100 text-emerald-800 font-semibold block";
-          fb.innerText = "✓ Correct trace! Gate 1 (A AND E) = TRUE, but Gate 2 (TRUE AND FALSE) = FALSE -> STAY LOCKED.";
-        } else {
-          fb.className = "text-xs p-2 rounded bg-red-100 text-red-800 font-semibold block";
-          fb.innerText = "✗ Incorrect trace. Remember: TRUE AND TRUE = TRUE for Gate 1; TRUE AND FALSE = FALSE for Gate 2.";
-        }
-      } else {
-        fb.className = "hidden";
-      }
-
-      return score;
-    }
-
-    function checkPhase4() {
-      getPhase4Score();
-      updateScoreAndReport();
-    }
-
-    function getPhase5Score() {
-      let score = 0;
-
-      const gate = document.getElementById("p5-override-gate").value;
-      const reason = document.getElementById("p5-override-reason").value;
-      const q1 = document.getElementById("cert-q1").value;
-      const q2 = document.getElementById("cert-q2").value;
-
-      if (gate === "OR") score += 0.5;
-      if (reason === "correct") score += 0.5;
-      if (q1 === "1101") score += 0.5;
-      if (q2 === "correct") score += 0.5;
-
-      const fb = document.getElementById("p5-feedback");
-      if (gate && reason && q1 && q2) {
-        if (score === 2.0) {
-          fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
-          fb.innerText = "✓ Certification Complete! You mastered Boolean rules, gate diagrams, and representation cross-checking.";
-        } else {
-          fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
-          fb.innerText = "Check your answers: Staff Override uses an OR gate because either rule allows unlocking. 13 = 1101.";
-        }
-      } else {
-        fb.className = "hidden";
-      }
-
-      return score;
-    }
-
-    function checkPhase5() {
-      getPhase5Score();
-      updateScoreAndReport();
-    }
-
-    function updateScoreAndReport() {
-      const name = document.getElementById("student-name").value.trim() || "[Student Name]";
-      const className = document.getElementById("student-class").value.trim() || "[Class Period]";
-      const dateStr = document.getElementById("assignment-date").value;
-
-      const p1 = getPhase1Score();
-      const p2 = getPhase2Score();
-      const p3 = getPhase3Score();
-      const p4 = getPhase4Score();
-      const p5 = getPhase5Score();
-
-      const totalScore = (p1 + p2 + p3 + p4 + p5).toFixed(1);
-
-      document.getElementById("total-score-display").innerText = `${totalScore} / 10.0`;
-
-      // Build Report Text
-      const reportText =
+  <!-- Top Navigation & Student Header -->
+  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-emerald-500 text-slate-900 p-2 rounded-lg font-bold text-xl tracking-wider">
+          CT2
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">Digital Equipment Locker System</h1>
+          <p class="text-xs text-slate-400">Day 30: Integrated Binary + Logic Challenge</p>
+        </div>
+      </div>
+      
+      <!-- Score & Grade Badge -->
+      <div class="flex items-center space-x-4 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">
+        <div class="text-right">
+          <div class="text-xs text-slate-400 uppercase font-semibold">Total Grade</div>
+          <div class="text-xl font-extrabold text-emerald-400" id="total-score-display">0.0 / 10.0</div>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <button onclick="scrollToSection('report-section')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-all shadow-sm">
+          Generate Report
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow space-y-8">
+
+    <!-- Student Details Bar -->
+    <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Student Name <span class="text-red-500">*</span></label>
+          <input type="text" id="student-name" oninput="updateScoreAndReport()" placeholder="Enter full name" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 font-medium">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Class / Period <span class="text-red-500">*</span></label>
+          <input type="text" id="student-class" oninput="updateScoreAndReport()" placeholder="e.g., Period 3 - CS" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 font-medium">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Date</label>
+          <input type="text" id="assignment-date" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 font-medium cursor-not-allowed">
+        </div>
+      </div>
+    </section>
+
+    <!-- Logic Gate Visual Reference Sheet (IEEE Standard Shapes) -->
+    <section class="bg-slate-900 text-white p-6 rounded-2xl shadow-md border border-slate-800">
+      <h2 class="text-base font-bold text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        IEEE Logic Gate Reference Library
+      </h2>
+      <p class="text-xs text-slate-300 mb-6">Review the standard schematic shapes for logic gates before building and testing the system.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- AND Gate Reference -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
+          <span class="text-sm font-bold text-slate-200 mb-2">AND Gate (All MUST be TRUE)</span>
+          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
+            <!-- Inputs -->
+            <line x1="10" y1="25" x2="50" y2="25" stroke="#94a3b8" stroke-width="3"/>
+            <line x1="10" y1="65" x2="50" y2="65" stroke="#94a3b8" stroke-width="3"/>
+            <text x="5" y="29" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
+            <text x="5" y="69" fill="#94a3b8" font-size="11" font-weight="bold">B</text>
+            <!-- Body -->
+            <path d="M 50,10 L 90,10 A 35,35 0 0,1 90,80 L 50,80 Z" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
+            <!-- Output -->
+            <line x1="125" y1="45" x2="170" y2="45" stroke="#10b981" stroke-width="3"/>
+            <text x="130" y="38" fill="#10b981" font-size="11" font-weight="bold">A AND B</text>
+          </svg>
+          <p class="text-xs text-slate-400 text-center mt-2">Flat input side, rounded curved output side.</p>
+        </div>
+
+        <!-- OR Gate Reference -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
+          <span class="text-sm font-bold text-slate-200 mb-2">OR Gate (ANY can be TRUE)</span>
+          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
+            <!-- Inputs -->
+            <line x1="10" y1="25" x2="55" y2="25" stroke="#94a3b8" stroke-width="3"/>
+            <line x1="10" y1="65" x2="55" y2="65" stroke="#94a3b8" stroke-width="3"/>
+            <text x="5" y="29" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
+            <text x="5" y="69" fill="#94a3b8" font-size="11" font-weight="bold">B</text>
+            <!-- Body -->
+            <path d="M 50,10 Q 70,45 50,80 Q 95,80 125,45 Q 95,10 50,10 Z" fill="#1e293b" stroke="#3b82f6" stroke-width="3"/>
+            <!-- Output -->
+            <line x1="125" y1="45" x2="170" y2="45" stroke="#3b82f6" stroke-width="3"/>
+            <text x="130" y="38" fill="#3b82f6" font-size="11" font-weight="bold">A OR B</text>
+          </svg>
+          <p class="text-xs text-slate-400 text-center mt-2">Curved input side, pointed output tip.</p>
+        </div>
+
+        <!-- NOT Gate Reference -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col items-center">
+          <span class="text-sm font-bold text-slate-200 mb-2">NOT Gate (Inverter)</span>
+          <svg class="w-44 h-24 gate-svg" viewBox="0 0 180 90">
+            <!-- Input -->
+            <line x1="10" y1="45" x2="50" y2="45" stroke="#94a3b8" stroke-width="3"/>
+            <text x="5" y="49" fill="#94a3b8" font-size="11" font-weight="bold">A</text>
+            <!-- Triangle Body -->
+            <polygon points="50,15 110,45 50,75" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
+            <!-- Inversion Bubble -->
+            <circle cx="116" cy="45" r="6" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
+            <!-- Output -->
+            <line x1="122" y1="45" x2="170" y2="45" stroke="#f59e0b" stroke-width="3"/>
+            <text x="130" y="38" fill="#f59e0b" font-size="11" font-weight="bold">NOT A</text>
+          </svg>
+          <p class="text-xs text-slate-400 text-center mt-2">Triangle shape with an inversion bubble.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE 1: Represent the Locker Code -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 1 (2.0 Pts)</span>
+        <h2 class="text-xl font-bold text-slate-900 mt-2">Represent the Locker Code</h2>
+        <p class="text-sm text-slate-600 mt-1">Convert decimal and 4-bit binary values using place values (8 • 4 • 2 • 1).</p>
+      </div>
+
+      <!-- Binary Conversion Inputs -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Decimal to Binary Conversions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Item 1 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700">Convert Decimal 5 to 4-bit Binary</span>
+              <span id="p1-status-1" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="p1-q1" placeholder="e.g. 0000" maxlength="4" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono uppercase tracking-widest text-center focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div id="p1-fb-1" class="text-xs hidden"></div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700">Convert Decimal 10 to 4-bit Binary</span>
+              <span id="p1-status-2" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="p1-q2" placeholder="e.g. 0000" maxlength="4" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono uppercase tracking-widest text-center focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div id="p1-fb-2" class="text-xs hidden"></div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700">Convert Binary 1101 to Decimal</span>
+              <span id="p1-status-3" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="number" id="p1-q3" placeholder="Enter decimal" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono text-center focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div id="p1-fb-3" class="text-xs hidden"></div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700">Convert Binary 0110 to Decimal</span>
+              <span id="p1-status-4" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600">Pending</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="number" id="p1-q4" placeholder="Enter decimal" oninput="checkPhase1()" class="w-full px-3 py-2 border rounded-lg font-mono text-center focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div id="p1-fb-4" class="text-xs hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abstraction Short Answer -->
+      <div class="space-y-3 pt-2">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. Abstraction Reflection</h3>
+        <p class="text-xs text-slate-600">Why is representing the code match as a single Boolean condition (<code class="bg-slate-100 px-1 font-mono text-emerald-700">code_matches = TRUE/FALSE</code>) a useful abstraction?</p>
+        <select id="p1-abstraction" onchange="checkPhase1()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500">
+          <option value="">-- Choose the best explanation --</option>
+          <option value="incorrect1">It completely avoids having to store any binary numbers in memory.</option>
+          <option value="correct">It hides low-level bit comparator hardware details so we can focus on overall system access logic.</option>
+          <option value="incorrect2">It allows the locker to unlock even if the binary numbers do not match.</option>
+        </select>
+        <div id="p1-fb-abstract" class="text-xs hidden"></div>
+      </div>
+    </section>
+
+    <!-- PHASE 2: Model the Access Rule -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 2 (2.0 Pts)</span>
+        <h2 class="text-xl font-bold text-slate-900 mt-2">Model the Access Rule</h2>
+        <p class="text-sm text-slate-600 mt-1">
+          System Rule: Unlock only when <code class="bg-slate-100 px-1 font-mono text-slate-800">account_active (A)</code> <b>AND</b> <code class="bg-slate-100 px-1 font-mono text-slate-800">equipment_available (E)</code> <b>AND</b> <code class="bg-slate-100 px-1 font-mono text-slate-800">code_matches (C)</code>.
+        </p>
+      </div>
+
+      <!-- Interactive Decision Table -->
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Complete the Access Decision Table</h3>
+          <span class="text-xs text-slate-500">Select T (True) or F (False) for each outcome case</span>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-sm text-center font-mono">
+            <thead class="bg-slate-100 text-slate-700 text-xs uppercase">
+              <tr>
+                <th class="p-2 border-b">Case</th>
+                <th class="p-2 border-b bg-slate-200">A (Active)</th>
+                <th class="p-2 border-b bg-slate-200">E (Equip)</th>
+                <th class="p-2 border-b bg-slate-200">C (Code)</th>
+                <th class="p-2 border-b">A AND E</th>
+                <th class="p-2 border-b bg-emerald-50 text-emerald-800">Final UNLOCK (A AND E AND C)</th>
+                <th class="p-2 border-b">Locker Action</th>
+              </tr>
+            </thead>
+            <tbody id="decision-table-body" class="divide-y divide-slate-200">
+              <!-- JS Populates Rows -->
+            </tbody>
+          </table>
+        </div>
+        <div id="p2-table-feedback" class="text-xs p-3 rounded-lg hidden"></div>
+      </div>
+    </section>
+      <!-- PHASE 3: Test Cases & Diagnosis -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+        <div class="border-b border-slate-200 pb-4">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 3 (2.0 Pts)</span>
+          <h2 class="text-xl font-bold text-slate-900 mt-2">Test Cases & System Diagnosis</h2>
+          <p class="text-sm text-slate-600 mt-1">Evaluate test cases and diagnose system flaws.</p>
+        </div>
+
+        <!-- Test Cases Table -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Test Case Predictions</h3>
+          <div class="grid grid-cols-1 gap-3">
+            <!-- Case 1 -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
+              <div class="text-sm">
+                <span class="font-bold text-slate-800">Case 1:</span> Correct Code Entered | 
+                <span class="text-slate-600 font-mono">A=T, E=T, C=T</span>
+              </div>
+              <select id="tc-1" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
+                <option value="">-- Result --</option>
+                <option value="UNLOCK">UNLOCK</option>
+                <option value="STAY LOCKED">STAY LOCKED</option>
+              </select>
+            </div>
+
+            <!-- Case 2 -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
+              <div class="text-sm">
+                <span class="font-bold text-slate-800">Case 2:</span> Incorrect Code Entered | 
+                <span class="text-slate-600 font-mono">A=T, E=T, C=F</span>
+              </div>
+              <select id="tc-2" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
+                <option value="">-- Result --</option>
+                <option value="UNLOCK">UNLOCK</option>
+                <option value="STAY LOCKED">STAY LOCKED</option>
+              </select>
+            </div>
+
+            <!-- Case 3 -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-4">
+              <div class="text-sm">
+                <span class="font-bold text-slate-800">Case 3:</span> Equipment Unavailable | 
+                <span class="text-slate-600 font-mono">A=T, E=F, C=T</span>
+              </div>
+              <select id="tc-3" onchange="checkPhase3()" class="px-3 py-1.5 border rounded-lg text-sm bg-white font-medium">
+                <option value="">-- Result --</option>
+                <option value="UNLOCK">UNLOCK</option>
+                <option value="STAY LOCKED">STAY LOCKED</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem Diagnosis -->
+      <div class="space-y-4 pt-2">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. System Flaw Diagnosis</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="text-xs text-slate-700 font-medium">1. Requirement states AND, but designer writes <code class="bg-slate-200 px-1 font-mono">A OR E OR C</code>.</p>
+            <select id="diag-1" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Type --</option>
+              <option value="logic">Logic Error</option>
+              <option value="rep">Representation Error</option>
+              <option value="gap">Design Gap</option>
+            </select>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="text-xs text-slate-700 font-medium">2. The rule is correct, but table marks T,T,F as UNLOCK.</p>
+            <select id="diag-2" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Type --</option>
+              <option value="logic">Logic Error</option>
+              <option value="rep">Representation Error</option>
+              <option value="gap">Design Gap</option>
+            </select>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="text-xs text-slate-700 font-medium">3. System has no rule for 3 repeated wrong code attempts.</p>
+            <select id="diag-3" onchange="checkPhase3()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Type --</option>
+              <option value="logic">Logic Error</option>
+              <option value="rep">Representation Error</option>
+              <option value="gap">Design Gap</option>
+            </select>
+          </div>
+        </div>
+        <div id="p3-feedback" class="text-xs p-3 rounded-lg hidden"></div>
+      </div>
+    </section>
+
+    <!-- PHASE 4: Logic Gate Plan & Interactive Circuit Simulator -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 4 (2.0 Pts)</span>
+        <h2 class="text-xl font-bold text-slate-900 mt-2">Logic Gate Circuit Plan & Interactive Simulator</h2>
+        <p class="text-sm text-slate-600 mt-1">Trace signal inputs dynamically through two cascaded AND gates using the interactive circuit diagram.</p>
+      </div>
+
+      <!-- Interactive Gate Simulator Canvas -->
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-white space-y-4">
+        <div class="flex flex-wrap justify-between items-center gap-2">
+          <span class="text-xs uppercase font-bold text-emerald-400 tracking-wider">Live Circuit Simulator: UNLOCK = (A AND E) AND C</span>
+          <span class="text-xs text-slate-400">Toggle switches to test logic flow</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
+          <!-- Switches Column -->
+          <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+            <h4 class="text-xs font-bold text-slate-300 uppercase">Input Signals</h4>
+            
+            <!-- Switch A -->
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">A (Active):</span>
+              <button id="btn-sw-a" onclick="toggleSwitch('a')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-emerald-600 text-white">TRUE (1)</button>
+            </div>
+
+            <!-- Switch E -->
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">E (Equipment):</span>
+              <button id="btn-sw-e" onclick="toggleSwitch('e')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-emerald-600 text-white">TRUE (1)</button>
+            </div>
+
+            <!-- Switch C -->
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200">C (Code Match):</span>
+              <button id="btn-sw-c" onclick="toggleSwitch('c')" class="px-3 py-1 rounded text-xs font-bold transition-all bg-red-600 text-white">FALSE (0)</button>
+            </div>
+          </div>
+
+          <!-- Dynamic SVG Circuit Diagram -->
+          <div class="lg:col-span-2 flex justify-center py-2">
+            <svg class="w-full h-48 gate-svg max-w-md" viewBox="0 0 340 160">
+              <!-- Wire A -->
+              <line x1="20" y1="30" x2="100" y2="30" id="wire-a" stroke="#10b981" stroke-width="4"/>
+              <text x="5" y="34" fill="#cbd5e1" font-size="12" font-weight="bold">A</text>
+
+              <!-- Wire E -->
+              <line x1="20" y1="70" x2="100" y2="70" id="wire-e" stroke="#10b981" stroke-width="4"/>
+              <text x="5" y="74" fill="#cbd5e1" font-size="12" font-weight="bold">E</text>
+
+              <!-- Gate 1 (AND) -->
+              <path d="M 100,15 L 130,15 A 30,30 0 0,1 130,85 L 100,85 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+              <text x="110" y="54" fill="#38bdf8" font-size="11" font-weight="bold">AND 1</text>
+
+              <!-- Wire Gate1 Output -->
+              <line x1="160" y1="50" x2="220" y2="50" id="wire-g1" stroke="#10b981" stroke-width="4"/>
+              <text x="165" y="42" id="label-g1" fill="#10b981" font-size="10" font-family="monospace">G1: TRUE</text>
+
+              <!-- Wire C -->
+              <line x1="20" y1="120" x2="220" y2="120" id="wire-c" stroke="#ef4444" stroke-width="4"/>
+              <text x="5" y="124" fill="#cbd5e1" font-size="12" font-weight="bold">C</text>
+
+              <!-- Gate 2 (AND) -->
+              <path d="M 220,35 L 250,35 A 30,30 0 0,1 250,135 L 220,135 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+              <text x="228" y="90" fill="#38bdf8" font-size="11" font-weight="bold">AND 2</text>
+
+              <!-- Final Output Wire -->
+              <line x1="280" y1="85" x2="330" y2="85" id="wire-out" stroke="#ef4444" stroke-width="4"/>
+            </svg>
+          </div>
+
+          <!-- Status Box -->
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center space-y-2">
+            <span class="text-xs font-bold text-slate-400 uppercase">System Status</span>
+            <div id="sim-status-badge" class="py-2 px-3 rounded-lg font-extrabold text-sm bg-red-950 text-red-400 border border-red-800">
+              LOCKED (0)
+            </div>
+            <p id="sim-explanation" class="text-xs text-slate-400">Gate 1 outputs TRUE, but Gate 2 requires C = TRUE to unlock.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gate Plan Tracing Worksheet Question -->
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">Tracing Verification Prompt</h3>
+        <p class="text-xs text-slate-600">When inputs are set to <span class="font-bold text-slate-800">A = TRUE, E = TRUE, C = FALSE</span>:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">What is Gate 1 Output (A AND E)?</label>
+            <select id="p4-g1-ans" onchange="checkPhase4()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Choose --</option>
+              <option value="TRUE">TRUE (1)</option>
+              <option value="FALSE">FALSE (0)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">What is Gate 2 Final Output?</label>
+            <select id="p4-g2-ans" onchange="checkPhase4()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Choose --</option>
+              <option value="TRUE">TRUE (1) -> UNLOCK</option>
+              <option value="FALSE">FALSE (0) -> STAY LOCKED</option>
+            </select>
+          </div>
+        </div>
+        <div id="p4-feedback" class="text-xs p-2 rounded hidden"></div>
+      </div>
+    </section>
+
+    <!-- PHASE 5: Revision & Certification Exit Ticket -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase px-2.5 py-1 rounded-md">Phase 5 (2.0 Pts)</span>
+        <h2 class="text-xl font-bold text-slate-900 mt-2">System Revision & Certification Exit Ticket</h2>
+        <p class="text-sm text-slate-600 mt-1">Design an override mechanism and complete certification questions.</p>
+      </div>
+
+      <!-- Override Gate Revision -->
+      <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">A. Design Revision: Staff Override</h3>
+        <p class="text-xs text-slate-600">
+          New Requirement: A staff member can unlock the locker with an override switch (<code class="bg-slate-200 px-1 font-mono">S</code>) even if student conditions fail.
+          <br>
+          Revised Rule: <code class="bg-slate-200 px-1 font-mono font-bold">UNLOCK = (student_access) [ GATE ] (staff_override)</code>
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Which additional gate is needed?</label>
+            <select id="p5-override-gate" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Logic Gate --</option>
+              <option value="AND">AND Gate</option>
+              <option value="OR">OR Gate</option>
+              <option value="NOT">NOT Gate</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Reasoning:</label>
+            <select id="p5-override-reason" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Choose Reasoning --</option>
+              <option value="correct">The locker should unlock if EITHER normal student access IS true OR staff override IS true.</option>
+              <option value="incorrect">Both student access and staff override must be true at the same time.</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certification Multiple Choice Questions -->
+      <div class="space-y-4 pt-2">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wide">B. Certification Check Questions</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Cert Q1 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="text-xs font-bold text-slate-800">1. Which 4-bit binary string represents Decimal 13?</p>
+            <select id="cert-q1" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Answer --</option>
+              <option value="1010">A. 1010</option>
+              <option value="1101">B. 1101</option>
+              <option value="1110">C. 1110</option>
+              <option value="1001">D. 1001</option>
+            </select>
+          </div>
+
+          <!-- Cert Q2 -->
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <p class="text-xs font-bold text-slate-800">2. Why compare Boolean expressions, decision tables, and gate circuits?</p>
+            <select id="cert-q2" onchange="checkPhase5()" class="w-full p-2 border rounded-lg bg-white text-xs">
+              <option value="">-- Select Answer --</option>
+              <option value="correct">A. To verify that all representations describe the exact same system behavior</option>
+              <option value="incorrect1">B. To eliminate the need for software testing</option>
+              <option value="incorrect2">C. To increase binary storage speed</option>
+            </select>
+          </div>
+        </div>
+        <div id="p5-feedback" class="text-xs p-3 rounded-lg hidden"></div>
+      </div>
+    </section>
+
+    <!-- Schoology Summary Report Section -->
+    <section id="report-section" class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border border-slate-800 space-y-6">
+      <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-4 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-emerald-400">Schoology Assessment Report</h2>
+          <p class="text-xs text-slate-400">Generate your final score summary to copy and submit into Schoology.</p>
+        </div>
+        <button onclick="copyReportToClipboard()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg flex items-center gap-2 text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          Copy Report to Clipboard
+        </button>
+      </div>
+
+      <!-- Printable/Copyable Report Card -->
+      <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 font-mono text-xs space-y-4 text-slate-300 overflow-x-auto">
+        <textarea id="report-text-area" readonly rows="12" class="w-full bg-transparent border-0 text-emerald-300 font-mono focus:outline-none resize-none leading-relaxed text-xs"></textarea>
+      </div>
+      <div id="copy-status-msg" class="text-xs font-semibold text-emerald-400 hidden text-center">
+        ✓ Report successfully copied to clipboard! You can now paste it directly into Schoology.
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-500 text-center text-xs py-4 border-t border-slate-800 mt-12">
+    Computational Thinking Unit 2 • Day 30 Integrated Challenge • Hosted on GitHub Pages
+  </footer>
+
+  <script>
+    // Simulator Switch States
+    let stateSW = { a: true, e: true, c: false };
+
+    // Set auto date
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date();
+      document.getElementById("assignment-date").value = today.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+
+      renderDecisionTable();
+      updateSimulator();
+      updateScoreAndReport();
+    });
+
+    const decisionCases = [
+      { a: true,  e: true,  c: true  },
+      { a: true,  e: true,  c: false },
+      { a: true,  e: false, c: true  },
+      { a: true,  e: false, c: false },
+      { a: false, e: true,  c: true  },
+      { a: false, e: true,  c: false },
+      { a: false, e: false, c: true  },
+      { a: false, e: false, c: false }
+    ];
+
+    function renderDecisionTable() {
+      const tbody = document.getElementById("decision-table-body");
+      tbody.innerHTML = "";
+
+      decisionCases.forEach((c, idx) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50";
+
+        const aeVal = c.a && c.e;
+
+        tr.innerHTML = `
+          <td class="p-2 border-b text-slate-500 font-semibold">${idx + 1}</td>
+          <td class="p-2 border-b ${c.a ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.a ? 'T' : 'F'}</td>
+          <td class="p-2 border-b ${c.e ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.e ? 'T' : 'F'}</td>
+          <td class="p-2 border-b ${c.c ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${c.c ? 'T' : 'F'}</td>
+          <td class="p-2 border-b font-bold ${aeVal ? 'text-emerald-600' : 'text-slate-400'}">${aeVal ? 'T' : 'F'}</td>
+          <td class="p-2 border-b bg-emerald-50/50">
+            <select id="dt-unlock-${idx}" onchange="checkPhase2()" class="px-2 py-1 text-xs border rounded bg-white font-bold text-center">
+              <option value="">?</option>
+              <option value="T">T</option>
+              <option value="F">F</option>
+            </select>
+          </td>
+          <td class="p-2 border-b text-xs">
+            <span id="dt-action-${idx}" class="text-slate-400 font-semibold">--</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getPhase1Score() {
+      const q1 = document.getElementById("p1-q1").value.trim();
+      const q2 = document.getElementById("p1-q2").value.trim();
+      const q3 = document.getElementById("p1-q3").value.trim();
+      const q4 = document.getElementById("p1-q4").value.trim();
+      const abs = document.getElementById("p1-abstraction").value;
+
+      let score = 0;
+
+      // Q1 (5 -> 0101)
+      if (q1 === "0101") {
+        score += 0.4;
+        setFieldStatus("p1-status-1", "p1-fb-1", true, "Correct!");
+      } else if (q1 !== "") {
+        setFieldStatus("p1-status-1", "p1-fb-1", false, "Incorrect. Place values: 8·4·2·1.");
+      } else {
+        resetFieldStatus("p1-status-1", "p1-fb-1");
+      }
+
+      // Q2 (10 -> 1010)
+      if (q2 === "1010") {
+        score += 0.4;
+        setFieldStatus("p1-status-2", "p1-fb-2", true, "Correct!");
+      } else if (q2 !== "") {
+        setFieldStatus("p1-status-2", "p1-fb-2", false, "Incorrect. Place values: 8·4·2·1.");
+      } else {
+        resetFieldStatus("p1-status-2", "p1-fb-2");
+      }
+
+      // Q3 (1101 -> 13)
+      if (q3 === "13") {
+        score += 0.4;
+        setFieldStatus("p1-status-3", "p1-fb-3", true, "Correct!");
+      } else if (q3 !== "") {
+        setFieldStatus("p1-status-3", "p1-fb-3", false, "Incorrect. Calculate 8 + 4 + 0 + 1.");
+      } else {
+        resetFieldStatus("p1-status-3", "p1-fb-3");
+      }
+
+      // Q4 (0110 -> 6)
+      if (q4 === "6") {
+        score += 0.4;
+        setFieldStatus("p1-status-4", "p1-fb-4", true, "Correct!");
+      } else if (q4 !== "") {
+        setFieldStatus("p1-status-4", "p1-fb-4", false, "Incorrect. Calculate 0 + 4 + 2 + 0.");
+      } else {
+        resetFieldStatus("p1-status-4", "p1-fb-4");
+      }
+
+      // Abstraction Check
+      const fbAbs = document.getElementById("p1-fb-abstract");
+      if (abs === "correct") {
+        score += 0.4;
+        fbAbs.className = "text-xs text-emerald-600 font-semibold mt-1 block";
+        fbAbs.innerText = "✓ Correct! Abstraction allows us to group bit-by-bit comparisons into one logical condition.";
+      } else if (abs !== "") {
+        fbAbs.className = "text-xs text-red-600 font-semibold mt-1 block";
+        fbAbs.innerText = "✗ Incorrect. Abstraction hides hardware-level details so high-level logic can be designed.";
+      } else {
+        fbAbs.className = "hidden";
+      }
+
+      return score;
+    }
+
+    function checkPhase1() {
+      getPhase1Score();
+      updateScoreAndReport();
+    }
+
+    function resetFieldStatus(statusId, fbId) {
+      const statusEl = document.getElementById(statusId);
+      const fbEl = document.getElementById(fbId);
+      statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-slate-200 text-slate-600";
+      statusEl.innerText = "Pending";
+      fbEl.className = "hidden";
+    }
+
+    function setFieldStatus(statusId, fbId, isCorrect, msg) {
+      const statusEl = document.getElementById(statusId);
+      const fbEl = document.getElementById(fbId);
+
+      if (isCorrect) {
+        statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-100 text-emerald-700";
+        statusEl.innerText = "Correct";
+        fbEl.className = "text-xs text-emerald-600 font-medium mt-1 block";
+        fbEl.innerText = "✓ " + msg;
+      } else {
+        statusEl.className = "text-xs px-2 py-0.5 rounded font-semibold bg-red-100 text-red-700";
+        statusEl.innerText = "Try Again";
+        fbEl.className = "text-xs text-red-600 font-medium mt-1 block";
+        fbEl.innerText = "✗ " + msg;
+      }
+    }
+
+    function getPhase2Score() {
+      let correctCount = 0;
+
+      decisionCases.forEach((c, idx) => {
+        const val = document.getElementById(`dt-unlock-${idx}`).value;
+        const actionEl = document.getElementById(`dt-action-${idx}`);
+        const expected = (c.a && c.e && c.c) ? "T" : "F";
+
+        if (val === expected) {
+          correctCount++;
+          actionEl.innerText = expected === "T" ? "UNLOCK" : "STAY LOCKED";
+          actionEl.className = expected === "T" ? "text-emerald-600 font-extrabold" : "text-slate-500 font-medium";
+        } else if (val !== "") {
+          actionEl.innerText = "Incorrect";
+          actionEl.className = "text-red-500 font-bold";
+        } else {
+          actionEl.innerText = "--";
+          actionEl.className = "text-slate-400 font-semibold";
+        }
+      });
+
+      const fb = document.getElementById("p2-table-feedback");
+      const score = (correctCount / 8) * 2.0;
+
+      if (correctCount === 8) {
+        fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
+        fb.innerText = "✓ Perfect! Only 1 out of 8 possible input cases satisfies the triple-AND condition to unlock.";
+      } else if (correctCount > 0) {
+        fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
+        fb.innerText = `Table progress: ${correctCount}/8 rows correct. Remember: A AND E AND C requires ALL three inputs to be T!`;
+      } else {
+        fb.className = "hidden";
+      }
+
+      return score;
+    }
+
+    function checkPhase2() {
+      getPhase2Score();
+      updateScoreAndReport();
+    }
+
+    function getPhase3Score() {
+      let score = 0;
+
+      const tc1 = document.getElementById("tc-1").value;
+      const tc2 = document.getElementById("tc-2").value;
+      const tc3 = document.getElementById("tc-3").value;
+
+      if (tc1 === "UNLOCK") score += 0.33;
+      if (tc2 === "STAY LOCKED") score += 0.33;
+      if (tc3 === "STAY LOCKED") score += 0.34;
+
+      const d1 = document.getElementById("diag-1").value;
+      const d2 = document.getElementById("diag-2").value;
+      const d3 = document.getElementById("diag-3").value;
+
+      if (d1 === "logic") score += 0.33;
+      if (d2 === "rep") score += 0.33;
+      if (d3 === "gap") score += 0.34;
+
+      const fb = document.getElementById("p3-feedback");
+      if (tc1 && tc2 && tc3 && d1 && d2 && d3) {
+        if (score >= 1.9) {
+          fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
+          fb.innerText = "✓ Excellent diagnosis! You accurately differentiated logic errors, representation mistakes, and design gaps.";
+        } else {
+          fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
+          fb.innerText = "Review your diagnoses: 1 = Logic Error (wrong operator), 2 = Representation Error (table mismatch), 3 = Design Gap (missing specification).";
+        }
+      } else {
+        fb.className = "hidden";
+      }
+
+      return Math.min(2.0, score);
+    }
+
+    function checkPhase3() {
+      getPhase3Score();
+      updateScoreAndReport();
+    }
+
+    function toggleSwitch(sw) {
+      stateSW[sw] = !stateSW[sw];
+      
+      const btn = document.getElementById(`btn-sw-${sw}`);
+      btn.innerText = stateSW[sw] ? "TRUE (1)" : "FALSE (0)";
+      btn.className = `px-3 py-1 rounded text-xs font-bold transition-all ${stateSW[sw] ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`;
+
+      updateSimulator();
+    }
+
+    function updateSimulator() {
+      const wireA = document.getElementById("wire-a");
+      const wireE = document.getElementById("wire-e");
+      const wireC = document.getElementById("wire-c");
+      const wireG1 = document.getElementById("wire-g1");
+      const wireOut = document.getElementById("wire-out");
+      const labelG1 = document.getElementById("label-g1");
+
+      const g1Output = stateSW.a && stateSW.e;
+      const finalOutput = g1Output && stateSW.c;
+
+      // Color wires based on signal (Green = True, Red = False)
+      wireA.setAttribute("stroke", stateSW.a ? "#10b981" : "#ef4444");
+      wireE.setAttribute("stroke", stateSW.e ? "#10b981" : "#ef4444");
+      wireC.setAttribute("stroke", stateSW.c ? "#10b981" : "#ef4444");
+
+      wireG1.setAttribute("stroke", g1Output ? "#10b981" : "#ef4444");
+      labelG1.textContent = `G1: ${g1Output ? 'TRUE' : 'FALSE'}`;
+      labelG1.setAttribute("fill", g1Output ? "#10b981" : "#ef4444");
+
+      wireOut.setAttribute("stroke", finalOutput ? "#10b981" : "#ef4444");
+
+      // Badge Update
+      const badge = document.getElementById("sim-status-badge");
+      const explanation = document.getElementById("sim-explanation");
+
+      if (finalOutput) {
+        badge.className = "py-2 px-3 rounded-lg font-extrabold text-sm bg-emerald-950 text-emerald-400 border border-emerald-700 animate-pulse";
+        badge.innerText = "UNLOCKED (1)";
+        explanation.innerText = "All 3 inputs are TRUE! Logic gates output HIGH signal.";
+      } else {
+        badge.className = "py-2 px-3 rounded-lg font-extrabold text-sm bg-red-950 text-red-400 border border-red-800";
+        badge.innerText = "LOCKED (0)";
+        
+        if (!g1Output) {
+          explanation.innerText = "Gate 1 output is FALSE because account or equipment is missing.";
+        } else {
+          explanation.innerText = "Gate 1 is TRUE, but Gate 2 requires Code Match (C = TRUE).";
+        }
+      }
+    }
+
+    function getPhase4Score() {
+      const g1Ans = document.getElementById("p4-g1-ans").value;
+      const g2Ans = document.getElementById("p4-g2-ans").value;
+      const fb = document.getElementById("p4-feedback");
+
+      let score = 0;
+      if (g1Ans === "TRUE") score += 1.0;
+      if (g2Ans === "FALSE") score += 1.0;
+
+      if (g1Ans && g2Ans) {
+        if (score === 2.0) {
+          fb.className = "text-xs p-2 rounded bg-emerald-100 text-emerald-800 font-semibold block";
+          fb.innerText = "✓ Correct trace! Gate 1 (A AND E) = TRUE, but Gate 2 (TRUE AND FALSE) = FALSE -> STAY LOCKED.";
+        } else {
+          fb.className = "text-xs p-2 rounded bg-red-100 text-red-800 font-semibold block";
+          fb.innerText = "✗ Incorrect trace. Remember: TRUE AND TRUE = TRUE for Gate 1; TRUE AND FALSE = FALSE for Gate 2.";
+        }
+      } else {
+        fb.className = "hidden";
+      }
+
+      return score;
+    }
+
+    function checkPhase4() {
+      getPhase4Score();
+      updateScoreAndReport();
+    }
+
+    function getPhase5Score() {
+      let score = 0;
+
+      const gate = document.getElementById("p5-override-gate").value;
+      const reason = document.getElementById("p5-override-reason").value;
+      const q1 = document.getElementById("cert-q1").value;
+      const q2 = document.getElementById("cert-q2").value;
+
+      if (gate === "OR") score += 0.5;
+      if (reason === "correct") score += 0.5;
+      if (q1 === "1101") score += 0.5;
+      if (q2 === "correct") score += 0.5;
+
+      const fb = document.getElementById("p5-feedback");
+      if (gate && reason && q1 && q2) {
+        if (score === 2.0) {
+          fb.className = "text-xs p-3 rounded-lg bg-emerald-100 text-emerald-800 font-semibold block";
+          fb.innerText = "✓ Certification Complete! You mastered Boolean rules, gate diagrams, and representation cross-checking.";
+        } else {
+          fb.className = "text-xs p-3 rounded-lg bg-amber-100 text-amber-800 font-semibold block";
+          fb.innerText = "Check your answers: Staff Override uses an OR gate because either rule allows unlocking. 13 = 1101.";
+        }
+      } else {
+        fb.className = "hidden";
+      }
+
+      return score;
+    }
+
+    function checkPhase5() {
+      getPhase5Score();
+      updateScoreAndReport();
+    }
+
+    function updateScoreAndReport() {
+      const name = document.getElementById("student-name").value.trim() || "[Student Name]";
+      const className = document.getElementById("student-class").value.trim() || "[Class Period]";
+      const dateStr = document.getElementById("assignment-date").value;
+
+      const p1 = getPhase1Score();
+      const p2 = getPhase2Score();
+      const p3 = getPhase3Score();
+      const p4 = getPhase4Score();
+      const p5 = getPhase5Score();
+
+      const totalScore = (p1 + p2 + p3 + p4 + p5).toFixed(1);
+
+      document.getElementById("total-score-display").innerText = `${totalScore} / 10.0`;
+
+      // Build Report Text
+      const reportText = 
 `==================================================
 COMPUTATIONAL THINKING ASSESSMENT REPORT
 Unit 2 Day 30: Integrated Binary + Logic Challenge
@@ -941,55 +941,54 @@ File ID: CT2_10_4.html
 ==================================================
 Student Name : ${name}
 Class / Period: ${className}
-Date         : ${dateStr}
-TOTAL GRADE  : ${totalScore} / 10.0
+Date         : ${dateStr}
+TOTAL GRADE  : ${totalScore} / 10.0
 --------------------------------------------------
 SCORE BREAKDOWN BY PHASE:
-• Phase 1 (Binary & Abstraction)   : ${p1.toFixed(1)} / 2.0
+• Phase 1 (Binary & Abstraction)   : ${p1.toFixed(1)} / 2.0
 • Phase 2 (Boolean Decision Table) : ${p2.toFixed(1)} / 2.0
-• Phase 3 (Test Cases & Diagnosis)  : ${p3.toFixed(1)} / 2.0
-• Phase 4 (Gate Circuit Tracing)   : ${p4.toFixed(1)} / 2.0
+• Phase 3 (Test Cases & Diagnosis)  : ${p3.toFixed(1)} / 2.0
+• Phase 4 (Gate Circuit Tracing)   : ${p4.toFixed(1)} / 2.0
 • Phase 5 (Override & Certification): ${p5.toFixed(1)} / 2.0
 
 --------------------------------------------------
 KEY RESPONSES & VERIFICATIONS:
-1. Binary Conversions:
-   - 5 = 0101 | 10 = 1010 | 1101 = 13 | 0110 = 6
+1. Binary Conversions: 
+   - 5 = 0101 | 10 = 1010 | 1101 = 13 | 0110 = 6
 2. Access Rule Logic:
-   - Rule: UNLOCK = A AND E AND C
-   - Satisfied cases: 1 out of 8 possible input combinations.
+   - Rule: UNLOCK = A AND E AND C
+   - Satisfied cases: 1 out of 8 possible input combinations.
 3. System Flaw Diagnoses:
-   - Wrong operator (OR instead of AND): Logic Error
-   - Table outcome mismatch: Representation Error
-   - Missing 3-strike wrong attempt rule: Design Gap
+   - Wrong operator (OR instead of AND): Logic Error
+   - Table outcome mismatch: Representation Error
+   - Missing 3-strike wrong attempt rule: Design Gap
 4. Staff Override Revision:
-   - Revised Expression: (student_access) OR (staff_override)
+   - Revised Expression: (student_access) OR (staff_override)
 ==================================================`;
 
-      document.getElementById("report-text-area").value = reportText;
-    }
+      document.getElementById("report-text-area").value = reportText;
+    }
 
-    function copyReportToClipboard() {
-      const reportArea = document.getElementById("report-text-area");
-      reportArea.select();
-      reportArea.setSelectionRange(0, 99999); // For mobile devices
+    function copyReportToClipboard() {
+      const reportArea = document.getElementById("report-text-area");
+      reportArea.select();
+      reportArea.setSelectionRange(0, 99999); // For mobile devices
 
-      try {
-        document.execCommand('copy');
-        const statusMsg = document.getElementById("copy-status-msg");
-        statusMsg.classList.remove("hidden");
-        setTimeout(() => {
-          statusMsg.classList.add("hidden");
-        }, 4000);
-      } catch (err) {
-        alert("Failed to copy automatically. Please select the text in the box and copy manually.");
-      }
-    }
+      try {
+        document.execCommand('copy');
+        const statusMsg = document.getElementById("copy-status-msg");
+        statusMsg.classList.remove("hidden");
+        setTimeout(() => {
+          statusMsg.classList.add("hidden");
+        }, 4000);
+      } catch (err) {
+        alert("Failed to copy automatically. Please select the text in the box and copy manually.");
+      }
+    }
 
-    function scrollToSection(id) {
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-    }
-  </script>
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 </body>
 </html>
-
