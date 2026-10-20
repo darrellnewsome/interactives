@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bits, Bytes & File Size — Estimating Digital Storage</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .input-correct { border-color: #10B981 !important; background-color: #ECFDF5 !important; color: #065F46 !important; }
+        .input-incorrect { border-color: #EF4444 !important; background-color: #FEF2F2 !important; color: #991B1B !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
+
+    <header class="bg-indigo-700 text-white py-6 shadow-md mb-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-indigo-800 text-indigo-200 text-xs font-semibold rounded-full uppercase tracking-wider mb-2">CT2_16 Activity</span>
+                    <h1 class="text-2xl sm:text-3xl font-bold">Bits, Bytes & File Size</h1>
+                    <p class="text-indigo-200 text-sm mt-1">Estimating Digital Storage & Understanding Compression</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center bg-indigo-800/60 backdrop-blur-sm px-4 py-3 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid me-3 text-indigo-300 text-xl fa-bullseye"></i>
+                    <div class="text-xs">
+                        <span class="font-bold text-white block">Learning Target</span>
+                        <span class="text-indigo-200">Convert storage units, estimate media sizes, & explain compression.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
+
+        <!-- GUIDED NOTES REFERENCE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <i class="fa-solid fa-book-open text-indigo-600 mr-2.5"></i> Guided Notes — Storage Units
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Bit</span>
+                    <p class="font-bold text-slate-800 text-base mt-1">0 or 1</p>
+                    <p class="text-xs text-slate-500 mt-1">Smallest binary unit</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Byte</span>
+                    <p class="font-bold text-slate-800 text-base mt-1">8 bits</p>
+                    <p class="text-xs text-slate-500 mt-1">Common basic storage unit</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Kilobyte (KB)</span>
+                    <p class="font-bold text-slate-800 text-base mt-1">1,000 bytes</p>
+                    <p class="text-xs text-slate-500 mt-1">Class decimal estimate</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Megabyte (MB)</span>
+                    <p class="font-bold text-slate-800 text-base mt-1">1,000 KB</p>
+                    <p class="text-xs text-slate-500 mt-1">Class decimal estimate</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 1: STORAGE UNIT CONVERTER -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">1</span>
+                    Part 1 — Storage Unit Converter
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Directions: Show the operation in the "Work" column and include the correct unit in your final answer (e.g., <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700 font-mono">8 bytes</code> or <code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700 font-mono">4 KB</code>).</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">Given</th>
+                            <th class="p-3">Convert To</th>
+                            <th class="p-3">Work (Show Operation)</th>
+                            <th class="p-3 rounded-tr-lg">Answer (Value + Unit)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="part1-table">
+                        <!-- Row 1 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">64 bits</td>
+                            <td class="p-3 text-slate-500">bytes</td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_work" placeholder="e.g. 64 / 8" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_ans" data-correct="8 bytes" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">24 bits</td>
+                            <td class="p-3 text-slate-500">bytes</td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_work" placeholder="e.g. 24 / 8" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_ans" data-correct="3 bytes" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">5 bytes</td>
+                            <td class="p-3 text-slate-500">bits</td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_work" placeholder="e.g. 5 * 8" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_ans" data-correct="40 bits" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">12 bytes</td>
+                            <td class="p-3 text-slate-500">bits</td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_work" placeholder="e.g. 12 * 8" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_ans" data-correct="96 bits" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 5 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">4,000 bytes</td>
+                            <td class="p-3 text-slate-500">KB</td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_work" placeholder="e.g. 4000 / 1000" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_ans" data-correct="4 KB" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 6 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">7 KB</td>
+                            <td class="p-3 text-slate-500">bytes</td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_work" placeholder="e.g. 7 * 1000" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_ans" data-correct="7,000 bytes|7000 bytes" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 7 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">3,000 KB</td>
+                            <td class="p-3 text-slate-500">MB</td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_work" placeholder="e.g. 3000 / 1000" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_ans" data-correct="3 MB" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                        <!-- Row 8 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">2 MB</td>
+                            <td class="p-3 text-slate-500">KB</td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_work" placeholder="e.g. 2 * 1000" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_ans" data-correct="2,000 KB|2000 KB" placeholder="Answer + Unit" class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition check-input"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Leading Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-circle-question text-indigo-500 mr-2"></i> Leading Questions
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">When converting bits to bytes, why do you divide by 8?</label>
+                    <textarea data-key="p1_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your explanation..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">When converting KB to bytes, why do you multiply by 1,000?</label>
+                    <textarea data-key="p1_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your explanation..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Why should every final answer include a unit?</label>
+                    <textarea data-key="p1_q3" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your explanation..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2: TEXT & IMAGE SIZE ESTIMATES -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">2</span>
+                    Part 2 — Text & Image Size Estimates
+                </h2>
+            </div>
+
+            <!-- A. Text Estimate -->
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center">
+                    <i class="fa-solid fa-file-lines text-indigo-600 mr-2"></i> A. Text Estimate
+                    <span class="ml-2 font-normal text-xs text-slate-500">(Simplified model: 1 character ≈ 1 byte)</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                                <th class="p-3 rounded-tl-lg">Text Amount</th>
+                                <th class="p-3">Bytes</th>
+                                <th class="p-3">KB</th>
+                                <th class="p-3 rounded-tr-lg">Work / Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">25 characters</td>
+                                <td class="p-3"><input type="text" data-key="p2a_r1_bytes" data-correct="25" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r1_kb" data-correct="0.025|0.025 KB|.025" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r1_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">500 characters</td>
+                                <td class="p-3"><input type="text" data-key="p2a_r2_bytes" data-correct="500" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r2_kb" data-correct="0.5|0.5 KB|.5" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r2_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">1,000 characters</td>
+                                <td class="p-3"><input type="text" data-key="p2a_r3_bytes" data-correct="1000|1,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r3_kb" data-correct="1|1 KB" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r3_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">3,500 characters</td>
+                                <td class="p-3"><input type="text" data-key="p2a_r4_bytes" data-correct="3500|3,500" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r4_kb" data-correct="3.5|3.5 KB" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2a_r4_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- B. Black/White Image Estimate -->
+            <div class="pt-4 border-t border-slate-100">
+                <h3 class="font-bold text-slate-800 text-sm mb-2 flex items-center">
+                    <i class="fa-solid fa-image text-indigo-600 mr-2"></i> B. Black/White Image Estimate
+                    <span class="ml-2 font-normal text-xs text-slate-500">(1 bit per pixel)</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                                <th class="p-3 rounded-tl-lg">Resolution</th>
+                                <th class="p-3">Pixels</th>
+                                <th class="p-3">Bits</th>
+                                <th class="p-3">Bytes</th>
+                                <th class="p-3 rounded-tr-lg">KB</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">20 × 10</td>
+                                <td class="p-3"><input type="text" data-key="p2b_r1_px" data-correct="200" placeholder="Pixels" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r1_bits" data-correct="200" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r1_bytes" data-correct="25" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r1_kb" data-correct="0.025|.025" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">40 × 20</td>
+                                <td class="p-3"><input type="text" data-key="p2b_r2_px" data-correct="800" placeholder="Pixels" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r2_bits" data-correct="800" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r2_bytes" data-correct="100" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r2_kb" data-correct="0.1|.1" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700">100 × 80</td>
+                                <td class="p-3"><input type="text" data-key="p2b_r3_px" data-correct="8000|8,000" placeholder="Pixels" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r3_bits" data-correct="8000|8,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r3_bytes" data-correct="1000|1,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                                <td class="p-3"><input type="text" data-key="p2b_r3_kb" data-correct="1" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 3: COLOR DETAIL & IMAGE SIZE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">3</span>
+                    Part 3 — Color Detail & Image Size
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Use the same 100 × 80 image (8,000 pixels). Compare different bits-per-pixel values.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">Model</th>
+                            <th class="p-3">Bits / Pixel</th>
+                            <th class="p-3">Pixels</th>
+                            <th class="p-3">Total Bits</th>
+                            <th class="p-3">Bytes</th>
+                            <th class="p-3 rounded-tr-lg">KB</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Black / White</td>
+                            <td class="p-3 text-slate-500">1</td>
+                            <td class="p-3 text-slate-500">8,000</td>
+                            <td class="p-3"><input type="text" data-key="p3_r1_bits" data-correct="8000|8,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r1_bytes" data-correct="1000|1,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r1_kb" data-correct="1" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">8-bit Grayscale</td>
+                            <td class="p-3 text-slate-500">8</td>
+                            <td class="p-3 text-slate-500">8,000</td>
+                            <td class="p-3"><input type="text" data-key="p3_r2_bits" data-correct="64000|64,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r2_bytes" data-correct="8000|8,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r2_kb" data-correct="8" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">24-bit Color</td>
+                            <td class="p-3 text-slate-500">24</td>
+                            <td class="p-3 text-slate-500">8,000</td>
+                            <td class="p-3"><input type="text" data-key="p3_r3_bits" data-correct="192000|192,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r3_bytes" data-correct="24000|24,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r3_kb" data-correct="24" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Analyze Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-magnifying-glass text-indigo-500 mr-2"></i> Analyze
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Which representation is smallest?</label>
+                    <textarea data-key="p3_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Which representation stores the most detail per pixel?</label>
+                    <textarea data-key="p3_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Why can two images with the same resolution have different file sizes?</label>
+                    <textarea data-key="p3_q3" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4: SIMPLE AUDIO SIZE ESTIMATES -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">4</span>
+                    Part 4 — Simple Audio Size Estimates
+                </h2>
+                <div class="mt-2 p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-800 text-xs font-mono">
+                    <strong>Formula:</strong> samples/second × bits/sample × seconds = total bits
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">Samples / sec</th>
+                            <th class="p-3">Bits / sample</th>
+                            <th class="p-3">Seconds</th>
+                            <th class="p-3">Total Bits</th>
+                            <th class="p-3">Bytes</th>
+                            <th class="p-3">KB</th>
+                            <th class="p-3 rounded-tr-lg">Work</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- Row 1 -->
+                        <tr>
+                            <td class="p-3 text-slate-700 font-medium">1,000</td>
+                            <td class="p-3 text-slate-500">8</td>
+                            <td class="p-3 text-slate-500">10</td>
+                            <td class="p-3"><input type="text" data-key="p4_r1_bits" data-correct="80000|80,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r1_bytes" data-correct="10000|10,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r1_kb" data-correct="10" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r1_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr>
+                            <td class="p-3 text-slate-700 font-medium">2,000</td>
+                            <td class="p-3 text-slate-500">8</td>
+                            <td class="p-3 text-slate-500">5</td>
+                            <td class="p-3"><input type="text" data-key="p4_r2_bits" data-correct="80000|80,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r2_bytes" data-correct="10000|10,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r2_kb" data-correct="10" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r2_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr>
+                            <td class="p-3 text-slate-700 font-medium">2,000</td>
+                            <td class="p-3 text-slate-500">16</td>
+                            <td class="p-3 text-slate-500">5</td>
+                            <td class="p-3"><input type="text" data-key="p4_r3_bits" data-correct="160000|160,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r3_bytes" data-correct="20000|20,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r3_kb" data-correct="20" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r3_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr>
+                            <td class="p-3 text-slate-700 font-medium">4,000</td>
+                            <td class="p-3 text-slate-500">8</td>
+                            <td class="p-3 text-slate-500">10</td>
+                            <td class="p-3"><input type="text" data-key="p4_r4_bits" data-correct="320000|320,000" placeholder="Bits" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r4_bytes" data-correct="40000|40,000" placeholder="Bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r4_kb" data-correct="40" placeholder="KB" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p4_r4_work" placeholder="Show work" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Compare Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-code-compare text-indigo-500 mr-2"></i> Compare
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What happens to size when bit depth doubles but everything else stays the same?</label>
+                    <textarea data-key="p4_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What happens to size when duration doubles?</label>
+                    <textarea data-key="p4_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What happens to size when sample rate doubles?</label>
+                    <textarea data-key="p4_q3" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 5: STORAGE & COMPRESSION CHALLENGE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">5</span>
+                    Part 5 — Storage & Compression Challenge
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">The school is preparing three files. Estimate each uncompressed size (in Bytes or KB), then apply the listed compression ratio.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">File</th>
+                            <th class="p-3">Given</th>
+                            <th class="p-3">Formula</th>
+                            <th class="p-3">Uncompressed Size</th>
+                            <th class="p-3">Ratio</th>
+                            <th class="p-3">Compressed Size</th>
+                            <th class="p-3 rounded-tr-lg">Largest Uncompressed?</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- Text -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Text</td>
+                            <td class="p-3 text-slate-500">2,000 characters</td>
+                            <td class="p-3 text-slate-500 text-xs font-mono">1 char ≈ 1 byte</td>
+                            <td class="p-3"><input type="text" data-key="p5_r1_uncomp" data-correct="2000 bytes|2,000 bytes|2 KB|2KB" placeholder="e.g. 2,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-slate-500 font-medium">2:1</td>
+                            <td class="p-3"><input type="text" data-key="p5_r1_comp" data-correct="1000 bytes|1,000 bytes|1 KB|1KB" placeholder="e.g. 1,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-center"><input type="radio" name="p5_largest" value="Text" data-key="p5_largest_text" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"></td>
+                        </tr>
+                        <!-- Image -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Image</td>
+                            <td class="p-3 text-slate-500">200 × 100 px, 8 bits/px</td>
+                            <td class="p-3 text-slate-500 text-xs font-mono">pixels × bits/pixel</td>
+                            <td class="p-3"><input type="text" data-key="p5_r2_uncomp" data-correct="20000 bytes|20,000 bytes|20 KB|20KB" placeholder="e.g. 20,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-slate-500 font-medium">4:1</td>
+                            <td class="p-3"><input type="text" data-key="p5_r2_comp" data-correct="5000 bytes|5,000 bytes|5 KB|5KB" placeholder="e.g. 5,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-center"><input type="radio" name="p5_largest" value="Image" data-key="p5_largest_image" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"></td>
+                        </tr>
+                        <!-- Audio -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Audio</td>
+                            <td class="p-3 text-slate-500">2,000 smp/s, 8 bits/smp, 5s</td>
+                            <td class="p-3 text-slate-500 text-xs font-mono">rate × depth × time</td>
+                            <td class="p-3"><input type="text" data-key="p5_r3_uncomp" data-correct="10000 bytes|10,000 bytes|10 KB|10KB" placeholder="e.g. 10,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-slate-500 font-medium">2:1</td>
+                            <td class="p-3"><input type="text" data-key="p5_r3_comp" data-correct="5000 bytes|5,000 bytes|5 KB|5KB" placeholder="e.g. 5,000 bytes" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3 text-center"><input type="radio" name="p5_largest" value="Audio" data-key="p5_largest_audio" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decision Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-lightbulb text-indigo-500 mr-2"></i> Decision Questions
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Which file is largest before compression?</label>
+                    <textarea data-key="p5_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Which representation choice contributes most to that file's size?</label>
+                    <textarea data-key="p5_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Which compressed file becomes smallest?</label>
+                    <textarea data-key="p5_q3" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Why is estimating size useful before storing or transmitting media?</label>
+                    <textarea data-key="p5_q4" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBMISSION & COPY REPORT CARD -->
+        <section class="bg-slate-900 text-white rounded-2xl p-6 shadow-xl space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-bold flex items-center text-indigo-400">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Schoology Submission Helper
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Check your answers for instant feedback, then copy the generated text below to paste into Schoology.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="check-answers-btn" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition shadow-lg flex items-center">
+                        <i class="fa-solid fa-check-double mr-2"></i> Check Answers
+                    </button>
+                    <button id="copy-report-btn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition shadow-lg flex items-center">
+                        <i class="fa-solid fa-copy mr-2"></i> Copy Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Feedback Counter -->
+            <div id="feedback-summary" class="hidden p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div id="score-badge" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-indigo-500 text-white">
+                        0/0
+                    </div>
+                    <div>
+                        <span class="text-sm font-semibold text-slate-200 block">Calculation Accuracy</span>
+                        <span id="score-subtext" class="text-xs text-slate-400">Complete all table inputs to verify answers.</span>
+                    </div>
+                </div>
+                <span id="feedback-msg" class="text-xs font-medium text-slate-300"></span>
+            </div>
+
+            <!-- Formatted Copy Box -->
+            <div>
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Report Content (Auto-generated with timestamp)</label>
+                <textarea id="schoology-report" readonly rows="12" class="w-full p-4 bg-slate-950 text-slate-300 font-mono text-xs rounded-xl border border-slate-800 focus:outline-none"></textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const checkInputs = document.querySelectorAll('.check-input');
+            const allInputs = document.querySelectorAll('input[type="text"], textarea');
+            const radios = document.querySelectorAll('input[type="radio"]');
+            const checkBtn = document.getElementById('check-answers-btn');
+            const copyBtn = document.getElementById('copy-report-btn');
+            const reportTextarea = document.getElementById('schoology-report');
+            const feedbackSummary = document.getElementById('feedback-summary');
+            const scoreBadge = document.getElementById('score-badge');
+            const scoreSubtext = document.getElementById('score-subtext');
+
+            // Sanitize string for matching
+            function cleanStr(val) {
+                if (!val) return '';
+                return val.toString().toLowerCase().replace(/[\s,]/g, '').trim();
+            }
+
+            // Real-time calculation check logic
+            function validateField(input) {
+                const userVal = cleanStr(input.value);
+                const correctAttr = input.getAttribute('data-correct');
+                if (!correctAttr) return true;
+
+                if (!userVal) {
+                    input.classList.remove('input-correct', 'input-incorrect');
+                    return false;
+                }
+
+                const acceptedVals = correctAttr.split('|').map(v => cleanStr(v));
+                const isCorrect = acceptedVals.includes(userVal);
+
+                if (isCorrect) {
+                    input.classList.add('input-correct');
+                    input.classList.remove('input-incorrect');
+                } else {
+                    input.classList.add('input-incorrect');
+                    input.classList.remove('input-correct');
+                }
+
+                return isCorrect;
+            }
+
+            // Check answers button handler
+            function runValidation() {
+                let totalChecked = checkInputs.length;
+                let correctCount = 0;
+
+                checkInputs.forEach(input => {
+                    if (validateField(input)) {
+                        correctCount++;
+                    }
+                });
+
+                feedbackSummary.classList.remove('hidden');
+                scoreBadge.innerText = `${correctCount}/${totalChecked}`;
+
+                if (correctCount === totalChecked) {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-emerald-500 text-white";
+                    scoreSubtext.innerText = "Excellent! All calculations are correct.";
+                } else if (correctCount > totalChecked / 2) {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-amber-500 text-white";
+                    scoreSubtext.innerText = "Good progress! Check highlighted fields to fix errors.";
+                } else {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-indigo-500 text-white";
+                    scoreSubtext.innerText = "Review your formulas and corrections.";
+                }
+
+                generateReport();
+            }
+
+            // Input change listener for live feedback
+            checkInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    validateField(input);
+                    generateReport();
+                });
+            });
+
+            allInputs.forEach(input => {
+                input.addEventListener('input', generateReport);
+            });
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', generateReport);
+            });
+
+            // Generate Schoology Formatted Report with Timestamp
+            function generateReport() {
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+
+                let totalCalculations = checkInputs.length;
+                let correctCalculations = 0;
+                checkInputs.forEach(input => {
+                    const userVal = cleanStr(input.value);
+                    const correctAttr = input.getAttribute('data-correct');
+                    if (correctAttr && acceptedValsMatch(userVal, correctAttr)) {
+                        correctCalculations++;
+                    }
+                });
+
+                function acceptedValsMatch(uVal, correctAttr) {
+                    if (!uVal) return false;
+                    const accepted = correctAttr.split('|').map(v => cleanStr(v));
+                    return accepted.includes(uVal);
+                }
+
+                function getVal(key) {
+                    const el = document.querySelector(`[data-key="${key}"]`);
+                    return el ? el.value.trim() : '';
+                }
+
+                function getRadioVal(name) {
+                    const el = document.querySelector(`input[name="${name}"]:checked`);
+                    return el ? el.value : 'Not selected';
+                }
+
+                let r = `====================================================\n`;
+                r += `CT2_16: BITS, BYTES & FILE SIZE - COMPLETED WORKSHEET\n`;
+                r += `Timestamp: ${timestamp}\n`;
+                r += `Calculation Accuracy Score: ${correctCalculations}/${totalCalculations}\n`;
+                r += `====================================================\n\n`;
+
+                // Part 1
+                r += `--- PART 1: STORAGE UNIT CONVERTER ---\n`;
+                r += `64 bits -> bytes: [Work: ${getVal('p1_r1_work')}] [Ans: ${getVal('p1_r1_ans')}]\n`;
+                r += `24 bits -> bytes: [Work: ${getVal('p1_r2_work')}] [Ans: ${getVal('p1_r2_ans')}]\n`;
+                r += `5 bytes -> bits: [Work: ${getVal('p1_r3_work')}] [Ans: ${getVal('p1_r3_ans')}]\n`;
+                r += `12 bytes -> bits: [Work: ${getVal('p1_r4_work')}] [Ans: ${getVal('p1_r4_ans')}]\n`;
+                r += `4,000 bytes -> KB: [Work: ${getVal('p1_r5_work')}] [Ans: ${getVal('p1_r5_ans')}]\n`;
+                r += `7 KB -> bytes: [Work: ${getVal('p1_r6_work')}] [Ans: ${getVal('p1_r6_ans')}]\n`;
+                r += `3,000 KB -> MB: [Work: ${getVal('p1_r7_work')}] [Ans: ${getVal('p1_r7_ans')}]\n`;
+                r += `2 MB -> KB: [Work: ${getVal('p1_r8_work')}] [Ans: ${getVal('p1_r8_ans')}]\n\n`;
+                r += `Leading Questions:\n`;
+                r += `1. Why divide by 8 (bits to bytes)? ${getVal('p1_q1')}\n`;
+                r += `2. Why multiply by 1,000 (KB to bytes)? ${getVal('p1_q2')}\n`;
+                r += `3. Why include unit? ${getVal('p1_q3')}\n\n`;
+
+                // Part 2
+                r += `--- PART 2: TEXT & IMAGE SIZE ESTIMATES ---\n`;
+                r += `A. Text:\n`;
+                r += `- 25 chars: ${getVal('p2a_r1_bytes')} Bytes | ${getVal('p2a_r1_kb')} KB | Work: ${getVal('p2a_r1_work')}\n`;
+                r += `- 500 chars: ${getVal('p2a_r2_bytes')} Bytes | ${getVal('p2a_r2_kb')} KB | Work: ${getVal('p2a_r2_work')}\n`;
+                r += `- 1,000 chars: ${getVal('p2a_r3_bytes')} Bytes | ${getVal('p2a_r3_kb')} KB | Work: ${getVal('p2a_r3_work')}\n`;
+                r += `- 3,500 chars: ${getVal('p2a_r4_bytes')} Bytes | ${getVal('p2a_r4_kb')} KB | Work: ${getVal('p2a_r4_work')}\n\n`;
+
+                r += `B. B/W Image (1 bit/px):\n`;
+                r += `- 20x10: ${getVal('p2b_r1_px')} px | ${getVal('p2b_r1_bits')} bits | ${getVal('p2b_r1_bytes')} bytes | ${getVal('p2b_r1_kb')} KB\n`;
+                r += `- 40x20: ${getVal('p2b_r2_px')} px | ${getVal('p2b_r2_bits')} bits | ${getVal('p2b_r2_bytes')} bytes | ${getVal('p2b_r2_kb')} KB\n`;
+                r += `- 100x80: ${getVal('p2b_r3_px')} px | ${getVal('p2b_r3_bits')} bits | ${getVal('p2b_r3_bytes')} bytes | ${getVal('p2b_r3_kb')} KB\n\n`;
+
+                // Part 3
+                r += `--- PART 3: COLOR DETAIL & IMAGE SIZE ---\n`;
+                r += `- B/W (1 bit): ${getVal('p3_r1_bits')} bits | ${getVal('p3_r1_bytes')} bytes | ${getVal('p3_r1_kb')} KB\n`;
+                r += `- Grayscale (8 bit): ${getVal('p3_r2_bits')} bits | ${getVal('p3_r2_bytes')} bytes | ${getVal('p3_r2_kb')} KB\n`;
+                r += `- Color (24 bit): ${getVal('p3_r3_bits')} bits | ${getVal('p3_r3_bytes')} bytes | ${getVal('p3_r3_kb')} KB\n\n`;
+                r += `Analyze:\n`;
+                r += `1. Smallest representation? ${getVal('p3_q1')}\n`;
+                r += `2. Most detail per pixel? ${getVal('p3_q2')}\n`;
+                r += `3. Why same resolution can have diff sizes? ${getVal('p3_q3')}\n\n`;
+
+                // Part 4
+                r += `--- PART 4: AUDIO SIZE ESTIMATES ---\n`;
+                r += `- 1,000 smp/s, 8-bit, 10s: ${getVal('p4_r1_bits')} bits | ${getVal('p4_r1_bytes')} bytes | ${getVal('p4_r1_kb')} KB | Work: ${getVal('p4_r1_work')}\n`;
+                r += `- 2,000 smp/s, 8-bit, 5s: ${getVal('p4_r2_bits')} bits | ${getVal('p4_r2_bytes')} bytes | ${getVal('p4_r2_kb')} KB | Work: ${getVal('p4_r2_work')}\n`;
+                r += `- 2,000 smp/s, 16-bit, 5s: ${getVal('p4_r3_bits')} bits | ${getVal('p4_r3_bytes')} bytes | ${getVal('p4_r3_kb')} KB | Work: ${getVal('p4_r3_work')}\n`;
+                r += `- 4,000 smp/s, 8-bit, 10s: ${getVal('p4_r4_bits')} bits | ${getVal('p4_r4_bytes')} bytes | ${getVal('p4_r4_kb')} KB | Work: ${getVal('p4_r4_work')}\n\n`;
+                r += `Compare:\n`;
+                r += `1. Bit depth doubles? ${getVal('p4_q1')}\n`;
+                r += `2. Duration doubles? ${getVal('p4_q2')}\n`;
+                r += `3. Sample rate doubles? ${getVal('p4_q3')}\n\n`;
+
+                // Part 5
+                r += `--- PART 5: STORAGE & COMPRESSION CHALLENGE ---\n`;
+                r += `- Text (2,000 chars, 2:1): Uncompressed = ${getVal('p5_r1_uncomp')} | Compressed = ${getVal('p5_r1_comp')}\n`;
+                r += `- Image (200x100 8-bit, 4:1): Uncompressed = ${getVal('p5_r2_uncomp')} | Compressed = ${getVal('p5_r2_comp')}\n`;
+                r += `- Audio (2,000 smp/s 8-bit 5s, 2:1): Uncompressed = ${getVal('p5_r3_uncomp')} | Compressed = ${getVal('p5_r3_comp')}\n`;
+                r += `Selected Largest Uncompressed: ${getRadioVal('p5_largest')}\n\n`;
+                r += `Decision Questions:\n`;
+                r += `1. Largest file before compression? ${getVal('p5_q1')}\n`;
+                r += `2. Representation choice contributing most? ${getVal('p5_q2')}\n`;
+                r += `3. Which compressed file becomes smallest? ${getVal('p5_q3')}\n`;
+                r += `4. Why is estimating size useful? ${getVal('p5_q4')}\n`;
+
+                reportTextarea.value = r;
+            }
+
+            // Copy to Clipboard logic using standard standard legacy execCommand fallback support
+            copyBtn.addEventListener('click', () => {
+                generateReport();
+                reportTextarea.select();
+                try {
+                    document.execCommand('copy');
+                    const originalBtnText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Copied!`;
+                    copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-700');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalBtnText;
+                        copyBtn.classList.replace('bg-emerald-700', 'bg-emerald-600');
+                    }, 2000);
+                } catch (err) {
+                    alert('Copying failed. Please copy directly from the text box.');
+                }
+            });
+
+            checkBtn.addEventListener('click', runValidation);
+
+            // Initial report generation
+            generateReport();
+        });
+    </script>
+</body>
+</html>
