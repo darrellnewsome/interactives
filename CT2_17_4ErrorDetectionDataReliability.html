@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Detection & Data Reliability — Even Parity</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .input-correct { border-color: #10B981 !important; background-color: #ECFDF5 !important; color: #065F46 !important; }
+        .input-incorrect { border-color: #EF4444 !important; background-color: #FEF2F2 !important; color: #991B1B !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
+
+    <header class="bg-indigo-700 text-white py-6 shadow-md mb-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-indigo-800 text-indigo-200 text-xs font-semibold rounded-full uppercase tracking-wider mb-2">CT2_17 Activity</span>
+                    <h1 class="text-2xl sm:text-3xl font-bold">Error Detection & Data Reliability</h1>
+                    <p class="text-indigo-200 text-sm mt-1">Understanding Even Parity, Transmission Errors, and System Response</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center bg-indigo-800/60 backdrop-blur-sm px-4 py-3 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid fa-shield-halved text-indigo-300 text-xl mr-3"></i>
+                    <div class="text-xs">
+                        <span class="font-bold text-white block">Learning Target</span>
+                        <span class="text-indigo-200">Add & check even-parity bits, detect errors, & explain parity limits.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
+
+        <!-- GUIDED NOTES REFERENCE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <i class="fa-solid fa-book-open text-indigo-600 mr-2.5"></i> Guided Notes — Reliability & Parity
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Data Corruption</span>
+                    <p class="text-xs text-slate-600 mt-1">A stored or transmitted bit pattern changes from the original (e.g. 0 becomes 1).</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Redundancy</span>
+                    <p class="text-xs text-slate-600 mt-1">Extra information added to data to help verify accuracy and detect errors.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Parity Bit</span>
+                    <p class="text-xs text-slate-600 mt-1">An extra bit appended so the total number of 1s satisfies a designated rule.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Even Parity</span>
+                    <p class="text-xs text-slate-600 mt-1">The final transmitted bit pattern MUST contain an EVEN number of total 1s.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 sm:col-span-2 lg:col-span-2">
+                    <span class="text-xs font-bold uppercase text-indigo-600 tracking-wider">Error Detection</span>
+                    <p class="text-xs text-slate-600 mt-1">Recognizing that transmitted data has been corrupted. <em>Note: Detecting an error is not the same as correcting it!</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 1: BUILD AN EVEN-PARITY BIT -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">1</span>
+                    Part 1 — Build an Even-Parity Bit
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Directions: Count the number of 1s in the DATA only. Choose a parity bit (0 or 1) so the TOTAL number of 1s becomes even. Then append the parity bit to form the Transmitted Message.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">Data Bits</th>
+                            <th class="p-3"># of 1s in Data</th>
+                            <th class="p-3">Parity Bit</th>
+                            <th class="p-3">Transmitted Message (Data + Parity)</th>
+                            <th class="p-3 rounded-tr-lg">Final # of 1s</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- Row 1 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1011001</td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_ones" data-correct="4" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_pbit" data-correct="0" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_msg" data-correct="10110010" placeholder="e.g. 10110010" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r1_final" data-correct="4" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1011101</td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_ones" data-correct="5" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_pbit" data-correct="1" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_msg" data-correct="10111011" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r2_final" data-correct="6" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">0000000</td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_ones" data-correct="0" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_pbit" data-correct="0" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_msg" data-correct="00000000" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r3_final" data-correct="0" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1111111</td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_ones" data-correct="7" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_pbit" data-correct="1" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_msg" data-correct="11111111" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r4_final" data-correct="8" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 5 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1100101</td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_ones" data-correct="4" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_pbit" data-correct="0" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_msg" data-correct="11001010" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r5_final" data-correct="4" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 6 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">0101010</td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_ones" data-correct="3" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_pbit" data-correct="1" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_msg" data-correct="01010101" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r6_final" data-correct="4" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 7 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1000001</td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_ones" data-correct="2" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_pbit" data-correct="0" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_msg" data-correct="10000010" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r7_final" data-correct="2" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                        <!-- Row 8 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">1110000</td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_ones" data-correct="3" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_pbit" data-correct="1" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_msg" data-correct="11100001" placeholder="Transmitted" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono"></td>
+                            <td class="p-3"><input type="text" data-key="p1_r8_final" data-correct="4" placeholder="Total 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Leading Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-circle-question text-indigo-500 mr-2"></i> Leading Questions
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">If the data already contains an even number of 1s, what parity bit is needed?</label>
+                    <textarea data-key="p1_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">If the data contains an odd number of 1s, what parity bit is needed?</label>
+                    <textarea data-key="p1_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Why do you count the final message again after adding the parity bit?</label>
+                    <textarea data-key="p1_q3" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2: RECEIVER PARITY CHECK -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">2</span>
+                    Part 2 — Receiver Parity Check
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Directions: Count ALL 1s in each received 8-bit message. Under Even Parity rules, an EVEN count = PASS; an ODD count = ERROR DETECTED.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg">Received Message</th>
+                            <th class="p-3"># of 1s</th>
+                            <th class="p-3">Even or Odd?</th>
+                            <th class="p-3">PASS / ERROR DETECTED</th>
+                            <th class="p-3 rounded-tr-lg">Evidence / Explanation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- Row 1 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">10110010</td>
+                            <td class="p-3"><input type="text" data-key="p2_r1_ones" data-correct="4" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r1_eo" data-correct="Even" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r1_res" data-correct="PASS" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r1_ev" placeholder="e.g. 4 is even" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">10100010</td>
+                            <td class="p-3"><input type="text" data-key="p2_r2_ones" data-correct="3" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r2_eo" data-correct="Odd" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r2_res" data-correct="ERROR|ERROR DETECTED" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r2_ev" placeholder="e.g. 3 is odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">10111011</td>
+                            <td class="p-3"><input type="text" data-key="p2_r3_ones" data-correct="6" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r3_eo" data-correct="Even" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r3_res" data-correct="PASS" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r3_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">10111010</td>
+                            <td class="p-3"><input type="text" data-key="p2_r4_ones" data-correct="5" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r4_eo" data-correct="Odd" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r4_res" data-correct="ERROR|ERROR DETECTED" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r4_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 5 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">00000000</td>
+                            <td class="p-3"><input type="text" data-key="p2_r5_ones" data-correct="0" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r5_eo" data-correct="Even" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r5_res" data-correct="PASS" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r5_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 6 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">11111111</td>
+                            <td class="p-3"><input type="text" data-key="p2_r6_ones" data-correct="8" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r6_eo" data-correct="Even" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r6_res" data-correct="PASS" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r6_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 7 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">11001010</td>
+                            <td class="p-3"><input type="text" data-key="p2_r7_ones" data-correct="4" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r7_eo" data-correct="Even" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r7_res" data-correct="PASS" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r7_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Row 8 -->
+                        <tr>
+                            <td class="p-3 font-mono font-medium text-slate-700">11001110</td>
+                            <td class="p-3"><input type="text" data-key="p2_r8_ones" data-correct="5" placeholder="# of 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r8_eo" data-correct="Odd" placeholder="Even/Odd" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r8_res" data-correct="ERROR|ERROR DETECTED" placeholder="PASS/ERROR" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-bold"></td>
+                            <td class="p-3"><input type="text" data-key="p2_r8_ev" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Receiver Decision Questions -->
+            <div class="mt-6 space-y-4 pt-4 border-t border-slate-100">
+                <h3 class="font-semibold text-slate-800 text-sm flex items-center">
+                    <i class="fa-solid fa-headset text-indigo-500 mr-2"></i> Receiver Decision Questions
+                </h3>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What should a receiver do when parity reports an error?</label>
+                    <textarea data-key="p2_q1" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Does a PASS prove the message is definitely perfect? Why or why not?</label>
+                    <textarea data-key="p2_q2" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 3: ERROR DETECTION VS CORRECTION -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">3</span>
+                    Part 3 — Error Detection vs. Correction
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg w-1/4">Situation</th>
+                            <th class="p-3 w-1/4">Prompt</th>
+                            <th class="p-3 w-1/4">Your Answer</th>
+                            <th class="p-3 rounded-tr-lg w-1/4">Evidence / Explanation</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Parity check fails.</td>
+                            <td class="p-3 text-slate-500">What can you conclude?</td>
+                            <td class="p-3"><input type="text" data-key="p3_r1_ans" placeholder="Your answer" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r1_exp" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Parity check passes.</td>
+                            <td class="p-3 text-slate-500">What can you conclude?</td>
+                            <td class="p-3"><input type="text" data-key="p3_r2_ans" placeholder="Your answer" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r2_exp" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">You know an error exists, but not which bit changed.</td>
+                            <td class="p-3 text-slate-500">Detection, location, or correction?</td>
+                            <td class="p-3"><input type="text" data-key="p3_r3_ans" data-correct="Detection|Error Detection" placeholder="Choose term" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-semibold"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r3_exp" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">The sender transmits the message again after an error.</td>
+                            <td class="p-3 text-slate-500">Why might this help?</td>
+                            <td class="p-3"><input type="text" data-key="p3_r4_ans" placeholder="Your answer" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r4_exp" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Two bits change and total 1s remains even.</td>
+                            <td class="p-3 text-slate-500">Could simple parity miss this?</td>
+                            <td class="p-3"><input type="text" data-key="p3_r5_ans" data-correct="Yes" placeholder="Yes / No" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-semibold"></td>
+                            <td class="p-3"><input type="text" data-key="p3_r5_exp" placeholder="Explanation" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Big Idea Synthesis -->
+            <div class="mt-6 p-4 bg-indigo-50 border border-indigo-100 rounded-xl space-y-3">
+                <h3 class="font-bold text-indigo-900 text-sm flex items-center">
+                    <i class="fa-solid fa-lightbulb text-indigo-600 mr-2"></i> Big Idea Synthesis
+                </h3>
+                <p class="text-xs text-indigo-800 font-medium">Complete the sentence below:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">Error detection tells the system...</label>
+                        <textarea data-key="p3_bigidea_part1" rows="2" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="that an error occurred / data is wrong..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">While error correction would require...</label>
+                        <textarea data-key="p3_bigidea_part2" rows="2" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="knowing exact bit location / extra parity bits..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4: RELIABILITY DETECTIVE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="border-b border-slate-100 pb-4 mb-5">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">4</span>
+                    Part 4 — Reliability Detective
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Directions: Determine whether each statement is correct (Yes or No). Provide evidence and a correction if needed.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                            <th class="p-3 rounded-tl-lg w-1/3">Claim</th>
+                            <th class="p-3 w-1/6">Correct?</th>
+                            <th class="p-3 w-1/4">Evidence</th>
+                            <th class="p-3 rounded-tr-lg w-1/4">Correction if Needed</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- Claim 1 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Even parity means the final message should have an even number of 1s.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c1" value="Yes" data-key="p4_c1_yes" data-correct="true" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c1" value="No" data-key="p4_c1_no" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c1_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c1_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Claim 2 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">A failed parity check identifies exactly which bit changed.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c2" value="Yes" data-key="p4_c2_yes" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c2" value="No" data-key="p4_c2_no" data-correct="true" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c2_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c2_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Claim 3 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Adding a parity bit slightly increases the amount of transmitted data.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c3" value="Yes" data-key="p4_c3_yes" data-correct="true" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c3" value="No" data-key="p4_c3_no" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c3_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c3_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Claim 4 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">A passing parity check guarantees that no bits changed.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c4" value="Yes" data-key="p4_c4_yes" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c4" value="No" data-key="p4_c4_no" data-correct="true" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c4_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c4_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Claim 5 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">Simple parity can detect a one-bit error.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c5" value="Yes" data-key="p4_c5_yes" data-correct="true" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c5" value="No" data-key="p4_c5_no" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c5_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c5_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                        <!-- Claim 6 -->
+                        <tr>
+                            <td class="p-3 font-medium text-slate-700">A system can respond to a detected error by requesting retransmission.</td>
+                            <td class="p-3">
+                                <div class="flex items-center space-x-3">
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c6" value="Yes" data-key="p4_c6_yes" data-correct="true" class="text-indigo-600"> <span class="ml-1">Yes</span></label>
+                                    <label class="inline-flex items-center text-xs"><input type="radio" name="p4_c6" value="No" data-key="p4_c6_no" class="text-indigo-600"> <span class="ml-1">No</span></label>
+                                </div>
+                            </td>
+                            <td class="p-3"><input type="text" data-key="p4_c6_ev" placeholder="Evidence" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                            <td class="p-3"><input type="text" data-key="p4_c6_corr" placeholder="Correction if No" class="w-full p-2 border border-slate-300 rounded-lg text-sm"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reliability Trade-Off Reflection -->
+            <div class="mt-6 pt-4 border-t border-slate-100">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Reliability Trade-Off: Why might adding extra check bits be worth the small increase in data size?</label>
+                <textarea data-key="p4_tradeoff" rows="3" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your explanation..."></textarea>
+            </div>
+        </section>
+
+        <!-- PART 5: RELIABLE SENSOR MESSAGE CHALLENGE -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div class="border-b border-slate-100 pb-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm mr-3">5</span>
+                    Part 5 — Reliable Sensor Message Challenge
+                </h2>
+                <p class="text-xs text-slate-500 mt-1">Scenario: A remote weather sensor transmits 7 data bits plus 1 even-parity bit. The receiving computer checks the message before logging the reading.</p>
+            </div>
+
+            <!-- A. Sender -->
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center text-indigo-700">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> A. Sender Stage
+                </h3>
+                <p class="text-xs text-slate-600">Sensor Data: <code class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded font-mono font-bold">1010110</code></p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Number of 1s in Data:</label>
+                        <input type="text" data-key="p5_a_ones" data-correct="4" placeholder="Count 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Parity Bit Needed:</label>
+                        <input type="text" data-key="p5_a_pbit" data-correct="0" placeholder="0 or 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">8-bit Transmitted Message:</label>
+                        <input type="text" data-key="p5_a_msg" data-correct="10101100" placeholder="8-bit string" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input font-mono">
+                    </div>
+                </div>
+            </div>
+
+            <!-- B. Receiver -->
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center text-indigo-700">
+                    <i class="fa-solid fa-satellite-dish mr-2"></i> B. Receiver Stage
+                </h3>
+                <p class="text-xs text-slate-600">Received Message: <code class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-mono font-bold">10100100</code></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Number of 1s in Received Message:</label>
+                        <input type="text" data-key="p5_b_ones" data-correct="3" placeholder="Count 1s" class="w-full p-2 border border-slate-300 rounded-lg text-sm check-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Parity Result:</label>
+                        <div class="flex items-center space-x-4 mt-2">
+                            <label class="inline-flex items-center text-xs"><input type="radio" name="p5_b_result" value="PASS" data-key="p5_b_pass" class="text-indigo-600"> <span class="ml-1 font-semibold text-emerald-700">PASS</span></label>
+                            <label class="inline-flex items-center text-xs"><input type="radio" name="p5_b_result" value="ERROR DETECTED" data-key="p5_b_err" data-correct="true" class="text-indigo-600"> <span class="ml-1 font-semibold text-rose-700">ERROR DETECTED</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What should the receiver conclude from this result?</label>
+                    <textarea data-key="p5_b_conclusion" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your explanation..."></textarea>
+                </div>
+            </div>
+
+            <!-- C. System Response -->
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center text-indigo-700">
+                    <i class="fa-solid fa-gears mr-2"></i> C. System Response Decision
+                </h3>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Choose the best automated action for the sensor receiver:</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-indigo-400">
+                        <input type="radio" name="p5_c_action" value="Request retransmission" data-key="p5_c_retransmit" data-correct="true" class="text-indigo-600">
+                        <span class="ml-2 text-xs font-medium">Request Retransmission</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-indigo-400">
+                        <input type="radio" name="p5_c_action" value="Ignore the reading" data-key="p5_c_ignore" class="text-indigo-600">
+                        <span class="ml-2 text-xs font-medium">Ignore the Reading</span>
+                    </label>
+                    <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-indigo-400">
+                        <input type="radio" name="p5_c_action" value="Flag a warning for review" data-key="p5_c_flag" class="text-indigo-600">
+                        <span class="ml-2 text-xs font-medium">Flag Warning for Review</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Explain why your chosen system action is best:</label>
+                    <textarea data-key="p5_c_action_exp" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Type your reasoning..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">What limitation of parity should the system designer still remember?</label>
+                    <textarea data-key="p5_c_limitation" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Explain parity limitations (e.g. 2-bit error masking)..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBMISSION & COPY REPORT CARD -->
+        <section class="bg-slate-900 text-white rounded-2xl p-6 shadow-xl space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-bold flex items-center text-indigo-400">
+                        <i class="fa-solid fa-clipboard-check mr-2"></i> Schoology Submission Helper
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Check your calculations for instant feedback, then copy the auto-formatted report below to submit on Schoology.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="check-answers-btn" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition shadow-lg flex items-center">
+                        <i class="fa-solid fa-check-double mr-2"></i> Check Answers
+                    </button>
+                    <button id="copy-report-btn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition shadow-lg flex items-center">
+                        <i class="fa-solid fa-copy mr-2"></i> Copy Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Feedback Counter -->
+            <div id="feedback-summary" class="hidden p-4 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div id="score-badge" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-indigo-500 text-white">
+                        0/0
+                    </div>
+                    <div>
+                        <span class="text-sm font-semibold text-slate-200 block">Calculation & Accuracy Score</span>
+                        <span id="score-subtext" class="text-xs text-slate-400">Complete input fields to verify responses.</span>
+                    </div>
+                </div>
+                <span id="feedback-msg" class="text-xs font-medium text-slate-300"></span>
+            </div>
+
+            <!-- Formatted Copy Box -->
+            <div>
+                <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Report Content (Auto-generated with live timestamp)</label>
+                <textarea id="schoology-report" readonly rows="12" class="w-full p-4 bg-slate-950 text-slate-300 font-mono text-xs rounded-xl border border-slate-800 focus:outline-none"></textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const checkInputs = document.querySelectorAll('.check-input');
+            const allInputs = document.querySelectorAll('input[type="text"], textarea');
+            const radios = document.querySelectorAll('input[type="radio"]');
+            const checkBtn = document.getElementById('check-answers-btn');
+            const copyBtn = document.getElementById('copy-report-btn');
+            const reportTextarea = document.getElementById('schoology-report');
+            const feedbackSummary = document.getElementById('feedback-summary');
+            const scoreBadge = document.getElementById('score-badge');
+            const scoreSubtext = document.getElementById('score-subtext');
+
+            // Sanitize string for matching
+            function cleanStr(val) {
+                if (!val) return '';
+                return val.toString().toLowerCase().replace(/[\s,]/g, '').trim();
+            }
+
+            // Real-time calculation check logic
+            function validateField(input) {
+                const userVal = cleanStr(input.value);
+                const correctAttr = input.getAttribute('data-correct');
+                if (!correctAttr) return true;
+
+                if (!userVal) {
+                    input.classList.remove('input-correct', 'input-incorrect');
+                    return false;
+                }
+
+                const acceptedVals = correctAttr.split('|').map(v => cleanStr(v));
+                const isCorrect = acceptedVals.includes(userVal);
+
+                if (isCorrect) {
+                    input.classList.add('input-correct');
+                    input.classList.remove('input-incorrect');
+                } else {
+                    input.classList.add('input-incorrect');
+                    input.classList.remove('input-correct');
+                }
+
+                return isCorrect;
+            }
+
+            // Check answers button handler
+            function runValidation() {
+                let totalChecked = checkInputs.length;
+                let correctCount = 0;
+
+                checkInputs.forEach(input => {
+                    if (validateField(input)) {
+                        correctCount++;
+                    }
+                });
+
+                feedbackSummary.classList.remove('hidden');
+                scoreBadge.innerText = `${correctCount}/${totalChecked}`;
+
+                if (correctCount === totalChecked) {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-emerald-500 text-white";
+                    scoreSubtext.innerText = "Awesome job! All parity calculations and responses are correct.";
+                } else if (correctCount > totalChecked / 2) {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-amber-500 text-white";
+                    scoreSubtext.innerText = "Good progress! Check highlighted red fields to make corrections.";
+                } else {
+                    scoreBadge.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-indigo-500 text-white";
+                    scoreSubtext.innerText = "Review parity rules and check your answers.";
+                }
+
+                generateReport();
+            }
+
+            // Input change listener for live feedback
+            checkInputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    validateField(input);
+                    generateReport();
+                });
+            });
+
+            allInputs.forEach(input => {
+                input.addEventListener('input', generateReport);
+            });
+
+            radios.forEach(radio => {
+                radio.addEventListener('change', generateReport);
+            });
+
+            // Generate Schoology Formatted Report with Timestamp
+            function generateReport() {
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+
+                let totalCalculations = checkInputs.length;
+                let correctCalculations = 0;
+                checkInputs.forEach(input => {
+                    const userVal = cleanStr(input.value);
+                    const correctAttr = input.getAttribute('data-correct');
+                    if (correctAttr && acceptedValsMatch(userVal, correctAttr)) {
+                        correctCalculations++;
+                    }
+                });
+
+                function acceptedValsMatch(uVal, correctAttr) {
+                    if (!uVal) return false;
+                    const accepted = correctAttr.split('|').map(v => cleanStr(v));
+                    return accepted.includes(uVal);
+                }
+
+                function getVal(key) {
+                    const el = document.querySelector(`[data-key="${key}"]`);
+                    return el ? el.value.trim() : '';
+                }
+
+                function getRadioVal(name) {
+                    const el = document.querySelector(`input[name="${name}"]:checked`);
+                    return el ? el.value : 'Not selected';
+                }
+
+                let r = `====================================================\n`;
+                r += `CT2_17: ERROR DETECTION & DATA RELIABILITY - WORKSHEET\n`;
+                r += `Timestamp: ${timestamp}\n`;
+                r += `Calculation Accuracy Score: ${correctCalculations}/${totalCalculations}\n`;
+                r += `====================================================\n\n`;
+
+                // Part 1
+                r += `--- PART 1: BUILD AN EVEN-PARITY BIT ---\n`;
+                r += `1011001: Ones=${getVal('p1_r1_ones')} | ParityBit=${getVal('p1_r1_pbit')} | Transmitted=${getVal('p1_r1_msg')} | FinalOnes=${getVal('p1_r1_final')}\n`;
+                r += `1011101: Ones=${getVal('p1_r2_ones')} | ParityBit=${getVal('p1_r2_pbit')} | Transmitted=${getVal('p1_r2_msg')} | FinalOnes=${getVal('p1_r2_final')}\n`;
+                r += `0000000: Ones=${getVal('p1_r3_ones')} | ParityBit=${getVal('p1_r3_pbit')} | Transmitted=${getVal('p1_r3_msg')} | FinalOnes=${getVal('p1_r3_final')}\n`;
+                r += `1111111: Ones=${getVal('p1_r4_ones')} | ParityBit=${getVal('p1_r4_pbit')} | Transmitted=${getVal('p1_r4_msg')} | FinalOnes=${getVal('p1_r4_final')}\n`;
+                r += `1100101: Ones=${getVal('p1_r5_ones')} | ParityBit=${getVal('p1_r5_pbit')} | Transmitted=${getVal('p1_r5_msg')} | FinalOnes=${getVal('p1_r5_final')}\n`;
+                r += `0101010: Ones=${getVal('p1_r6_ones')} | ParityBit=${getVal('p1_r6_pbit')} | Transmitted=${getVal('p1_r6_msg')} | FinalOnes=${getVal('p1_r6_final')}\n`;
+                r += `1000001: Ones=${getVal('p1_r7_ones')} | ParityBit=${getVal('p1_r7_pbit')} | Transmitted=${getVal('p1_r7_msg')} | FinalOnes=${getVal('p1_r7_final')}\n`;
+                r += `1110000: Ones=${getVal('p1_r8_ones')} | ParityBit=${getVal('p1_r8_pbit')} | Transmitted=${getVal('p1_r8_msg')} | FinalOnes=${getVal('p1_r8_final')}\n\n`;
+                r += `Leading Questions:\n`;
+                r += `1. If data has even # of 1s: ${getVal('p1_q1')}\n`;
+                r += `2. If data has odd # of 1s: ${getVal('p1_q2')}\n`;
+                r += `3. Why count final message again: ${getVal('p1_q3')}\n\n`;
+
+                // Part 2
+                r += `--- PART 2: RECEIVER PARITY CHECK ---\n`;
+                r += `10110010: Ones=${getVal('p2_r1_ones')} | Type=${getVal('p2_r1_eo')} | Result=${getVal('p2_r1_res')} | Ev: ${getVal('p2_r1_ev')}\n`;
+                r += `10100010: Ones=${getVal('p2_r2_ones')} | Type=${getVal('p2_r2_eo')} | Result=${getVal('p2_r2_res')} | Ev: ${getVal('p2_r2_ev')}\n`;
+                r += `10111011: Ones=${getVal('p2_r3_ones')} | Type=${getVal('p2_r3_eo')} | Result=${getVal('p2_r3_res')} | Ev: ${getVal('p2_r3_ev')}\n`;
+                r += `10111010: Ones=${getVal('p2_r4_ones')} | Type=${getVal('p2_r4_eo')} | Result=${getVal('p2_r4_res')} | Ev: ${getVal('p2_r4_ev')}\n`;
+                r += `00000000: Ones=${getVal('p2_r5_ones')} | Type=${getVal('p2_r5_eo')} | Result=${getVal('p2_r5_res')} | Ev: ${getVal('p2_r5_ev')}\n`;
+                r += `11111111: Ones=${getVal('p2_r6_ones')} | Type=${getVal('p2_r6_eo')} | Result=${getVal('p2_r6_res')} | Ev: ${getVal('p2_r6_ev')}\n`;
+                r += `11001010: Ones=${getVal('p2_r7_ones')} | Type=${getVal('p2_r7_eo')} | Result=${getVal('p2_r7_res')} | Ev: ${getVal('p2_r7_ev')}\n`;
+                r += `11001110: Ones=${getVal('p2_r8_ones')} | Type=${getVal('p2_r8_eo')} | Result=${getVal('p2_r8_res')} | Ev: ${getVal('p2_r8_ev')}\n\n`;
+                r += `Receiver Decision:\n`;
+                r += `1. What receiver should do on error: ${getVal('p2_q1')}\n`;
+                r += `2. Does PASS prove message is perfect: ${getVal('p2_q2')}\n\n`;
+
+                // Part 3
+                r += `--- PART 3: ERROR DETECTION VS. CORRECTION ---\n`;
+                r += `- Parity check fails: Ans=${getVal('p3_r1_ans')} | Exp=${getVal('p3_r1_exp')}\n`;
+                r += `- Parity check passes: Ans=${getVal('p3_r2_ans')} | Exp=${getVal('p3_r2_exp')}\n`;
+                r += `- Error exists but unknown bit: Term=${getVal('p3_r3_ans')} | Exp=${getVal('p3_r3_exp')}\n`;
+                r += `- Retransmit after error: Ans=${getVal('p3_r4_ans')} | Exp=${getVal('p3_r4_exp')}\n`;
+                r += `- Two bits change: Missed?=${getVal('p3_r5_ans')} | Exp=${getVal('p3_r5_exp')}\n\n`;
+                r += `Big Idea Sentence:\n`;
+                r += `Error detection tells the system: ${getVal('p3_bigidea_part1')}\n`;
+                r += `While error correction would require: ${getVal('p3_bigidea_part2')}\n\n`;
+
+                // Part 4
+                r += `--- PART 4: RELIABILITY DETECTIVE ---\n`;
+                r += `Claim 1 (Even parity means even # 1s): Correct=${getRadioVal('p4_c1')} | Ev=${getVal('p4_c1_ev')} | Corr=${getVal('p4_c1_corr')}\n`;
+                r += `Claim 2 (Failed check identifies exact bit): Correct=${getRadioVal('p4_c2')} | Ev=${getVal('p4_c2_ev')} | Corr=${getVal('p4_c2_corr')}\n`;
+                r += `Claim 3 (Parity bit increases data size): Correct=${getRadioVal('p4_c3')} | Ev=${getVal('p4_c3_ev')} | Corr=${getVal('p4_c3_corr')}\n`;
+                r += `Claim 4 (Passing check guarantees perfection): Correct=${getRadioVal('p4_c4')} | Ev=${getVal('p4_c4_ev')} | Corr=${getVal('p4_c4_corr')}\n`;
+                r += `Claim 5 (Simple parity detects 1-bit error): Correct=${getRadioVal('p4_c5')} | Ev=${getVal('p4_c5_ev')} | Corr=${getVal('p4_c5_corr')}\n`;
+                r += `Claim 6 (System can request retransmission): Correct=${getRadioVal('p4_c6')} | Ev=${getVal('p4_c6_ev')} | Corr=${getVal('p4_c6_corr')}\n\n`;
+                r += `Reliability Trade-Off Reflection: ${getVal('p4_tradeoff')}\n\n`;
+
+                // Part 5
+                r += `--- PART 5: RELIABLE SENSOR MESSAGE CHALLENGE ---\n`;
+                r += `A. Sender: Data 1010110 -> Ones=${getVal('p5_a_ones')} | ParityBit=${getVal('p5_a_pbit')} | Msg=${getVal('p5_a_msg')}\n`;
+                r += `B. Receiver: Received 10100100 -> Ones=${getVal('p5_b_ones')} | Result=${getRadioVal('p5_b_result')} | Conclusion=${getVal('p5_b_conclusion')}\n`;
+                r += `C. System Response: Action=${getRadioVal('p5_c_action')} | ActionExp=${getVal('p5_c_action_exp')} | ParityLimitation=${getVal('p5_c_limitation')}\n`;
+
+                reportTextarea.value = r;
+            }
+
+            // Copy to Clipboard logic using execCommand fallback support
+            copyBtn.addEventListener('click', () => {
+                generateReport();
+                reportTextarea.select();
+                try {
+                    document.execCommand('copy');
+                    const originalBtnText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Copied!`;
+                    copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-700');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalBtnText;
+                        copyBtn.classList.replace('bg-emerald-700', 'bg-emerald-600');
+                    }, 2000);
+                } catch (err) {
+                    alert('Copying failed. Please select and copy directly from the report text box.');
+                }
+            });
+
+            checkBtn.addEventListener('click', runValidation);
+
+            // Initial report generation on load
+            generateReport();
+        });
+    </script>
+</body>
+</html>
