@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 38: Checksums & Reliable Transmission</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .correct-bg { background-color: #ecfdf5 !important; border-color: #10b981 !important; }
+        .incorrect-bg { background-color: #fef2f2 !important; border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen pb-16">
+
+    <!-- STICKY HEADER & NAVBAR -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-lg border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                
+                <!-- Title & Subtitle -->
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-blue-600 rounded-xl shadow-md">
+                        <i class="fa-solid fa-network-wired text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight flex items-center gap-2">
+                            Day 38: Checksums & Reliable Transmission
+                            <span class="text-xs bg-blue-500/30 text-blue-300 font-mono px-2 py-0.5 rounded border border-blue-400/30">Interactive Worksheet</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">Calculate & verify checksums, compare with parity, and explain retransmission reliability.</p>
+                    </div>
+                </div>
+
+                <!-- Stats & Action Controls -->
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <div class="flex items-center space-x-1.5 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                        <i class="fa-solid fa-clock text-amber-400"></i>
+                        <span id="timer-display" class="font-mono text-slate-300">00:00</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                        <i class="fa-solid fa-trophy text-yellow-400"></i>
+                        <span>Auto-Score: <strong id="score-display" class="text-emerald-400">0</strong> / <span id="max-score-display">29</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                        <i class="fa-solid fa-chart-pie text-blue-400"></i>
+                        <div class="w-16 bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div id="progress-bar-inner" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="progress-text" class="font-bold text-blue-300">0%</span>
+                    </div>
+                    <button onclick="scrollToReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow transition">
+                        <i class="fa-solid fa-paper-plane"></i> Schoology Report
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Navigation Bar -->
+            <div class="mt-2.5 pt-2 border-t border-slate-800 flex items-center space-x-1 overflow-x-auto text-xs text-slate-300">
+                <a href="#guided-notes" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-book-open text-blue-400 mr-1"></i> Guided Notes</a>
+                <a href="#part-1" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-calculator text-emerald-400 mr-1"></i> Part 1: Build Checksums</a>
+                <a href="#part-2" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-check-double text-purple-400 mr-1"></i> Part 2: Receiver Verification</a>
+                <a href="#part-3" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-code-compare text-amber-400 mr-1"></i> Part 3: Comparison</a>
+                <a href="#part-4" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-user-secret text-rose-400 mr-1"></i> Part 4: Detective</a>
+                <a href="#part-5" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-medium whitespace-nowrap"><i class="fa-solid fa-tower-broadcast text-cyan-400 mr-1"></i> Part 5: Sensor Challenge</a>
+                <a href="#submission-section" class="px-2.5 py-1 hover:bg-slate-800 rounded transition font-semibold text-emerald-400 whitespace-nowrap"><i class="fa-solid fa-copy mr-1"></i> Copy Submission</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-8">
+
+        <!-- LEARNING TARGET BANNER -->
+        <div class="bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-900 text-white p-4.5 rounded-2xl shadow-md border border-blue-800/40 flex items-center gap-4">
+            <div class="p-3 bg-blue-500/20 rounded-xl text-2xl text-blue-300 border border-blue-400/20">
+                <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <div>
+                <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold">Learning Target</h2>
+                <p class="text-sm sm:text-base font-medium text-slate-100">I can calculate and verify a simple checksum, compare checksums with parity, and explain how retransmission can improve reliability.</p>
+            </div>
+        </div>
+
+        <!-- GUIDED NOTES — CHECKSUM WORKFLOW (VOCABULARY ONLY) -->
+        <section id="guided-notes" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-black">1</span>
+                    GUIDED NOTES — Checksum Workflow
+                </h2>
+                <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-semibold border border-blue-200">Vocabulary Reference</span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">Review these key terms and workflow meanings before completing the activities below.</p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                            <th class="p-3.5 font-bold w-1/3">Term</th>
+                            <th class="p-3.5 font-bold w-2/3">Meaning</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5 font-bold text-blue-900 bg-slate-50/80">Checksum</td>
+                            <td class="p-3.5 text-slate-700">A check value calculated from a block of data.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5 font-bold text-blue-900 bg-slate-50/80">Sender</td>
+                            <td class="p-3.5 text-slate-700">Calculates checksum, then sends data + checksum.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5 font-bold text-blue-900 bg-slate-50/80">Receiver</td>
+                            <td class="p-3.5 text-slate-700">Recomputes the checksum from the received data.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5 font-bold text-blue-900 bg-slate-50/80">Match</td>
+                            <td class="p-3.5 text-slate-700">No change detected by that check.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3.5 font-bold text-blue-900 bg-slate-50/80">Mismatch</td>
+                            <td class="p-3.5 text-slate-700">Error detected; data should not be trusted yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PART 1 — BUILD SIMPLE CHECKSUMS -->
+        <section id="part-1" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-black">2</span>
+                    PART 1 — Build Simple Checksums
+                </h2>
+                <span class="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full font-semibold border border-emerald-200">Classroom Rule: Add all data values</span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">Classroom Rule: Add all data values together. The total is the checksum. Study the first two pre-filled <strong>e.g.</strong> examples before completing the practice problems below.</p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200 mb-6">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                            <th class="p-3 font-semibold">Data Block</th>
+                            <th class="p-3 font-semibold">Work / Arithmetic Shown</th>
+                            <th class="p-3 font-semibold w-32 text-center">Checksum</th>
+                            <th class="p-3 font-semibold text-center w-20">Check</th>
+                            <th class="p-3 font-semibold text-center w-32">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        <!-- Example Row 1 -->
+                        <tr class="bg-blue-50/40">
+                            <td class="p-3 font-mono font-bold text-slate-800">12, 7, 9, 4</td>
+                            <td class="p-3"><input type="text" value="12 + 7 + 9 + 4 = 32" disabled class="w-full p-2 border border-blue-200 rounded text-xs bg-blue-50/50 text-slate-700 font-mono"></td>
+                            <td class="p-3 text-center"><input type="number" value="32" disabled class="w-24 p-2 border border-blue-200 rounded text-xs font-bold text-center bg-blue-50/50 text-slate-800"></td>
+                            <td class="p-3 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-emerald-600 rounded"></td>
+                            <td class="p-3 text-center"><span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded border border-blue-200">e.g. Example</span></td>
+                        </tr>
+                        <!-- Example Row 2 -->
+                        <tr class="bg-blue-50/40">
+                            <td class="p-3 font-mono font-bold text-slate-800">4, 7, 3</td>
+                            <td class="p-3"><input type="text" value="4 + 7 + 3 = 14" disabled class="w-full p-2 border border-blue-200 rounded text-xs bg-blue-50/50 text-slate-700 font-mono"></td>
+                            <td class="p-3 text-center"><input type="number" value="14" disabled class="w-24 p-2 border border-blue-200 rounded text-xs font-bold text-center bg-blue-50/50 text-slate-800"></td>
+                            <td class="p-3 text-center"><input type="checkbox" checked disabled class="w-4 h-4 text-emerald-600 rounded"></td>
+                            <td class="p-3 text-center"><span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded border border-blue-200">e.g. Example</span></td>
+                        </tr>
+                        <!-- Practice Row 3 -->
+                        <tr>
+                            <td class="p-3 font-mono font-bold text-slate-800 bg-slate-50">8, 11, 3, 6</td>
+                            <td class="p-3"><input type="text" id="p1-work-0" oninput="checkPart1Practice(0)" placeholder="Show work: e.g. 8 + 11 + 3 + 6" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></td>
+                            <td class="p-3 text-center"><input type="number" id="p1-cs-0" oninput="checkPart1Practice(0)" placeholder="Sum" class="w-24 p-2 border border-slate-300 rounded text-xs font-bold text-center focus:ring-2 focus:ring-emerald-500 focus:outline-none"></td>
+                            <td class="p-3 text-center"><input type="checkbox" id="p1-chk-0" onchange="updateProgress()" class="w-4 h-4 text-emerald-600 rounded cursor-pointer"></td>
+                            <td class="p-3 text-center" id="p1-status-0"><span class="text-xs text-slate-400">—</span></td>
+                        </tr>
+                        <!-- Practice Row 4 -->
+                        <tr>
+                            <td class="p-3 font-mono font-bold text-slate-800 bg-slate-50">5, 6, 4, 2</td>
+                            <td class="p-3"><input type="text" id="p1-work-1" oninput="checkPart1Practice(1)" placeholder="Show work: e.g. 5 + 6 + 4 + 2" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"></td>
+                            <td class="p-3 text-center"><input type="number" id="p1-cs-1" oninput="checkPart1Practice(1)" placeholder="Sum" class="w-24 p-2 border border-slate-300 rounded text-xs font-bold text-center focus:ring-2 focus:ring-emerald-500 focus:outline-none"></td>
+                            <td class="p-3 text-center"><input type="checkbox" id="p1-chk-1" onchange="updateProgress()" class="w-4 h-4 text-emerald-600 rounded cursor-pointer"></td>
+                            <td class="p-3 text-center" id="p1-status-1"><span class="text-xs text-slate-400">—</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Part 1 Leading Questions -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+                <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-slate-500">Leading Questions</h3>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">1. What information does the checksum summarize?</label>
+                    <textarea id="p1-q1" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p1-q1-exp')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p1-q1-exp" class="hidden mt-2 p-3 bg-emerald-50 text-emerald-900 rounded-lg text-xs border border-emerald-200">The checksum summarizes the combined total/sum of all numerical data values in the block into a single single-number check value.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">2. Why does the receiver need BOTH the data and the original checksum?</label>
+                    <textarea id="p1-q2" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p1-q2-exp')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p1-q2-exp" class="hidden mt-2 p-3 bg-emerald-50 text-emerald-900 rounded-lg text-xs border border-emerald-200">The receiver needs the data to compute its own local checksum, and the original checksum to compare against to verify if any values changed in transit.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">3. Why should you show the arithmetic rather than only writing the final checksum?</label>
+                    <textarea id="p1-q3" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p1-q3-exp')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p1-q3-exp" class="hidden mt-2 p-3 bg-emerald-50 text-emerald-900 rounded-lg text-xs border border-emerald-200">Showing the addition steps verifies your math accuracy, prevents mental arithmetic mistakes, and makes it easy to spot calculation errors.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 2 — RECEIVER VERIFICATION -->
+        <section id="part-2" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-black">3</span>
+                    PART 2 — Receiver Verification
+                </h2>
+                <span class="text-xs bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-semibold border border-purple-200">Recompute & Compare</span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">Recompute the checksum from the RECEIVED data. Compare it with the transmitted checksum. Select Match (Yes/No), Decision (PASS / ERROR DETECTED), and state Evidence.</p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200 mb-6">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                            <th class="p-2.5 font-semibold">Received Data</th>
+                            <th class="p-2.5 font-semibold text-center w-20">Received CS</th>
+                            <th class="p-2.5 font-semibold w-24 text-center">Recomputed</th>
+                            <th class="p-2.5 font-semibold text-center w-28">Match?</th>
+                            <th class="p-2.5 font-semibold text-center w-36">Decision</th>
+                            <th class="p-2.5 font-semibold">Evidence / Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="part2-table-body" class="divide-y divide-slate-200 bg-white">
+                        <!-- Dynamic Part 2 Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Interpretation Prompt -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <label class="block font-medium text-slate-800 mb-1 text-sm">
+                    Interpretation: What should the receiver do when the recomputed checksum does NOT match?
+                </label>
+                <textarea id="p2-interp" oninput="updateProgress()" rows="2" placeholder="Describe the receiver's required action..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+                <button onclick="toggleExemplar('p2-interp-exp')" class="text-xs text-purple-600 hover:text-purple-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                <div id="p2-interp-exp" class="hidden mt-2 p-3 bg-purple-50 text-purple-900 rounded-lg text-xs border border-purple-200">The receiver should discard/reject the corrupted data block and request that the sender retransmit a fresh copy of the message.</div>
+            </div>
+        </section>
+
+        <!-- PART 3 — PARITY, CHECKSUM, CORRECTION & RETRANSMISSION -->
+        <section id="part-3" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-black">4</span>
+                    PART 3 — Parity, Checksum, Correction & Retransmission
+                </h2>
+                <span class="text-xs bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full font-semibold border border-amber-200">Concept Comparison</span>
+            </div>
+
+            <!-- Reference Comparison Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200 mb-6">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-amber-50/80 border-b border-amber-200 text-amber-950">
+                            <th class="p-3 font-bold">Method</th>
+                            <th class="p-3 font-bold">What It Uses</th>
+                            <th class="p-3 font-bold">Purpose</th>
+                            <th class="p-3 font-bold">Automatically Corrects?</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 bg-white">
+                        <tr>
+                            <td class="p-3 font-bold text-slate-800">Even Parity</td>
+                            <td class="p-3 text-slate-700">Count of 1-bits</td>
+                            <td class="p-3 text-slate-700">Detect some changes</td>
+                            <td class="p-3 text-red-600 font-bold">No</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-800">Simple Checksum</td>
+                            <td class="p-3 text-slate-700">Sum of data values</td>
+                            <td class="p-3 text-slate-700">Detect some changes</td>
+                            <td class="p-3 text-red-600 font-bold">No</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-800">Error-Correcting Method</td>
+                            <td class="p-3 text-slate-700">Extra structured information</td>
+                            <td class="p-3 text-slate-700">Detect + may correct</td>
+                            <td class="p-3 text-emerald-600 font-bold">Sometimes</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-800">Retransmission</td>
+                            <td class="p-3 text-slate-700">Send the data again after a detected error</td>
+                            <td class="p-3 text-slate-700">Replace suspect copy</td>
+                            <td class="p-3 text-blue-600 font-bold">Uses a new copy</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Explain Differences Prompts -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-slate-500">Explain the Difference</h3>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">1. How is parity SIMILAR to a checksum?</label>
+                    <textarea id="p3-q1" oninput="updateProgress()" rows="2" placeholder="Write your explanation..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p3-q1-exp')" class="text-xs text-amber-600 hover:text-amber-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p3-q1-exp" class="hidden mt-2 p-3 bg-amber-50 text-amber-900 rounded-lg text-xs border border-amber-200">Both are error-detection methods that append extra metadata alongside transmitted data to check if data was corrupted without altering original payload data.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">2. How are they DIFFERENT?</label>
+                    <textarea id="p3-q2" oninput="updateProgress()" rows="2" placeholder="Write your explanation..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p3-q2-exp')" class="text-xs text-amber-600 hover:text-amber-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p3-q2-exp" class="hidden mt-2 p-3 bg-amber-50 text-amber-900 rounded-lg text-xs border border-amber-200">Parity checks bit counts (even/odd 1s) for single bytes, whereas a simple checksum sums integer values across multi-number blocks.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">3. Why might retransmission be used after an error is detected?</label>
+                    <textarea id="p3-q3" oninput="updateProgress()" rows="2" placeholder="Write your explanation..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p3-q3-exp')" class="text-xs text-amber-600 hover:text-amber-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p3-q3-exp" class="hidden mt-2 p-3 bg-amber-50 text-amber-900 rounded-lg text-xs border border-amber-200">Simple checksums can only flag errors—they cannot repair corrupt data automatically. Retransmission fetches an uncorrupted replacement copy.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4 — RELIABILITY DETECTIVE -->
+        <section id="part-4" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-sm font-black">5</span>
+                    PART 4 — Reliability Detective
+                </h2>
+                <span class="text-xs bg-rose-50 text-rose-700 px-2.5 py-1 rounded-full font-semibold border border-rose-200">Claim Evaluation</span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">Evaluate each claim. Select Correct? (Yes/No), provide Evidence, and supply a Corrected Idea if needed.</p>
+
+            <div class="space-y-4 mb-6" id="part4-claims-container">
+                <!-- Dynamic Part 4 Claims Cards -->
+            </div>
+
+            <!-- Limitation Example Case Study -->
+            <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-200">
+                <h3 class="font-bold text-rose-900 text-sm mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                    Limitation Example
+                </h3>
+                <p class="text-xs text-slate-700 mb-2 font-mono bg-white p-2 rounded border border-rose-200">
+                    Original data: <strong>4, 6</strong> &nbsp;→ Checksum = 10<br>
+                    Changed data: &nbsp;<strong>5, 5</strong> &nbsp;→ Checksum = 10
+                </p>
+                <label class="block font-medium text-slate-800 mb-1 text-sm">
+                    What does this example show about a simple sum checksum?
+                </label>
+                <textarea id="p4-limitation" oninput="updateProgress()" rows="2" placeholder="Explain what this limitation demonstrates..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none bg-white"></textarea>
+                <button onclick="toggleExemplar('p4-lim-exp')" class="text-xs text-rose-600 hover:text-rose-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                <div id="p4-lim-exp" class="hidden mt-2 p-3 bg-rose-100 text-rose-900 rounded-lg text-xs border border-rose-200">It demonstrates a checksum collision: entirely different data sets can produce the exact same simple sum, causing corruption to slip through undetected.</div>
+            </div>
+        </section>
+
+        <!-- PART 5 — SCHOOL SENSOR TRANSMISSION CHALLENGE -->
+        <section id="part-5" class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center text-sm font-black">6</span>
+                    PART 5 — School Sensor Transmission Challenge
+                </h2>
+                <span class="text-xs bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-full font-semibold border border-cyan-200">Real-World Application</span>
+            </div>
+
+            <p class="text-xs text-slate-600 mb-4">A classroom environmental sensor sends four readings together with a calculated checksum.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Step A: Build Packet -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="w-5 h-5 bg-cyan-600 text-white rounded-full inline-flex items-center justify-center text-xs font-bold">A</span>
+                        Build the Packet
+                    </h3>
+                    <p class="text-xs text-slate-600">Original readings: <strong class="text-slate-900 font-mono">18, 21, 19, 20</strong></p>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Checksum calculation work:</label>
+                        <input type="text" id="p5-calc-work" oninput="updateProgress()" placeholder="e.g. 18 + 21 + 19 + 20" class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Checksum answer:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="p5-orig-cs" oninput="checkSensorChallenge()" placeholder="Total" class="w-28 p-2 border border-slate-300 rounded text-xs font-bold text-center focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                            <span id="p5-orig-cs-status" class="text-xs font-bold"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step B: Verify Received Packet -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <span class="w-5 h-5 bg-cyan-600 text-white rounded-full inline-flex items-center justify-center text-xs font-bold">B</span>
+                        Verify Received Packet
+                    </h3>
+                    <p class="text-xs text-slate-600">Received readings: <strong class="text-slate-900 font-mono">18, 21, 18, 20</strong> | Received CS: <strong class="font-mono text-slate-900">78</strong></p>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Recomputed checksum:</label>
+                        <input type="number" id="p5-recomp-cs" oninput="checkSensorChallenge()" placeholder="Compute sum" class="w-full p-2 border border-slate-300 rounded text-xs font-bold focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Decision:</label>
+                        <div class="flex items-center gap-4 text-xs font-bold">
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="radio" name="p5-decision" value="PASS" onchange="checkSensorChallenge()"> <span>PASS</span>
+                            </label>
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="radio" name="p5-decision" value="ERROR DETECTED" onchange="checkSensorChallenge()"> <span>ERROR DETECTED</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Evidence statement:</label>
+                        <input type="text" id="p5-evid" oninput="updateProgress()" placeholder="State reason..." class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+                    </div>
+                    <span id="p5-stepb-status" class="text-xs font-bold block"></span>
+                </div>
+            </div>
+
+            <!-- Step C: Response Design -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+                <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                    <span class="w-5 h-5 bg-cyan-600 text-white rounded-full inline-flex items-center justify-center text-xs font-bold">C</span>
+                    Design the Response
+                </h3>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">1. Should the system accept the readings? Why or why not?</label>
+                    <textarea id="p5-q1" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p5-q1-exp')" class="text-xs text-cyan-600 hover:text-cyan-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p5-q1-exp" class="hidden mt-2 p-3 bg-cyan-50 text-cyan-900 rounded-lg text-xs border border-cyan-200">No, the system must reject the readings because recomputing the sum yields 77, which mismatches the transmitted checksum of 78.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">2. Should it request retransmission? Why?</label>
+                    <textarea id="p5-q2" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p5-q2-exp')" class="text-xs text-cyan-600 hover:text-cyan-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p5-q2-exp" class="hidden mt-2 p-3 bg-cyan-50 text-cyan-900 rounded-lg text-xs border border-cyan-200">Yes, it should request a retransmission so the sensor can send a fresh, uncorrupted set of environmental readings.</div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <label class="block font-medium text-slate-800 mb-1 text-sm">3. Would the checksum tell you exactly which reading changed? Explain.</label>
+                    <textarea id="p5-q3" oninput="updateProgress()" rows="2" placeholder="Write your response..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none"></textarea>
+                    <button onclick="toggleExemplar('p5-q3-exp')" class="text-xs text-cyan-600 hover:text-cyan-800 font-semibold mt-1.5 inline-flex items-center gap-1"><i class="fa-solid fa-lightbulb"></i> Show Model Answer</button>
+                    <div id="p5-q3-exp" class="hidden mt-2 p-3 bg-cyan-50 text-cyan-900 rounded-lg text-xs border border-cyan-200">No, a simple checksum only sums all values to detect an error in the block; it cannot identify which specific reading was altered.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCHOOLOGY SUBMISSION REPORT GENERATOR -->
+        <section id="submission-section" class="bg-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-file-arrow-up text-emerald-400"></i>
+                        Schoology Submission Report
+                    </h2>
+                    <p class="text-xs text-slate-400">Generate and copy your complete assignment report to paste directly into Schoology.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="generateReport()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 border border-slate-700 transition">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh Report
+                    </button>
+                    <button onclick="copyReportToClipboard()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow-lg transition">
+                        <i class="fa-solid fa-copy"></i> Copy Report to Clipboard
+                    </button>
+                </div>
+            </div>
+
+            <textarea id="report-output" readonly rows="12" class="w-full p-4 bg-slate-950 font-mono text-xs text-slate-200 border border-slate-800 rounded-xl focus:outline-none leading-relaxed"></textarea>
+        </section>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-xs font-medium">Report copied to clipboard!</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DATA STRUCTURES
+        const part1PracticeData = [
+            { block: "8, 11, 3, 6", correctSum: 28 },
+            { block: "5, 6, 4, 2", correctSum: 17 }
+        ];
+
+        const part2Data = [
+            { received: "12, 7, 9, 4", recCS: 32, recomp: 32, match: "Yes", decision: "PASS" },
+            { received: "12, 7, 8, 4", recCS: 32, recomp: 31, match: "No", decision: "ERROR DETECTED" },
+            { received: "8, 11, 3, 6", recCS: 28, recomp: 28, match: "Yes", decision: "PASS" },
+            { received: "8, 10, 3, 6", recCS: 28, recomp: 27, match: "No", decision: "ERROR DETECTED" },
+            { received: "5, 6, 4, 2", recCS: 17, recomp: 17, match: "Yes", decision: "PASS" },
+            { received: "5, 6, 4, 3", recCS: 17, recomp: 18, match: "No", decision: "ERROR DETECTED" }
+        ];
+
+        const part4Claims = [
+            { text: "If the checksum matches, the classroom checksum guarantees the data is perfect.", correctChoice: "No" },
+            { text: "A checksum mismatch means the receiver detected a possible error.", correctChoice: "Yes" },
+            { text: "A checksum automatically identifies which value changed.", correctChoice: "No" },
+            { text: "The receiver should recompute the checksum from the received data.", correctChoice: "Yes" },
+            { text: "Two different data blocks can sometimes have the same simple sum.", correctChoice: "Yes" },
+            { text: "Retransmission can provide a fresh copy after a detected error.", correctChoice: "Yes" }
+        ];
+
+        // TIMER LOGIC
+        let secondsElapsed = 0;
+        setInterval(() => {
+            secondsElapsed++;
+            const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+        }, 1000);
+
+        // INITIALIZATION
+        window.onload = function() {
+            buildPart2Table();
+            buildPart4Claims();
+            loadState();
+            updateProgress();
+            generateReport();
+        };
+
+        function buildPart2Table() {
+            const tbody = document.getElementById('part2-table-body');
+            tbody.innerHTML = '';
+            part2Data.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2.5 font-mono font-bold text-slate-800 bg-slate-50">${row.received}</td>
+                    <td class="p-2.5 font-mono font-bold text-slate-700 text-center bg-slate-100">${row.recCS}</td>
+                    <td class="p-2.5 text-center"><input type="number" id="p2-recomp-${i}" oninput="checkPart2Row(${i})" placeholder="Sum" class="w-20 p-1.5 border border-slate-300 rounded text-xs font-bold text-center focus:ring-2 focus:ring-purple-500 focus:outline-none"></td>
+                    <td class="p-2.5 text-center">
+                        <div class="flex items-center justify-center space-x-2 text-xs font-bold">
+                            <label class="cursor-pointer"><input type="radio" name="p2-match-${i}" value="Yes" onchange="checkPart2Row(${i})"> Y</label>
+                            <label class="cursor-pointer"><input type="radio" name="p2-match-${i}" value="No" onchange="checkPart2Row(${i})"> N</label>
+                        </div>
+                    </td>
+                    <td class="p-2.5 text-center">
+                        <div class="flex items-center justify-center space-x-2 text-xs font-bold">
+                            <label class="cursor-pointer"><input type="radio" name="p2-dec-${i}" value="PASS" onchange="checkPart2Row(${i})"> PASS</label>
+                            <label class="cursor-pointer"><input type="radio" name="p2-dec-${i}" value="ERROR DETECTED" onchange="checkPart2Row(${i})"> ERR</label>
+                        </div>
+                    </td>
+                    <td class="p-2.5"><input type="text" id="p2-evid-${i}" oninput="updateProgress()" placeholder="Reason..." class="w-full p-1.5 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-purple-500 focus:outline-none"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function buildPart4Claims() {
+            const container = document.getElementById('part4-claims-container');
+            container.innerHTML = '';
+            part4Claims.forEach((claim, i) => {
+                const div = document.createElement('div');
+                div.className = "p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2";
+                div.innerHTML = `
+                    <p class="font-medium text-slate-800 text-sm">Claim ${i+1}: "${claim.text}"</p>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center space-x-3 text-xs font-bold">
+                            <span class="text-slate-500 font-semibold">Correct?</span>
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="radio" name="p4-claim-${i}" value="Yes" onchange="checkPart4Claim(${i})"> <span>☐ Yes</span>
+                            </label>
+                            <label class="flex items-center space-x-1 cursor-pointer">
+                                <input type="radio" name="p4-claim-${i}" value="No" onchange="checkPart4Claim(${i})"> <span>☐ No</span>
+                            </label>
+                        </div>
+                        <span id="p4-status-${i}" class="text-xs font-bold"></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                        <input type="text" id="p4-evid-${i}" oninput="updateProgress()" placeholder="Evidence..." class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                        <input type="text" id="p4-corr-${i}" oninput="updateProgress()" placeholder="Corrected Idea if needed..." class="w-full p-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkPart1Practice(i) {
+            const val = parseInt(document.getElementById(`p1-cs-${i}`).value);
+            const statusTd = document.getElementById(`p1-status-${i}`);
+            if (!isNaN(val)) {
+                if (val === part1PracticeData[i].correctSum) {
+                    statusTd.innerHTML = `<span class="text-emerald-600 font-bold text-xs"><i class="fa-solid fa-circle-check"></i> Correct</span>`;
+                } else {
+                    statusTd.innerHTML = `<span class="text-red-500 font-bold text-xs"><i class="fa-solid fa-circle-xmark"></i> ${val} ≠ ${part1PracticeData[i].correctSum}</span>`;
+                }
+            } else {
+                statusTd.innerHTML = `<span class="text-xs text-slate-400">—</span>`;
+            }
+            updateProgress();
+        }
+
+        function checkPart2Row(i) {
+            updateProgress();
+        }
+
+        function checkPart4Claim(i) {
+            const selected = document.querySelector(`input[name="p4-claim-${i}"]:checked`);
+            const statusSpan = document.getElementById(`p4-status-${i}`);
+            if (selected) {
+                if (selected.value === part4Claims[i].correctChoice) {
+                    statusSpan.className = "text-xs font-bold text-emerald-600";
+                    statusSpan.innerText = "✓ Correct Evaluation";
+                } else {
+                    statusSpan.className = "text-xs font-bold text-red-500";
+                    statusSpan.innerText = "✗ Incorrect Evaluation";
+                }
+            }
+            updateProgress();
+        }
+
+        function checkSensorChallenge() {
+            const origCS = parseInt(document.getElementById('p5-orig-cs').value);
+            const origStatus = document.getElementById('p5-orig-cs-status');
+            if (!isNaN(origCS)) {
+                if (origCS === 78) {
+                    origStatus.className = "text-emerald-600 text-xs";
+                    origStatus.innerText = "✓ Correct";
+                } else {
+                    origStatus.className = "text-red-500 text-xs";
+                    origStatus.innerText = "✗ Expected 78";
+                }
+            } else {
+                origStatus.innerText = "";
+            }
+
+            const recompCS = parseInt(document.getElementById('p5-recomp-cs').value);
+            const dec = document.querySelector('input[name="p5-decision"]:checked')?.value;
+            const stepbStatus = document.getElementById('p5-stepb-status');
+
+            if (!isNaN(recompCS) && dec) {
+                if (recompCS === 77 && dec === 'ERROR DETECTED') {
+                    stepbStatus.className = "text-xs font-bold text-emerald-600 block mt-1";
+                    stepbStatus.innerText = "✓ Correct! Recomputed 77 ≠ Received 78 (ERROR DETECTED)";
+                } else {
+                    stepbStatus.className = "text-xs font-bold text-red-500 block mt-1";
+                    stepbStatus.innerText = "✗ Recomputed sum is 77, Decision should be ERROR DETECTED";
+                }
+            } else {
+                stepbStatus.innerText = "";
+            }
+
+            updateProgress();
+        }
+
+        // COMPUTE PROGRESS & SCORE
+        function updateProgress() {
+            let totalPoints = 29; // 2 (Part 1 Practice) + 18 (Part 2) + 6 (Part 4) + 3 (Part 5)
+            let currentScore = 0;
+            let filledFields = 0;
+            let totalFields = 0;
+
+            // Part 1 Practice Rows (2 items)
+            part1PracticeData.forEach((row, i) => {
+                totalFields += 3;
+                if (document.getElementById(`p1-work-${i}`).value.trim()) filledFields++;
+                if (document.getElementById(`p1-chk-${i}`).checked) filledFields++;
+
+                const val = parseInt(document.getElementById(`p1-cs-${i}`).value);
+                if (val === row.correctSum) {
+                    currentScore += 1;
+                    filledFields++;
+                } else if (!isNaN(val)) {
+                    filledFields++;
+                }
+            });
+
+            // Part 1 Leading Questions
+            ['p1-q1', 'p1-q2', 'p1-q3'].forEach(id => {
+                totalFields++;
+                if (document.getElementById(id).value.trim()) filledFields++;
+            });
+
+            // Part 2 (6 rows)
+            part2Data.forEach((row, i) => {
+                totalFields += 4;
+                const recomp = parseInt(document.getElementById(`p2-recomp-${i}`).value);
+                const match = document.querySelector(`input[name="p2-match-${i}"]:checked`)?.value;
+                const dec = document.querySelector(`input[name="p2-dec-${i}"]:checked`)?.value;
+
+                if (document.getElementById(`p2-evid-${i}`).value.trim()) filledFields++;
+
+                if (recomp === row.recomp) { currentScore += 1; filledFields++; }
+                else if (!isNaN(recomp)) filledFields++;
+
+                if (match === row.match) { currentScore += 1; filledFields++; }
+                else if (match) filledFields++;
+
+                if (dec === row.decision) { currentScore += 1; filledFields++; }
+                else if (dec) filledFields++;
+            });
+            totalFields++;
+            if (document.getElementById('p2-interp').value.trim()) filledFields++;
+
+            // Part 3 Prompts
+            ['p3-q1', 'p3-q2', 'p3-q3'].forEach(id => {
+                totalFields++;
+                if (document.getElementById(id).value.trim()) filledFields++;
+            });
+
+            // Part 4 Claims
+            part4Claims.forEach((claim, i) => {
+                totalFields += 3;
+                const sel = document.querySelector(`input[name="p4-claim-${i}"]:checked`);
+                if (sel) {
+                    filledFields++;
+                    if (sel.value === claim.correctChoice) currentScore += 1;
+                }
+                if (document.getElementById(`p4-evid-${i}`).value.trim()) filledFields++;
+                if (document.getElementById(`p4-corr-${i}`).value.trim()) filledFields++;
+            });
+            totalFields++;
+            if (document.getElementById('p4-limitation').value.trim()) filledFields++;
+
+            // Part 5
+            totalFields += 6;
+            if (document.getElementById('p5-calc-work').value.trim()) filledFields++;
+            if (parseInt(document.getElementById('p5-orig-cs').value) === 78) { currentScore += 1; filledFields++; }
+            else if (document.getElementById('p5-orig-cs').value) filledFields++;
+
+            if (parseInt(document.getElementById('p5-recomp-cs').value) === 77) { currentScore += 1; filledFields++; }
+            else if (document.getElementById('p5-recomp-cs').value) filledFields++;
+
+            const p5Dec = document.querySelector('input[name="p5-decision"]:checked')?.value;
+            if (p5Dec === 'ERROR DETECTED') { currentScore += 1; filledFields++; }
+            else if (p5Dec) filledFields++;
+
+            if (document.getElementById('p5-evid').value.trim()) filledFields++;
+
+            ['p5-q1', 'p5-q2', 'p5-q3'].forEach(id => {
+                totalFields++;
+                if (document.getElementById(id).value.trim()) filledFields++;
+            });
+
+            // Render Metrics
+            document.getElementById('score-display').innerText = currentScore;
+            document.getElementById('max-score-display').innerText = totalPoints;
+
+            const pct = Math.min(100, Math.round((filledFields / totalFields) * 100));
+            document.getElementById('progress-bar-inner').style.width = `${pct}%`;
+            document.getElementById('progress-text').innerText = `${pct}%`;
+
+            saveState();
+        }
+
+        function toggleExemplar(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('hidden');
+        }
+
+        // SCHOOLOGY REPORT GENERATOR
+        function generateReport() {
+            const timer = document.getElementById('timer-display').innerText;
+            const score = document.getElementById('score-display').innerText;
+            const maxScore = document.getElementById('max-score-display').innerText;
+            const progress = document.getElementById('progress-text').innerText;
+
+            let report = `====================================================\n`;
+            report += `  DAY 38: CHECKSUMS & RELIABLE TRANSMISSION - REPORT\n`;
+            report += `====================================================\n`;
+            report += `Time Spent   : ${timer}\n`;
+            report += `Auto Score   : ${score} / ${maxScore} (${Math.round((score/maxScore)*100)}%)\n`;
+            report += `Completion   : ${progress}\n`;
+            report += `----------------------------------------------------\n\n`;
+
+            report += `1. PART 1 — CHECKSUM CALCULATIONS\n`;
+            report += `   - Example 1 [12, 7, 9, 4]: Work="12 + 7 + 9 + 4 = 32" | CS=32 [e.g.]\n`;
+            report += `   - Example 2 [4, 7, 3]    : Work="4 + 7 + 3 = 14"      | CS=14 [e.g.]\n`;
+            part1PracticeData.forEach((row, i) => {
+                const work = document.getElementById(`p1-work-${i}`).value || 'No work';
+                const cs = document.getElementById(`p1-cs-${i}`).value || 'None';
+                const chk = document.getElementById(`p1-chk-${i}`).checked ? '[x]' : '[ ]';
+                report += `   - Practice [${row.block}]: Work: (${work}) => CS: ${cs} Check: ${chk}\n`;
+            });
+            report += `   Leading Questions:\n`;
+            report += `   - Summarizes: ${document.getElementById('p1-q1').value || 'N/A'}\n`;
+            report += `   - Why Both  : ${document.getElementById('p1-q2').value || 'N/A'}\n`;
+            report += `   - Why Work  : ${document.getElementById('p1-q3').value || 'N/A'}\n\n`;
+
+            report += `2. PART 2 — RECEIVER VERIFICATION\n`;
+            part2Data.forEach((row, i) => {
+                const recomp = document.getElementById(`p2-recomp-${i}`).value || 'N/A';
+                const match = document.querySelector(`input[name="p2-match-${i}"]:checked`)?.value || 'N/A';
+                const dec = document.querySelector(`input[name="p2-dec-${i}"]:checked`)?.value || 'N/A';
+                const evid = document.getElementById(`p2-evid-${i}`).value || 'N/A';
+                report += `   - Rec [${row.received} | Original CS: ${row.recCS}]: Recomputed=${recomp}, Match=${match}, Dec=${dec}, Evidence=${evid}\n`;
+            });
+            report += `   - Interpretation: ${document.getElementById('p2-interp').value || 'N/A'}\n\n`;
+
+            report += `3. PART 3 — CONCEPT COMPARISON\n`;
+            report += `   - Parity vs Checksum Similarities: ${document.getElementById('p3-q1').value || 'N/A'}\n`;
+            report += `   - Parity vs Checksum Differences : ${document.getElementById('p3-q2').value || 'N/A'}\n`;
+            report += `   - Why Retransmission             : ${document.getElementById('p3-q3').value || 'N/A'}\n\n`;
+
+            report += `4. PART 4 — RELIABILITY DETECTIVE\n`;
+            part4Claims.forEach((claim, i) => {
+                const sel = document.querySelector(`input[name="p4-claim-${i}"]:checked`)?.value || 'Unselected';
+                const evid = document.getElementById(`p4-evid-${i}`).value || 'None';
+                const corr = document.getElementById(`p4-corr-${i}`).value || 'None';
+                report += `   - Claim ${i+1} [Correct? ${sel}]: Evidence="${evid}" | Corrected Idea="${corr}"\n`;
+            });
+            report += `   - Limitation Example: ${document.getElementById('p4-limitation').value || 'N/A'}\n\n`;
+
+            report += `5. PART 5 — SCHOOL SENSOR CHALLENGE\n`;
+            report += `   - Original CS Work : ${document.getElementById('p5-calc-work').value || 'N/A'} => Checksum: ${document.getElementById('p5-orig-cs').value || 'N/A'}\n`;
+            report += `   - Verification     : Recomputed ${document.getElementById('p5-recomp-cs').value || 'N/A'} => Decision: ${document.querySelector('input[name="p5-decision"]:checked')?.value || 'N/A'}\n`;
+            report += `   - Evidence         : ${document.getElementById('p5-evid').value || 'N/A'}\n`;
+            report += `   - Accept Readings? : ${document.getElementById('p5-q1').value || 'N/A'}\n`;
+            report += `   - Request Retrans? : ${document.getElementById('p5-q2').value || 'N/A'}\n`;
+            report += `   - Exact Pinpoint?  : ${document.getElementById('p5-q3').value || 'N/A'}\n`;
+            report += `====================================================\n`;
+
+            document.getElementById('report-output').value = report;
+        }
+
+        // CLIPBOARD COPY WITH FALLBACK
+        function copyReportToClipboard() {
+            generateReport();
+            const reportArea = document.getElementById('report-output');
+            
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = reportArea.value;
+            tempTextarea.style.position = 'fixed';
+            tempTextarea.style.opacity = '0';
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("Report copied to clipboard! Ready to paste into Schoology.", "success");
+                } else {
+                    showToast("Unable to copy automatically. Please select text manually.", "error");
+                }
+            } catch (err) {
+                showToast("Copy error. Please manually select and copy text.", "error");
+            }
+            document.body.removeChild(tempTextarea);
+        }
+
+        function scrollToReport() {
+            generateReport();
+            document.getElementById('submission-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+            if (type === "success") {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+            } else {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-lg";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        // LOCAL STORAGE SAVING
+        function saveState() {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="number"], textarea');
+            const state = {};
+            inputs.forEach(inp => {
+                if (inp.id) state[inp.id] = inp.value;
+            });
+
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            state.checkboxes = {};
+            checkboxes.forEach(chk => {
+                if (chk.id) state.checkboxes[chk.id] = chk.checked;
+            });
+
+            const radios = document.querySelectorAll('input[type="radio"]:checked');
+            state.radios = {};
+            radios.forEach(r => {
+                state.radios[r.name] = r.value;
+            });
+
+            try {
+                localStorage.setItem('day38_checksum_p1_examples_state', JSON.stringify(state));
+            } catch(e) {}
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('day38_checksum_p1_examples_state');
+                if (!saved) return;
+                const state = JSON.parse(saved);
+
+                Object.keys(state).forEach(id => {
+                    if (id !== 'radios' && id !== 'checkboxes') {
+                        const el = document.getElementById(id);
+                        if (el) el.value = state[id];
+                    }
+                });
+
+                if (state.checkboxes) {
+                    Object.keys(state.checkboxes).forEach(id => {
+                        const chk = document.getElementById(id);
+                        if (chk) chk.checked = state.checkboxes[id];
+                    });
+                }
+
+                if (state.radios) {
+                    Object.keys(state.radios).forEach(name => {
+                        const val = state.radios[name];
+                        const rad = document.querySelector(`input[name="${name}"][value="${val}"]`);
+                        if (rad) rad.checked = true;
+                    });
+                }
+
+                part1PracticeData.forEach((_, i) => checkPart1Practice(i));
+                part2Data.forEach((_, i) => checkPart2Row(i));
+                part4Claims.forEach((_, i) => checkPart4Claim(i));
+                checkSensorChallenge();
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>
