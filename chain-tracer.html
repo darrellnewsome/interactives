@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.6 Chain Tracer</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #16304d; background: #ffffff; }
+  .wrap { padding: 14px 16px; }
+  h1 { font-size: 17px; margin: 0 0 4px; color: #0b3d91; }
+  .sub { font-size: 14px; margin: 0 0 12px; color: #4a5d73; }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .code { flex: 1 1 330px; background: #12263a; border-radius: 8px; padding: 8px 0; font-family: Consolas, "Courier New", monospace; font-size: 15px; color: #ffffff; }
+  .line { display: flex; align-items: center; padding: 3px 12px; white-space: pre; min-height: 24px; }
+  .line.run { background: rgba(30, 158, 98, 0.45); }
+  .line.dim { color: #7f93a8; }
+  .badge { margin-left: auto; font-family: "Segoe UI", Arial, sans-serif; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 10px; color: #ffffff; }
+  .t { background: #1e9e62; } .f { background: #d64933; } .s { background: #6b7785; }
+  .panel { flex: 1 1 220px; }
+  label { font-weight: 700; font-size: 14px; }
+  .scorebox { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+  input[type=range] { flex: 1; }
+  input[type=number] { width: 64px; font-size: 16px; padding: 4px; border: 2px solid #0b3d91; border-radius: 6px; }
+  .quick button { margin: 0 6px 6px 0; padding: 5px 10px; border: 1px solid #0b3d91; background: #e0edff; color: #0b3d91; border-radius: 12px; cursor: pointer; font-size: 13px; }
+  .quick button:hover { background: #cfe0fb; }
+  .out { margin-top: 8px; background: #f0f7ff; border: 2px solid #0b3d91; border-radius: 8px; padding: 10px 12px; }
+  .out .big { font-size: 26px; font-weight: 800; font-family: Consolas, monospace; color: #12263a; }
+  .note { font-size: 13px; margin-top: 6px; color: #4a5d73; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Chain Tracer: First TRUE Wins</h1>
+  <p class="sub">Move the score and watch which conditions are checked. Conditions after the first TRUE are skipped.</p>
+  <div class="row">
+    <div class="code" id="code"></div>
+    <div class="panel">
+      <label for="num">score =</label>
+      <div class="scorebox">
+        <input type="range" id="slider" min="0" max="100" value="85" aria-label="score slider">
+        <input type="number" id="num" min="0" max="100" value="85">
+      </div>
+      <div class="quick">Try the boundaries:
+        <div style="margin-top:6px">
+          <button data-v="69">69</button><button data-v="70">70</button><button data-v="79">79</button><button data-v="80">80</button><button data-v="89">89</button><button data-v="90">90</button>
+        </div>
+      </div>
+      <div class="out">
+        <div style="font-size:13px;font-weight:700">Output</div>
+        <div class="big" id="output">B</div>
+        <div class="note" id="checked"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var lines = [
+    { text: 'if score >= 90:', cond: 0 },
+    { text: '    print("A")', branch: 0 },
+    { text: 'elif score >= 80:', cond: 1 },
+    { text: '    print("B")', branch: 1 },
+    { text: 'elif score >= 70:', cond: 2 },
+    { text: '    print("C")', branch: 2 },
+    { text: 'else:', isElse: true },
+    { text: '    print("Below C")', branch: 3 }
+  ];
+  var thresholds = [90, 80, 70];
+  var grades = ['A', 'B', 'C', 'Below C'];
+  var slider = document.getElementById('slider');
+  var num = document.getElementById('num');
+
+  function render(score) {
+    var chosen = 3;
+    for (var i = 0; i < 3; i++) { if (score >= thresholds[i]) { chosen = i; break; } }
+    var html = '';
+    for (var k = 0; k < lines.length; k++) {
+      var L = lines[k], cls = 'line', badge = '';
+      if (L.cond !== undefined) {
+        if (L.cond < chosen) badge = '<span class="badge f">FALSE</span>';
+        else if (L.cond === chosen) badge = '<span class="badge t">TRUE</span>';
+        else { badge = '<span class="badge s">skipped</span>'; cls += ' dim'; }
+      } else if (L.isElse) {
+        if (chosen === 3) badge = '<span class="badge t">reached</span>';
+        else { badge = '<span class="badge s">skipped</span>'; cls += ' dim'; }
+      } else if (L.branch === chosen) { cls += ' run'; badge = '<span class="badge t">runs</span>'; }
+      else { cls += ' dim'; }
+      var safe = L.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      html += '<div class="' + cls + '">' + safe + badge + '</div>';
+    }
+    document.getElementById('code').innerHTML = html;
+    document.getElementById('output').textContent = grades[chosen];
+    var n = Math.min(chosen + 1, 3);
+    document.getElementById('checked').textContent = 'Conditions checked: ' + n + ' of 3.' + (chosen < 2 ? ' The rest were skipped.' : '');
+  }
+  function setScore(v) {
+    v = Math.max(0, Math.min(100, parseInt(v, 10) || 0));
+    slider.value = v; num.value = v; render(v);
+  }
+  slider.addEventListener('input', function () { setScore(slider.value); });
+  num.addEventListener('input', function () { setScore(num.value); });
+  var btns = document.querySelectorAll('.quick button');
+  for (var b = 0; b < btns.length; b++) {
+    btns[b].addEventListener('click', function () { setScore(this.getAttribute('data-v')); });
+  }
+  setScore(85);
+</script>
+</body>
+</html>
