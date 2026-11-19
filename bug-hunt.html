@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.6 Bug Hunt</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #16304d; background: #ffffff; }
+  .wrap { padding: 14px 16px; }
+  h1 { font-size: 17px; margin: 0 0 4px; color: #0b3d91; }
+  .sub { font-size: 14px; margin: 0 0 10px; color: #4a5d73; }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .left { flex: 1 1 320px; }
+  .right { flex: 1 1 260px; }
+  .code { background: #12263a; border-radius: 8px; padding: 6px 0; font-family: Consolas, "Courier New", monospace; font-size: 14px; color: #ffffff; }
+  .line { padding: 2px 12px; white-space: pre; min-height: 22px; }
+  .line .n { color: #7f93a8; display: inline-block; width: 22px; }
+  .fixes { margin-top: 10px; background: #f0f7ff; border: 2px solid #0b3d91; border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+  .fixes div { margin: 4px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  select { font-size: 13px; padding: 3px; border: 1px solid #0b3d91; border-radius: 5px; }
+  .tester { display: flex; gap: 8px; align-items: center; font-weight: 700; font-size: 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  input[type=number] { width: 64px; font-size: 15px; padding: 4px; border: 2px solid #0b3d91; border-radius: 6px; }
+  button { padding: 6px 12px; border: 0; border-radius: 12px; background: #2f6f9f; color: #ffffff; font-weight: 700; cursor: pointer; font-size: 13px; }
+  button.alt { background: #1e9e62; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border: 1px solid #c5d0db; padding: 4px 6px; text-align: center; }
+  th { background: #2f6f9f; color: #ffffff; }
+  .ok { color: #1e9e62; font-weight: 800; } .bad { color: #d64933; font-weight: 800; }
+  .msg { margin-top: 8px; padding: 8px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; background: #fff3cd; border: 2px solid #e09a24; }
+  .msg.good { background: #dff0d8; border-color: #1e9e62; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bug Hunt: Fix the Grade Chain</h1>
+  <p class="sub">Rule: A is 90+, B is 80&ndash;89, C is 70&ndash;79, Below C is under 70. This program has 3 bugs. Test scores to expose them, fix them, then run all tests.</p>
+  <div class="row">
+    <div class="left">
+      <div class="code" id="code"></div>
+      <div class="fixes">
+        <strong>Fix switches</strong>
+        <div><span>Condition order</span><select id="fOrder"><option value="asc">70, 80, 90 (as written)</option><option value="desc">90, 80, 70</option></select></div>
+        <div><span>Operator on the A line</span><select id="fOp"><option value="&gt;">&gt; (as written)</option><option value="&gt;=">&gt;=</option></select></div>
+        <div><span>else branch</span><select id="fElse"><option value="no">missing (as written)</option><option value="yes">add else: print("Below C")</option></select></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="tester">score = <input type="number" id="score" min="0" max="100" value="95"><button id="test">Test it</button><button class="alt" id="all">Run all 6 tests</button></div>
+      <table><thead><tr><th>score</th><th>Should print</th><th>Program prints</th><th></th></tr></thead><tbody id="log"></tbody></table>
+      <div class="msg" id="msg">Start by testing a few scores. Which ones does the program get wrong?</div>
+    </div>
+  </div>
+</div>
+<script>
+  var fOrder = document.getElementById('fOrder'), fOp = document.getElementById('fOp'), fElse = document.getElementById('fElse');
+  var log = [];
+  function correct(s) { return s >= 90 ? 'A' : s >= 80 ? 'B' : s >= 70 ? 'C' : 'Below C'; }
+  function chain() {
+    var a = { t: 90, g: 'A', op: fOp.value }, b = { t: 80, g: 'B', op: '>=' }, c = { t: 70, g: 'C', op: '>=' };
+    return fOrder.value === 'asc' ? [c, b, a] : [a, b, c];
+  }
+  function run(s) {
+    var ch = chain();
+    for (var i = 0; i < ch.length; i++) {
+      var hit = ch[i].op === '>' ? s > ch[i].t : s >= ch[i].t;
+      if (hit) return ch[i].g;
+    }
+    return fElse.value === 'yes' ? 'Below C' : '(nothing)';
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function renderCode() {
+    var ch = chain(), lines = ['score = float(input("Score: "))'];
+    for (var i = 0; i < ch.length; i++) {
+      lines.push((i === 0 ? 'if' : 'elif') + ' score ' + ch[i].op + ' ' + ch[i].t + ':');
+      lines.push('    print("' + ch[i].g + '")');
+    }
+    if (fElse.value === 'yes') { lines.push('else:'); lines.push('    print("Below C")'); }
+    var h = '';
+    for (var k = 0; k < lines.length; k++) h += '<div class="line"><span class="n">' + (k + 1) + '</span>' + esc(lines[k]) + '</div>';
+    document.getElementById('code').innerHTML = h;
+  }
+  function renderLog(final) {
+    var h = '', fails = 0;
+    for (var i = 0; i < log.length; i++) {
+      var r = log[i]; if (!r.ok) fails++;
+      h += '<tr><td>' + r.s + '</td><td>' + r.exp + '</td><td>' + esc(r.got) + '</td><td class="' + (r.ok ? 'ok' : 'bad') + '">' + (r.ok ? '&#10003;' : '&#10007;') + '</td></tr>';
+    }
+    document.getElementById('log').innerHTML = h;
+    var msg = document.getElementById('msg');
+    if (final) {
+      if (fails === 0) { msg.className = 'msg good'; msg.textContent = 'All 6 tests pass. You fixed all three bugs, and the regression tests prove nothing else broke.'; }
+      else { msg.className = 'msg'; msg.textContent = fails + ' of 6 tests fail. Check the scores that fail: which fix switch would change that result?'; }
+    } else {
+      msg.className = 'msg';
+      msg.textContent = 'Tip: test just below and exactly on each boundary (69, 70, 89, 90), plus a score under 70.';
+    }
+  }
+  function testOne() {
+    var s = Math.max(0, Math.min(100, parseInt(document.getElementById('score').value, 10) || 0));
+    var exp = correct(s), got = run(s);
+    log.unshift({ s: s, exp: exp, got: got, ok: exp === got });
+    if (log.length > 6) log.pop();
+    renderLog(false);
+  }
+  function runAll() {
+    var set = [95, 90, 85, 75, 70, 60];
+    log = [];
+    for (var i = 0; i < set.length; i++) { var e = correct(set[i]), g = run(set[i]); log.push({ s: set[i], exp: e, got: g, ok: e === g }); }
+    renderLog(true);
+  }
+  function changed() { renderCode(); if (log.length) runAll(); }
+  fOrder.addEventListener('change', changed); fOp.addEventListener('change', changed); fElse.addEventListener('change', changed);
+  document.getElementById('test').addEventListener('click', testOne);
+  document.getElementById('all').addEventListener('click', runAll);
+  document.getElementById('score').addEventListener('keydown', function (e) { if (e.keyCode === 13) testOne(); });
+  renderCode();
+</script>
+</body>
+</html>
