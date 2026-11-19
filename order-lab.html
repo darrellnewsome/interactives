@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.6 Order Lab</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #16304d; background: #ffffff; }
+  .wrap { padding: 14px 16px; }
+  h1 { font-size: 17px; margin: 0 0 4px; color: #0b3d91; }
+  .sub { font-size: 14px; margin: 0 0 12px; color: #4a5d73; }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .code { flex: 1 1 340px; background: #12263a; border-radius: 8px; padding: 8px 0; font-family: Consolas, "Courier New", monospace; font-size: 15px; color: #ffffff; }
+  .block { display: flex; align-items: center; padding: 2px 8px 2px 12px; }
+  .block .txt { white-space: pre; flex: 1; line-height: 24px; }
+  .block.warn { background: rgba(224, 154, 36, 0.28); }
+  .btns button { width: 30px; height: 26px; margin-left: 4px; border: 0; border-radius: 5px; background: #2f6f9f; color: #ffffff; font-size: 14px; cursor: pointer; }
+  .btns button:disabled { background: #3b4b5c; color: #7f93a8; cursor: default; }
+  .tag { font-family: "Segoe UI", Arial, sans-serif; font-size: 11px; font-weight: 700; background: #e09a24; color: #ffffff; padding: 2px 7px; border-radius: 9px; margin-right: 6px; }
+  .fixed { padding: 2px 12px; white-space: pre; line-height: 24px; }
+  .panel { flex: 1 1 230px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #c5d0db; padding: 5px 8px; text-align: center; }
+  th { background: #2f6f9f; color: #ffffff; }
+  .ok { color: #1e9e62; font-weight: 800; } .bad { color: #d64933; font-weight: 800; }
+  .msg { margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+  .msg.good { background: #dff0d8; border: 2px solid #1e9e62; }
+  .msg.try { background: #fff3cd; border: 2px solid #e09a24; }
+  .reset { margin-top: 10px; padding: 6px 12px; border: 1px solid #0b3d91; background: #e0edff; color: #0b3d91; border-radius: 12px; cursor: pointer; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Order Lab: Most Restrictive First</h1>
+  <p class="sub">This chain is in the wrong order. Use the arrows to reorder the conditions until all four tests pass.</p>
+  <div class="row">
+    <div class="code" id="code"></div>
+    <div class="panel">
+      <table>
+        <thead><tr><th>score</th><th>Should print</th><th>Your chain</th><th></th></tr></thead>
+        <tbody id="tests"></tbody>
+      </table>
+      <div class="msg try" id="msg"></div>
+      <button class="reset" id="reset">Start over</button>
+    </div>
+  </div>
+</div>
+<script>
+  var start = [{ t: 70, g: 'C' }, { t: 80, g: 'B' }, { t: 90, g: 'A' }];
+  var conds = start.slice();
+  var tests = [95, 85, 75, 60];
+
+  function correct(s) { return s >= 90 ? 'A' : s >= 80 ? 'B' : s >= 70 ? 'C' : 'Below C'; }
+  function run(s) { for (var i = 0; i < conds.length; i++) { if (s >= conds[i].t) return conds[i].g; } return 'Below C'; }
+  function unreachable(i) { for (var j = 0; j < i; j++) { if (conds[j].t <= conds[i].t) return true; } return false; }
+  function move(i, d) { var j = i + d; var tmp = conds[i]; conds[i] = conds[j]; conds[j] = tmp; render(); }
+
+  function render() {
+    var html = '';
+    for (var i = 0; i < conds.length; i++) {
+      var kw = i === 0 ? 'if' : 'elif';
+      var warn = unreachable(i);
+      html += '<div class="block' + (warn ? ' warn' : '') + '"><span class="txt">' + kw + ' score &gt;= ' + conds[i].t + ':\n    print("' + conds[i].g + '")</span>' +
+        (warn ? '<span class="tag">never runs</span>' : '') +
+        '<span class="btns"><button aria-label="move up" ' + (i === 0 ? 'disabled' : '') + ' data-i="' + i + '" data-d="-1">&#9650;</button>' +
+        '<button aria-label="move down" ' + (i === conds.length - 1 ? 'disabled' : '') + ' data-i="' + i + '" data-d="1">&#9660;</button></span></div>';
+    }
+    html += '<div class="fixed">else:\n    print("Below C")</div>';
+    document.getElementById('code').innerHTML = html;
+    var bs = document.querySelectorAll('.btns button');
+    for (var b = 0; b < bs.length; b++) {
+      bs[b].addEventListener('click', function () { move(parseInt(this.getAttribute('data-i'), 10), parseInt(this.getAttribute('data-d'), 10)); });
+    }
+    var rows = '', passed = 0;
+    for (var k = 0; k < tests.length; k++) {
+      var exp = correct(tests[k]), got = run(tests[k]), ok = exp === got;
+      if (ok) passed++;
+      rows += '<tr><td>' + tests[k] + '</td><td>' + exp + '</td><td>' + got + '</td><td class="' + (ok ? 'ok' : 'bad') + '">' + (ok ? '&#10003;' : '&#10007;') + '</td></tr>';
+    }
+    document.getElementById('tests').innerHTML = rows;
+    var msg = document.getElementById('msg');
+    if (passed === tests.length) {
+      msg.className = 'msg good';
+      msg.textContent = 'All 4 tests pass! The most restrictive condition (>= 90) comes first, so every branch can be reached.';
+    } else {
+      msg.className = 'msg try';
+      msg.textContent = passed + ' of 4 tests pass. Look for branches marked "never runs": an earlier condition already catches those scores.';
+    }
+  }
+  document.getElementById('reset').addEventListener('click', function () { conds = start.slice(); render(); });
+  render();
+</script>
+</body>
+</html>
