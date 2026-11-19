@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.6 elif or Separate ifs?</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #16304d; background: #ffffff; }
+  .wrap { padding: 14px 16px; }
+  h1 { font-size: 17px; margin: 0 0 8px; color: #0b3d91; }
+  .tabs button { padding: 7px 14px; margin-right: 6px; border: 2px solid #0b3d91; background: #ffffff; color: #0b3d91; border-radius: 16px; font-weight: 700; cursor: pointer; font-size: 14px; }
+  .tabs button.on { background: #0b3d91; color: #ffffff; }
+  .inputs { margin: 12px 0 10px; display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; font-weight: 700; }
+  .inputs label { display: flex; align-items: center; gap: 8px; }
+  .inputs input[type=range] { width: 160px; }
+  .val { font-family: Consolas, monospace; font-size: 16px; min-width: 32px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .col { flex: 1 1 300px; }
+  .head { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+  .code { background: #12263a; border-radius: 8px; padding: 6px 0; font-family: Consolas, "Courier New", monospace; font-size: 14px; color: #ffffff; }
+  .line { padding: 2px 12px; white-space: pre; min-height: 22px; }
+  .line.run { background: rgba(30, 158, 98, 0.45); }
+  .line.dim { color: #7f93a8; }
+  .out { margin-top: 6px; background: #f0f7ff; border: 2px solid #0b3d91; border-radius: 8px; padding: 8px 10px; font-family: Consolas, monospace; font-size: 15px; min-height: 44px; }
+  .out .lbl { font-family: "Segoe UI", Arial, sans-serif; font-size: 12px; font-weight: 700; color: #4a5d73; }
+  .verdict { margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-size: 14px; background: #fde4cf; border: 2px solid #800000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>elif or Separate ifs?</h1>
+  <div class="tabs"><button id="tabG" class="on">Grades</button><button id="tabP">Phone warnings</button></div>
+  <div class="inputs" id="inputs"></div>
+  <div class="row">
+    <div class="col"><div class="head" style="color:#1e9e62">VERSION 1: elif chain</div><div class="code" id="c1"></div><div class="out" id="o1"></div></div>
+    <div class="col"><div class="head" style="color:#d64933" id="h2">VERSION 2: separate ifs</div><div class="code" id="c2"></div><div class="out" id="o2"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+</div>
+<script>
+  var mode = 'G';
+  var state = { score: 94, battery: 10, storage: 95 };
+
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function draw(id, lines, runs) {
+    var h = '';
+    for (var i = 0; i < lines.length; i++) {
+      var cls = 'line';
+      if (lines[i].p) cls += runs[i] ? ' run' : ' dim';
+      h += '<div class="' + cls + '">' + esc(lines[i].t) + '</div>';
+    }
+    document.getElementById(id).innerHTML = h;
+  }
+  function outs(id, list) {
+    document.getElementById(id).innerHTML = '<div class="lbl">Output (' + list.length + ' line' + (list.length === 1 ? '' : 's') + ')</div>' + (list.length ? list.map(esc).join('<br>') : '<span style="color:#6b7785">(nothing)</span>');
+  }
+  function slider(key, label, min, max) {
+    return '<label>' + label + ' <input type="range" min="' + min + '" max="' + max + '" value="' + state[key] + '" data-k="' + key + '"><span class="val" id="v_' + key + '">' + state[key] + '</span></label>';
+  }
+  function buildInputs() {
+    document.getElementById('inputs').innerHTML = mode === 'G' ? slider('score', 'score =', 0, 100) : slider('battery', 'battery % =', 0, 100) + slider('storage', 'storage used % =', 0, 100);
+    var rs = document.querySelectorAll('#inputs input');
+    for (var i = 0; i < rs.length; i++) {
+      rs[i].addEventListener('input', function () { var k = this.getAttribute('data-k'); state[k] = parseInt(this.value, 10); document.getElementById('v_' + k).textContent = state[k]; render(); });
+    }
+  }
+  function render() {
+    if (mode === 'G') {
+      var s = state.score;
+      var g = s >= 90 ? 0 : s >= 80 ? 1 : s >= 70 ? 2 : 3, names = ['A', 'B', 'C', 'Below C'];
+      var L1 = [{ t: 'if score >= 90:' }, { t: '    print("A")', p: 1 }, { t: 'elif score >= 80:' }, { t: '    print("B")', p: 1 }, { t: 'elif score >= 70:' }, { t: '    print("C")', p: 1 }, { t: 'else:' }, { t: '    print("Below C")', p: 1 }];
+      draw('c1', L1, [0, g === 0, 0, g === 1, 0, g === 2, 0, g === 3]);
+      outs('o1', [names[g]]);
+      var a = s >= 90, b = s >= 80, c = s >= 70;
+      var L2 = [{ t: 'if score >= 90:' }, { t: '    print("A")', p: 1 }, { t: 'if score >= 80:' }, { t: '    print("B")', p: 1 }, { t: 'if score >= 70:' }, { t: '    print("C")', p: 1 }];
+      draw('c2', L2, [0, a, 0, b, 0, c]);
+      var o2 = []; if (a) o2.push('A'); if (b) o2.push('B'); if (c) o2.push('C');
+      outs('o2', o2);
+      document.getElementById('h2').style.color = '#d64933';
+      document.getElementById('verdict').innerHTML = '<strong>Only one grade should print, so elif is correct here.</strong> Separate ifs check every condition, so a 94 prints A, B, and C. Try 94, then 75.';
+    } else {
+      var low = state.battery < 20, full = state.storage >= 90;
+      var M1 = [{ t: 'if battery < 20:' }, { t: '    print("Low battery")', p: 1 }, { t: 'elif storage >= 90:' }, { t: '    print("Storage almost full")', p: 1 }];
+      draw('c1', M1, [0, low, 0, !low && full]);
+      var e = []; if (low) e.push('Low battery'); else if (full) e.push('Storage almost full');
+      outs('o1', e);
+      var M2 = [{ t: 'if battery < 20:' }, { t: '    print("Low battery")', p: 1 }, { t: 'if storage >= 90:' }, { t: '    print("Storage almost full")', p: 1 }];
+      draw('c2', M2, [0, low, 0, full]);
+      var f = []; if (low) f.push('Low battery'); if (full) f.push('Storage almost full');
+      outs('o2', f);
+      document.getElementById('h2').style.color = '#1e9e62';
+      document.getElementById('verdict').innerHTML = '<strong>Both warnings can be true at once, so separate ifs are correct here.</strong> With elif, low battery hides the storage warning. Try battery 10 and storage 95.';
+    }
+  }
+  function setMode(m) {
+    mode = m;
+    document.getElementById('tabG').className = m === 'G' ? 'on' : '';
+    document.getElementById('tabP').className = m === 'P' ? 'on' : '';
+    buildInputs(); render();
+  }
+  document.getElementById('tabG').addEventListener('click', function () { setMode('G'); });
+  document.getElementById('tabP').addEventListener('click', function () { setMode('P'); });
+  setMode('G');
+</script>
+</body>
+</html>
